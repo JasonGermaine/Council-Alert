@@ -1,0 +1,5 @@
+#!/bin/bash
+cd web-service
+mvn clean install
+cp target/web-service.war $CATALINA_HOME/webapps/
+source catalina.sh start
