@@ -22,7 +22,7 @@ public class ReportController {
 
 	@RequestMapping("/get")
 	public Report getReportDetail() {
-		return reportService.getReport();
+		return reportService.getReport(6);
 	}
 	
 	@RequestMapping("/post")
