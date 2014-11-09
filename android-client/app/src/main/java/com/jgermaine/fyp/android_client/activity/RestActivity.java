@@ -12,18 +12,17 @@ import android.widget.EditText;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.model.Report;
 
-import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-public class MainActivity extends Activity {
+public class RestActivity extends Activity {
 
     public final static String URL = "http://192.168.0.8:8080/web-service/report";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_rest);
     }
 
 
@@ -64,7 +63,8 @@ public class MainActivity extends Activity {
     }
 
     private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
-        private  boolean isGet;
+        private boolean isGet;
+
         public HttpRequestTask(boolean isGet) {
             super();
             this.isGet = isGet;
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
         @Override
         protected Report doInBackground(Void... params) {
             try {
-                if(isGet) {
+                if (isGet) {
                     final String url = URL + "/get";
                     RestTemplate restTemplate = new RestTemplate();
                     restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
                     Report report = new Report();
                     report.setId(6);
                     report.setName("Graffiti");
-                    Report response = restTemplate.postForObject(url, report , Report.class);
+                    Report response = restTemplate.postForObject(url, report, Report.class);
                     return response;
                 }
             } catch (Exception e) {
@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(Report report) {
-            if(report != null) {
+            if (report != null) {
                 EditText edReportId = (EditText) findViewById(R.id.report_id);
                 edReportId.setText(Integer.toString(report.getId()));
                 EditText edReportName = (EditText) findViewById(R.id.report_name);

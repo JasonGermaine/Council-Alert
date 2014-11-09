@@ -4,10 +4,12 @@
     <string name="app_name">Android_Client</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
     <string name="report_id">ID</string>
     <string name="name">Name</string>
     <string name="retrieve">Retrieve</string>
     <string name="post">Post</string>
     <string name="clear">Clear</string>
+    <string name="title_activity_cloud_messaging">CloudMessagingActivity</string>
+    <string name="title_activity_cloud">CloudActivity</string>
+
 </resources>
