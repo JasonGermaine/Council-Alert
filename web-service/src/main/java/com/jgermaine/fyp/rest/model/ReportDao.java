@@ -9,13 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 /**
- * Class ReportDao
- * 
  * This class is used to access data for the Report entity.
- * Since we've setup setPackagesToScan and transaction manager on
- * DatabaseConfig, any bean method annotated with @Transactional will cause
- * Spring to magically call begin() and commit() at the start/end of the
- * method. If exception occurs it will also call rollback().
  */
 @Repository
 @Transactional
