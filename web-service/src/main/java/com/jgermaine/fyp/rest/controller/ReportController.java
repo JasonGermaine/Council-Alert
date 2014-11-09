@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Report;
@@ -21,14 +20,16 @@ public class ReportController {
 	@Autowired
 	private ReportService reportService;
 
-	@RequestMapping(value = "/detail", method = RequestMethod.GET)
+	@RequestMapping("/get")
 	public Report getReportDetail() {
 		return reportService.getReport();
 	}
 
-	@RequestMapping(value = "/detail", method = RequestMethod.POST)
+	@RequestMapping("/post")
 	public Report postReportDetails(@RequestBody Report report) {
 		LOGGER.info(String.format("Report id: %s, name: %s", report.getId(),
+				report.getName()));
+		System.out.println(String.format("Report id: %s, name: %s", report.getId(),
 				report.getName()));
 		return report;
 	}
