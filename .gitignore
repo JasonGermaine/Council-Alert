@@ -7,6 +7,7 @@
 /logs
 /.metadata
 /web-service/.*
+/setup.properties
 .gradle
 /local.properties
 /.idea/workspace.xml
