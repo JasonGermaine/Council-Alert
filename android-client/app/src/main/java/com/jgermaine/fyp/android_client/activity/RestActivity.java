@@ -84,8 +84,8 @@ public class RestActivity extends Activity {
                     RestTemplate restTemplate = new RestTemplate(true);
                     restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                     Report report = new Report();
-                    report.setId(6);
-                    report.setName("Graffiti");
+                    EditText edReportName = (EditText) findViewById(R.id.report_name);
+                    report.setName(edReportName.getText().toString());
                     Report response = restTemplate.postForObject(url, report, Report.class);
                     return response;
                 }

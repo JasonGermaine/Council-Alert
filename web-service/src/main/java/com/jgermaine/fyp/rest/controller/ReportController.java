@@ -24,13 +24,14 @@ public class ReportController {
 	public Report getReportDetail() {
 		return reportService.getReport();
 	}
-
+	
 	@RequestMapping("/post")
 	public Report postReportDetails(@RequestBody Report report) {
 		LOGGER.info(String.format("Report id: %s, name: %s", report.getId(),
 				report.getName()));
-		System.out.println(String.format("Report id: %s, name: %s", report.getId(),
-				report.getName()));
-		return report;
+		reportService.addReport(report);
+		return reportService.getReport(report.getName());
 	}
+	
+	
 }
