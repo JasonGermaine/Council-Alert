@@ -6,11 +6,11 @@ import com.jgermaine.fyp.rest.model.Report;
 
 @Service
 public class ReportService {
-	
+
 	public Report getReport(){
-		Report r = new Report();
-		r.setId(1);
-		r.setName("PotHole");
-		return r;
+		Report report = new Report();
+		report.setId(1);
+		report.setName("PotHole");
+		return report;
 	}
 } 

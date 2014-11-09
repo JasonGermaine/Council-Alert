@@ -15,7 +15,7 @@ import com.jgermaine.fyp.rest.service.ReportService;
 @RequestMapping("/report")
 public class ReportController {
 
-	private static final Logger LOGGER = LogManager.getLogger(ReportController.class);
+	private static final Logger LOGGER = LogManager.getLogger(ReportController.class.getName());
 
 	@Autowired
 	private ReportService reportService;
