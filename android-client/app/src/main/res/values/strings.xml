@@ -8,8 +8,11 @@
     <string name="name">Name</string>
     <string name="retrieve">Retrieve</string>
     <string name="post">Post</string>
+    <string name="ip">IP Address:</string>
+    <string name="submit">Submit</string>
     <string name="clear">Clear</string>
     <string name="title_activity_cloud_messaging">CloudMessagingActivity</string>
     <string name="title_activity_cloud">CloudActivity</string>
+    <string name="title_activity_setup">SetupActivity</string>
 
 </resources>

@@ -17,12 +17,13 @@ import org.springframework.web.client.RestTemplate;
 
 public class RestActivity extends Activity {
 
-    public final static String URL = "http://192.168.0.8:8080/web-service/report";
+    public static String URL = "http://192.168.0.8:8080/web-service/report";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rest);
+        URL = String.format("http://%s:8080/web-service/report",SetupActivity.IP_ADDR);
     }
 
 
