@@ -72,9 +72,9 @@ public class CloudActivity extends Activity {
                         mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
                     }
                     mRegid = mGcm.register(CloudActivity.PROJECT_NUMBER);
-                    msg = "Device registered" +
-                            "+\n registration ID:" +
-                            "+\n" + mRegid;
+                    msg = "Device registered." +
+                            "\n Registration ID:" +
+                            "\n" + mRegid;
                     Log.i("GCM", msg);
 
                 } catch (IOException ex) {
