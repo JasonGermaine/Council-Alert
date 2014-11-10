@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.android_client.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,9 @@ public class RestActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, CloudActivity.class);
+            startActivity(intent);
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -66,6 +70,7 @@ public class RestActivity extends Activity {
     private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
         private boolean isGet;
 
+        // Pure test purposes to determine method to call
         public HttpRequestTask(boolean isGet) {
             super();
             this.isGet = isGet;

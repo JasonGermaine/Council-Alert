@@ -48,5 +48,6 @@ public class SetupActivity extends Activity {
         }
         Intent intent = new Intent(this, RestActivity.class);
         startActivity(intent);
+
     }
 }

@@ -55,7 +55,7 @@ public class DbConfig {
 		entityManagerFactory.setPackagesToScan(env
 				.getProperty("entitymanager.packagesToScan"));
 
-		// Vendor adapter
+		// HbernateVendor adapter
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		entityManagerFactory.setJpaVendorAdapter(vendorAdapter);
 

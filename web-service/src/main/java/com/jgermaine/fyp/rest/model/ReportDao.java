@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 public class ReportDao {
    
   // An EntityManager will be automatically injected from entityManagerFactory
-  // setup on DatabaseConfig class.
   @PersistenceContext
   private EntityManager entityManager;
    
