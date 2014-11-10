@@ -9,7 +9,7 @@ android:orientation="vertical" >
     android:id="@+id/btnGetRegId"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Get RegId"/>
+    android:text="Get Registration Id"/>
 
 <EditText
     android:id="@+id/etRegId"
