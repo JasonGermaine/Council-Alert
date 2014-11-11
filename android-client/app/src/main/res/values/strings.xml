@@ -14,5 +14,7 @@
     <string name="title_activity_cloud_messaging">CloudMessagingActivity</string>
     <string name="title_activity_cloud">CloudActivity</string>
     <string name="title_activity_setup">SetupActivity</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

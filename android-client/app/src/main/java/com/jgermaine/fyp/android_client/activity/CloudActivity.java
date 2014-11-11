@@ -53,7 +53,7 @@ public class CloudActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, RestActivity.class);
+            Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);
             finish();
             return true;
