@@ -23,6 +23,7 @@ public class ReportController {
 	private ReportService reportService;
 
 
+	// This is a GET request
 	@RequestMapping("/get")
 	public Report getReportDetail() {
 		sendNotifcation();
