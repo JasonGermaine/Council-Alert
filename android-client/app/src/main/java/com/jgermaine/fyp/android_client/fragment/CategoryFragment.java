@@ -2,6 +2,7 @@ package com.jgermaine.fyp.android_client.fragment;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,11 @@ public class CategoryFragment extends Fragment {
         gridview.setAdapter(new CategoryAdapter(getActivity()));
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                ((ReportActivity) getActivity()).getTypeCategory(gridview.getAdapter().getItem(position).toString());
+                if (gridview.getAdapter().getItem(position).toString().equalsIgnoreCase("BACK")) {
+                    ((ReportActivity) getActivity()).onBackPressed();
+                } else {
+                    ((ReportActivity) getActivity()).getTypeCategory(gridview.getAdapter().getItem(position).toString());
+                }
             }
         });
         return view;

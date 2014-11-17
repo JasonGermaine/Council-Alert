@@ -111,6 +111,7 @@ public class ReportActivity extends FragmentActivity implements
     private void getCategoryFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_from_left, R.anim.slide_to_right);
         ft.add(R.id.fragment_container, CategoryFragment.newInstance("String", "String"));
         ft.commit();
     }
@@ -119,7 +120,9 @@ public class ReportActivity extends FragmentActivity implements
         // replace
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_from_left, R.anim.slide_to_right, R.anim.slide_from_right, R.anim.slide_to_left);
         ft.replace(R.id.fragment_container, TypeFragment.newInstance(category));
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -189,5 +192,15 @@ public class ReportActivity extends FragmentActivity implements
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @Override
+    public void onBackPressed(){
+        FragmentManager fm = getFragmentManager();
+        if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 }
