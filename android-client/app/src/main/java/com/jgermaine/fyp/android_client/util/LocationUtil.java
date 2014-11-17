@@ -27,17 +27,22 @@ public final class LocationUtil {
     }
 
 
-    public static Marker getMarker(GoogleMap map, Marker marker, Location current) {
+    public static Marker getMarker(GoogleMap map, Marker marker, Location current, String title, String desc) {
 
-        if (marker != null) {
-            marker.remove();
-        }
+        removeMarker(marker);
+
         marker = map.addMarker(
                 new MarkerOptions()
                         .position(getCoordinates(current))
-                        .title("PotHole")
-                        .snippet("Pothole on the road"));
+                        .title(title)
+                        .snippet(desc));
         marker.showInfoWindow();
         return marker;
+    }
+
+    public static void removeMarker(Marker marker) {
+        if (marker != null) {
+            marker.remove();
+        }
     }
 }

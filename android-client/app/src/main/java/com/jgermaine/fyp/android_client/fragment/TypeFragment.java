@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.activity.ReportActivity;
 
 public class TypeFragment extends ListFragment {
     private static final String ARG_CATEGORY = "category";
@@ -57,7 +58,6 @@ public class TypeFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         String item = l.getAdapter().getItem(position).toString();
-        TextView txt = (TextView) getView().findViewById(R.id.clickedText);
-        txt.setText(item);
+        ((ReportActivity) getActivity()).setMarker(item, "sample description");
     }
 }

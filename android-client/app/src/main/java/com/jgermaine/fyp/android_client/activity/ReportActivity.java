@@ -148,7 +148,6 @@ public class ReportActivity extends FragmentActivity implements
             mCurrentLocation = mLocationClient.getLastLocation();
             try {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), LocationUtil.ZOOM_LEVEL));
-                mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation);
             } catch (NullPointerException e) {
                 suggestRedirect();
             }
@@ -163,7 +162,7 @@ public class ReportActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = mLocationClient.getLastLocation();
         if (!LocationUtil.isLocationEquals(mCachedLocation, mCurrentLocation)) {
-            mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), LocationUtil.ZOOM_LEVEL));
         }
         mCachedLocation = mCurrentLocation;
     }
@@ -194,11 +193,16 @@ public class ReportActivity extends FragmentActivity implements
                 .show();
     }
 
+    public void setMarker(String title, String desc) {
+        mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation, title, desc);
+    }
+
     @Override
     public void onBackPressed(){
         FragmentManager fm = getFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
             fm.popBackStack();
+            LocationUtil.removeMarker(mMarker);
         } else {
             super.onBackPressed();
         }
