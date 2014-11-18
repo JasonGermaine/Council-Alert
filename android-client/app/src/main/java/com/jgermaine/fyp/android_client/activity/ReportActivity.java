@@ -4,11 +4,15 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -23,18 +27,29 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
+import com.jgermaine.fyp.android_client.model.Report;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.net.URL;
 
 public class ReportActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        CategoryFragment.OnCategoryInteractionListener,
+        TypeFragment.OnTypeInteractionListener {
 
     private LocationClient mLocationClient;
     private Location mCurrentLocation;
@@ -42,16 +57,18 @@ public class ReportActivity extends FragmentActivity implements
     private LocationRequest mLocationRequest;
     private Marker mMarker;
     private GoogleMap mMap;
-    private static int i = 1;
+    private int mZoomLevel;
+    private String mURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+        mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
         getMap();
         registerLocationListener();
         getCategoryFragment();
-
+        mURL = String.format("http://%s:8080/web-service/report/post",SetupActivity.IP_ADDR);
     }
 
     @Override
@@ -69,28 +86,27 @@ public class ReportActivity extends FragmentActivity implements
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        mLocationClient.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationClient.connect();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.report, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            if (i == 1) {
-                getTypeCategory("Sample");
-                i++;
-            } else {
-                displayFinal();
-                FrameLayout frag = (FrameLayout) findViewById(R.id.fragment_container);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), 17));
-                frag.setVisibility(View.GONE);
-            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -104,6 +120,7 @@ public class ReportActivity extends FragmentActivity implements
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setZoomControlsEnabled(false);
             }
         }
     }
@@ -112,11 +129,11 @@ public class ReportActivity extends FragmentActivity implements
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.anim.slide_from_left, R.anim.slide_to_right);
-        ft.add(R.id.fragment_container, CategoryFragment.newInstance("String", "String"));
+        ft.add(R.id.fragment_container, CategoryFragment.newInstance());
         ft.commit();
     }
 
-    public void getTypeCategory(String category) {
+    public void getTypeFragment(String category) {
         // replace
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
@@ -126,7 +143,7 @@ public class ReportActivity extends FragmentActivity implements
         ft.commit();
     }
 
-    private void displayFinal() {
+    private void displaySendReport() {
         FragmentManager fm = getFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
         FragmentTransaction ft = fm.beginTransaction();
@@ -147,7 +164,7 @@ public class ReportActivity extends FragmentActivity implements
             mLocationClient.requestLocationUpdates(mLocationRequest, this);
             mCurrentLocation = mLocationClient.getLastLocation();
             try {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), LocationUtil.ZOOM_LEVEL));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
             } catch (NullPointerException e) {
                 suggestRedirect();
             }
@@ -162,7 +179,7 @@ public class ReportActivity extends FragmentActivity implements
     public void onLocationChanged(Location location) {
         mCurrentLocation = mLocationClient.getLastLocation();
         if (!LocationUtil.isLocationEquals(mCachedLocation, mCurrentLocation)) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), LocationUtil.ZOOM_LEVEL));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
         }
         mCachedLocation = mCurrentLocation;
     }
@@ -171,7 +188,6 @@ public class ReportActivity extends FragmentActivity implements
         mLocationClient = new LocationClient(this, this, this);
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        // Set the update interval to 20 seconds
         mLocationRequest.setInterval(LocationUtil.INTERVAL);
         mLocationRequest.setFastestInterval(LocationUtil.INTERVAL);
     }
@@ -184,7 +200,6 @@ public class ReportActivity extends FragmentActivity implements
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // switch on location service intent
                         Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivity(intent);
                     }
@@ -198,13 +213,105 @@ public class ReportActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         FragmentManager fm = getFragmentManager();
         if (fm.getBackStackEntryCount() > 0) {
             fm.popBackStack();
             LocationUtil.removeMarker(mMarker);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onCategoryInteraction(String category) {
+        getTypeFragment(category);
+    }
+
+    private void animateMap(final String title) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
+                mZoomLevel), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                setMarker(title, "Sample");
+            }
+            @Override
+            public void onCancel() {
+            }
+        });
+    }
+
+    private void toggleUI() {
+        findViewById(R.id.fragment_container).setVisibility(View.GONE);
+        findViewById(R.id.map_shadow).setVisibility(View.GONE);
+        findViewById(R.id.footer).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onTypeInteraction(String type) {
+        displaySendReport();
+        mZoomLevel = LocationUtil.COMPLETE_ZOOM_LEVEL;
+        toggleUI();
+        animateMap(type);
+    }
+
+    public void postData(View view) {
+        Report report = new Report();
+        report.setName(mMarker.getTitle());
+        report.setLatitude(mCurrentLocation.getLatitude());
+        report.setLongitude(mCurrentLocation.getLongitude());
+        new HttpRequestTask(this, report).execute();
+    }
+
+    private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
+        private Context context;
+        private Report report;
+        private ProgressDialog dialog;
+
+        public HttpRequestTask(Context context, Report report) {
+            super();
+            this.context = context;
+            this.report = report;
+        }
+
+        private void showDialog() {
+            dialog = DialogUtil.getSpinningDialog(context);
+            dialog.setMessage("Reporting...");
+            dialog.show();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+               showDialog();
+        }
+
+        @Override
+        protected Report doInBackground(Void... params) {
+            try {
+                RestTemplate restTemplate = new RestTemplate(true);
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                Report response = restTemplate.postForObject(mURL, report, Report.class);
+                return response;
+            } catch (Exception e) {
+                Log.i("TAG", e.getLocalizedMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Report report) {
+            dialog.dismiss();
+
+            if (report != null) {
+                Toast.makeText(context,
+                        report.getName(),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context,
+                        "An error occurred",
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

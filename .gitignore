@@ -3,12 +3,14 @@
 /*.log
 /web-service/target/*
 /RemoteSystemsTempFiles
-/Servers
+/Servers*
+/keystore
+/android-client/app/*.apk
 /logs
 /.metadata
 /web-service/.*
 /setup.properties
-.gradle
+/.gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries

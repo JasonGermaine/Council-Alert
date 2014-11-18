@@ -20,6 +20,9 @@ public class Report {
 	@Size(max = 80)
 	private String name;
 	
+	private double longitude;
+	
+	private double latitude;
 	
 	public Report() { 
 		
@@ -27,11 +30,6 @@ public class Report {
 	 
 	public Report(int id) { 
 	    this.id = id;
-	}
-	
-	public Report(int id, String name) {
-		this.id = id;
-		this.name = name;
 	}
 	  
 	public int getId() {
@@ -47,4 +45,19 @@ public class Report {
 		this.name = name;
 	}
 
+	public double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
+
+	public double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
 } 

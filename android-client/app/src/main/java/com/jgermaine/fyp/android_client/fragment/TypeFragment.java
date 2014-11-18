@@ -2,6 +2,7 @@ package com.jgermaine.fyp.android_client.fragment;
 
 
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -19,6 +20,7 @@ public class TypeFragment extends ListFragment {
     private static final String ARG_CATEGORY = "category";
 
     private String mCategory;
+    private OnTypeInteractionListener mListener;
 
     public static TypeFragment newInstance(String category) {
         TypeFragment fragment = new TypeFragment();
@@ -57,7 +59,28 @@ public class TypeFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        String item = l.getAdapter().getItem(position).toString();
-        ((ReportActivity) getActivity()).setMarker(item, "sample description");
+        mListener.onTypeInteraction(l.getAdapter().getItem(position).toString());
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnTypeInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement CategoryInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnTypeInteractionListener {
+
+        public void onTypeInteraction(String type);
     }
 }

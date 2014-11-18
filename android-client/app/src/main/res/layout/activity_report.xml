@@ -8,18 +8,52 @@
     android:orientation="vertical"
     tools:context="com.jgermaine.fyp.android_client.activity.ReportActivity">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1.5" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dip"
-        android:background="@drawable/stroke_shadow" >
-    </View>
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:id="@+id/map_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="5dip"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/stroke_shadow" />
+
+        <RelativeLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:alpha="0.9"
+            android:background="@android:color/darker_gray"
+            android:gravity="center"
+            android:onClick="postData"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/send_icon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@android:drawable/ic_menu_send"
+                android:layout_toRightOf="@+id/send_text"/>
+            <TextView
+                android:id="@+id/send_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_centerInParent="true"
+                android:text="Send Report"
+                android:textSize="32sp" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/fragment_container"
