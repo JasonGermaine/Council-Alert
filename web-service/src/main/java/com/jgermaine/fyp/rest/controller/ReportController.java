@@ -48,7 +48,7 @@ public class ReportController {
 				report.getId(), report.getName(), report.getLongitude(),
 				report.getLatitude()));
 		reportService.addReport(report);
-		return reportService.getReport(report.getName());
+		return report;
 	}
 
 	@RequestMapping("/display")
