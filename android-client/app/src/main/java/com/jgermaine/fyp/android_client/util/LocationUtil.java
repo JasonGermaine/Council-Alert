@@ -31,7 +31,7 @@ public final class LocationUtil {
 
     public static Marker getMarker(GoogleMap map, Marker marker, Location current, String title, String desc) {
 
-        removeMarker(marker);
+        marker = removeMarker(marker);
 
         marker = map.addMarker(
                 new MarkerOptions()
@@ -42,9 +42,11 @@ public final class LocationUtil {
         return marker;
     }
 
-    public static void removeMarker(Marker marker) {
+    public static Marker removeMarker(Marker marker) {
         if (marker != null) {
             marker.remove();
+            marker = null;
         }
+        return marker;
     }
 }

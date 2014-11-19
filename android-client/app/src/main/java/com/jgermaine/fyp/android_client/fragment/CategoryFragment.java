@@ -17,11 +17,14 @@ import com.jgermaine.fyp.android_client.adapter.CategoryAdapter;
 
 public class CategoryFragment extends Fragment {
 
+    private static CategoryFragment fragment;
 
     private OnCategoryInteractionListener mListener;
 
     public static CategoryFragment newInstance() {
-        CategoryFragment fragment = new CategoryFragment();
+        if (fragment == null) {
+            fragment = new CategoryFragment();
+        }
         return fragment;
     }
 
@@ -42,11 +45,7 @@ public class CategoryFragment extends Fragment {
         gridview.setAdapter(new CategoryAdapter(getActivity()));
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (gridview.getAdapter().getItem(position).toString().equalsIgnoreCase("BACK")) {
-                    ((ReportActivity) getActivity()).onBackPressed();
-                } else {
-                    mListener.onCategoryInteraction(gridview.getAdapter().getItem(position).toString());
-                }
+                mListener.onCategoryInteraction(getString((int) id));
             }
         });
         return view;

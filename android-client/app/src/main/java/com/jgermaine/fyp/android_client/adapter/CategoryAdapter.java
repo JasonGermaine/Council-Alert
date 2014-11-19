@@ -29,7 +29,7 @@ public class CategoryAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
+        return mCategories[position].getTitle();
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -41,7 +41,8 @@ public class CategoryAdapter extends BaseAdapter {
             grid = inflater.inflate(R.layout.grid_category, null);
             TextView textView = (TextView) grid.findViewById(R.id.grid_text);
             ImageView imageView = (ImageView)grid.findViewById(R.id.grid_image);
-            textView.setText(mCategories[position].getTitle());
+            String title = mContext.getString(mCategories[position].getTitle());
+            textView.setText(title);
             imageView.setImageResource(mCategories[position].getIcon());
         } else {
             grid = (View) convertView;
@@ -50,22 +51,21 @@ public class CategoryAdapter extends BaseAdapter {
     }
 
     private final Category[] mCategories = {
-            new Category(R.drawable.ic_waste, "WASTE"),
-            new Category(R.drawable.ic_waste, "ROADS"),
-            new Category(R.drawable.ic_waste, "PARKS"),
-            new Category(R.drawable.ic_waste, "VANDALISM"),
-            new Category(R.drawable.ic_waste, "TRAFFIC"),
-            new Category(R.drawable.ic_waste, "DRAINAGE"),
-            new Category(R.drawable.ic_waste, "LIGHTING"),
-            new Category(R.drawable.ic_waste, "OTHER"),
-            new Category(R.drawable.ic_waste, "BACK")
+            new Category(R.drawable.ic_waste, R.string.type_waste),
+            new Category(R.drawable.ic_waste, R.string.type_road),
+            new Category(R.drawable.ic_waste, R.string.type_park),
+            new Category(R.drawable.ic_waste, R.string.type_vandalism),
+            new Category(R.drawable.ic_waste, R.string.type_traffic),
+            new Category(R.drawable.ic_waste, R.string.type_drainage),
+            new Category(R.drawable.ic_waste, R.string.type_lighting),
+            new Category(R.drawable.ic_waste, R.string.type_other),
     };
 
     private class Category {
         private Integer icon;
-        private String title;
+        private Integer title;
 
-        public Category (Integer icon, String title) {
+        public Category (Integer icon, Integer title) {
             this.icon = icon;
             this.title = title;
         }
@@ -74,7 +74,7 @@ public class CategoryAdapter extends BaseAdapter {
             return icon;
         }
 
-        public String getTitle() {
+        public Integer getTitle() {
             return title;
         }
     }

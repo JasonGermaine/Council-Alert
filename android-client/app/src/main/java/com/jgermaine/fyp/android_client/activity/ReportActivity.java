@@ -1,7 +1,6 @@
 package com.jgermaine.fyp.android_client.activity;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -27,8 +26,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
@@ -41,8 +38,6 @@ import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URL;
 
 public class ReportActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -143,14 +138,6 @@ public class ReportActivity extends FragmentActivity implements
         ft.commit();
     }
 
-    private void displaySendReport() {
-        FragmentManager fm = getFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.remove(fragment);
-        ft.commit();
-    }
-
     // GooglePlayServicesClient.OnConnectionFailedListener
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -215,9 +202,11 @@ public class ReportActivity extends FragmentActivity implements
     @Override
     public void onBackPressed() {
         FragmentManager fm = getFragmentManager();
-        if (fm.getBackStackEntryCount() > 0) {
+        mMarker = LocationUtil.removeMarker(mMarker);
+        if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
+            toggleUI(true);
+        } else if (fm.getBackStackEntryCount() > 0) {
             fm.popBackStack();
-            LocationUtil.removeMarker(mMarker);
         } else {
             super.onBackPressed();
         }
@@ -233,7 +222,9 @@ public class ReportActivity extends FragmentActivity implements
                 mZoomLevel), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
-                setMarker(title, "Sample");
+                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
+                    setMarker(title, "Sample");
+                }
             }
             @Override
             public void onCancel() {
@@ -241,17 +232,25 @@ public class ReportActivity extends FragmentActivity implements
         });
     }
 
-    private void toggleUI() {
-        findViewById(R.id.fragment_container).setVisibility(View.GONE);
-        findViewById(R.id.map_shadow).setVisibility(View.GONE);
-        findViewById(R.id.footer).setVisibility(View.VISIBLE);
+    private void toggleUI(boolean backPressed) {
+        if (backPressed) {
+            findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+            findViewById(R.id.map_shadow).setVisibility(View.VISIBLE);
+            findViewById(R.id.footer).setVisibility(View.GONE);
+            mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
+                    mZoomLevel));
+        } else {
+            findViewById(R.id.fragment_container).setVisibility(View.GONE);
+            findViewById(R.id.map_shadow).setVisibility(View.GONE);
+            findViewById(R.id.footer).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onTypeInteraction(String type) {
-        displaySendReport();
         mZoomLevel = LocationUtil.COMPLETE_ZOOM_LEVEL;
-        toggleUI();
+        toggleUI(false);
         animateMap(type);
     }
 
@@ -291,8 +290,7 @@ public class ReportActivity extends FragmentActivity implements
             try {
                 RestTemplate restTemplate = new RestTemplate(true);
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                Report response = restTemplate.postForObject(mURL, report, Report.class);
-                return response;
+                return restTemplate.postForObject(mURL, report, Report.class);
             } catch (Exception e) {
                 Log.i("TAG", e.getLocalizedMessage());
             }
@@ -302,16 +300,16 @@ public class ReportActivity extends FragmentActivity implements
         @Override
         protected void onPostExecute(Report report) {
             dialog.dismiss();
-
+            String message;
             if (report != null) {
-                Toast.makeText(context,
-                        report.getName(),
-                        Toast.LENGTH_LONG).show();
+                message= "Reported: " + report.getName() + ". ID: " + report.getId();
             } else {
-                Toast.makeText(context,
-                        "An error occurred",
-                        Toast.LENGTH_LONG).show();
+                message = "Well done Jason, you broke it!";
             }
+            Toast.makeText(context,
+                    message,
+                    Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 }
