@@ -29,6 +29,8 @@
     <string name="type_drainage">DRAINAGE</string>
     <string name="type_lighting">LIGHTING</string>
     <string name="type_other">OTHER</string>
+
+
     <string-array name="list_types">
         <item>@string/type_waste</item>
         <item>@string/type_road</item>
@@ -80,7 +82,6 @@
     <string-array name="list_traffic">
         <item>Repair Road Sign</item>
         <item>Repair Road Markings</item>
-        <item>Weed Control</item>
     </string-array>
 
     <!-- Drainage -->
@@ -96,4 +97,32 @@
         <item>Cats Eye Repair</item>
     </string-array>
 
+    <string-array name="list_all">
+        <item>Lamp Post Repair</item>
+        <item>Cats Eye Repair</item>
+        <item>Gully Problem</item>
+        <item>Blocked Drain</item>
+        <item>Water Pollution Incident</item>
+        <item>Repair Road Sign</item>
+        <item>Repair Road Markings</item>
+        <item>Weed Control</item>
+        <item>Grass Maintenance</item>
+        <item>Tree Maintenance</item>
+        <item>Graffiti</item>
+        <item>Abandoned Vehicle Inspection</item>
+        <item>Abandoned Bike/Trolley</item>
+        <item>Replace/Repair Damaged Bollard</item>
+        <item>Replace/Replace Cycle Stand</item>
+        <item>Faulty Manhole Cover</item>
+        <item>Cycle Track</item>
+        <item>Footpath</item>
+        <item>Road Surface</item>
+        <item>Ramps</item>
+        <item>Street Name Plate</item>
+        <item>Illegal Dumping</item>
+        <item>Overflowing Skips</item>
+        <item>Public Litter Bin Maintenance</item>
+        <item>Report Litter Offence</item>
+        <item>Sweep Your Street</item>
+    </string-array>
 </resources>

@@ -309,6 +309,7 @@ public class ReportActivity extends FragmentActivity implements
             Toast.makeText(context,
                     message,
                     Toast.LENGTH_LONG).show();
+            getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             finish();
         }
     }

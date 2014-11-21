@@ -1,16 +1,21 @@
 package com.jgermaine.fyp.android_client.fragment;
 
 
-
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,21 +25,21 @@ import com.jgermaine.fyp.android_client.activity.ReportActivity;
 public class TypeFragment extends ListFragment {
     private static final String ARG_CATEGORY = "category";
 
-    private static TypeFragment fragment;
     private String mCategory;
     private OnTypeInteractionListener mListener;
     private TextView mTextViewCategory;
     private ArrayAdapter<String> mAdapter;
+    private EditText mSearchBox;
+    private Button mSearchClearButton;
 
     public static TypeFragment newInstance(String category) {
-        if (fragment == null) {
-            fragment = new TypeFragment();
-            Bundle args = new Bundle();
-            args.putString(ARG_CATEGORY, category);
-            fragment.setArguments(args);
-        }
+        TypeFragment fragment = new TypeFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_CATEGORY, category);
+        fragment.setArguments(args);
         return fragment;
     }
+
     public TypeFragment() {
         // Required empty public constructor
     }
@@ -54,20 +59,66 @@ public class TypeFragment extends ListFragment {
         View view = inflater.inflate(R.layout.fragment_type, container, false);
         mTextViewCategory = (TextView) view.findViewById(R.id.sampleText);
         mTextViewCategory.setText(mCategory);
-        String[] values = getTypes(mCategory);
-         mAdapter = new ArrayAdapter<String>(getActivity(),
+        String[] values = setupTypes(mCategory);
+        mAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, values);
         setListAdapter(mAdapter);
+
+        if (mCategory.contentEquals(getString(R.string.type_other))) {
+            mSearchBox = (EditText) view.findViewById(R.id.search);
+            mSearchClearButton = (Button) view.findViewById(R.id.clear_txt);
+            setupSearch(view);
+        }
+
         return view;
     }
 
-    private void setList() {
+    private void setupSearch(View view) {
+        view.findViewById(R.id.search_frame).setVisibility(View.VISIBLE);
+        mSearchClearButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                clearText();
+            }
+        });
+        mSearchBox.setSingleLine(true);
+        setTextListener();
+    }
+
+    public void clearText() {
+        mSearchBox.setText("");
+    }
+
+    private void setTextListener() {
+        mSearchBox.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                mAdapter.getFilter().filter(arg0);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
 
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mListener.onTypeInteraction(l.getAdapter().getItem(position).toString());
+        if (mCategory.equalsIgnoreCase(getString(R.string.type_other))) {
+            mSearchBox.setText(l.getAdapter().getItem(position).toString());
+        } else {
+            mListener.onTypeInteraction(l.getAdapter().getItem(position).toString());
+        }
     }
 
     @Override
@@ -92,13 +143,8 @@ public class TypeFragment extends ListFragment {
         public void onTypeInteraction(String type);
     }
 
-    private void setCategory(String category) {
-        mCategory = category;
-        mTextViewCategory.setText(mCategory);
-    }
-
-    private String[] getTypes(String category) {
-        String [] types;
+    private String[] setupTypes(String category) {
+        String[] types;
         Resources res = getResources();
 
         if (category.equalsIgnoreCase(res.getString(R.string.type_waste))) {
@@ -116,8 +162,9 @@ public class TypeFragment extends ListFragment {
         } else if (category.equalsIgnoreCase(res.getString(R.string.type_lighting))) {
             types = res.getStringArray(R.array.list_lighting);
         } else {
-            types = new String[] {""};
+            types = res.getStringArray(R.array.list_all);
         }
+
         return types;
     }
 }
