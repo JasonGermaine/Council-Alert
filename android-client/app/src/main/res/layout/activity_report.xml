@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    tools:context="com.jgermaine.fyp.android_client.activity.ReportActivity">
+    tools:context="com.jgermaine.fyp.android_client.activity.SendReportActivity">
 
     <RelativeLayout
         android:layout_width="wrap_content"

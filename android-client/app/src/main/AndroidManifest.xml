@@ -49,7 +49,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.ReportActivity"
+            android:name=".activity.SendReportActivity"
             android:label="@string/title_activity_report"
             android:screenOrientation="portrait">
         </activity>

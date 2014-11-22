@@ -5,22 +5,18 @@ import android.app.Activity;
 import android.app.ListFragment;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jgermaine.fyp.android_client.R;
-import com.jgermaine.fyp.android_client.activity.ReportActivity;
 
 public class TypeFragment extends ListFragment {
     private static final String ARG_CATEGORY = "category";
