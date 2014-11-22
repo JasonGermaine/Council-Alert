@@ -23,35 +23,26 @@
         <View
             android:id="@+id/map_shadow"
             android:layout_width="match_parent"
-            android:layout_height="5dip"
+            android:layout_height="7.5dip"
             android:layout_alignParentBottom="true"
             android:background="@drawable/stroke_shadow" />
 
         <RelativeLayout
             android:id="@+id/footer"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:alpha="0.9"
-            android:background="@android:color/darker_gray"
-            android:gravity="center"
+            android:layout_centerHorizontal="true"
             android:onClick="postData"
             android:visibility="gone">
 
             <ImageView
-                android:id="@+id/send_icon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@android:drawable/ic_menu_send"
-                android:layout_toRightOf="@+id/send_text"/>
-            <TextView
-                android:id="@+id/send_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:layout_centerInParent="true"
-                android:text="Send Report"
-                android:textSize="32sp" />
+                android:gravity="center"
+                android:id="@+id/send_button"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/ic_send"/>
+
         </RelativeLayout>
     </RelativeLayout>
 

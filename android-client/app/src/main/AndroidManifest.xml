@@ -4,7 +4,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_waste"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
@@ -17,7 +17,7 @@
         </activity>
         <activity
             android:name=".activity.SetupActivity"
-            android:label="@string/title_activity_setup" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,7 +50,8 @@
 
         <activity
             android:name=".activity.ReportActivity"
-            android:label="@string/title_activity_report" >
+            android:label="@string/title_activity_report"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

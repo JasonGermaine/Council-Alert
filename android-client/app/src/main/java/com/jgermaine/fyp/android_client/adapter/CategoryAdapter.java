@@ -52,13 +52,13 @@ public class CategoryAdapter extends BaseAdapter {
 
     private final Category[] mCategories = {
             new Category(R.drawable.ic_waste, R.string.type_waste),
-            new Category(R.drawable.ic_waste, R.string.type_road),
-            new Category(R.drawable.ic_waste, R.string.type_park),
-            new Category(R.drawable.ic_waste, R.string.type_vandalism),
-            new Category(R.drawable.ic_waste, R.string.type_traffic),
-            new Category(R.drawable.ic_waste, R.string.type_drainage),
-            new Category(R.drawable.ic_waste, R.string.type_lighting),
-            new Category(R.drawable.ic_waste, R.string.type_other),
+            new Category(R.drawable.ic_road, R.string.type_road),
+            new Category(R.drawable.ic_park, R.string.type_park),
+            new Category(R.drawable.ic_vandal, R.string.type_vandalism),
+            new Category(R.drawable.ic_traffic, R.string.type_traffic),
+            new Category(R.drawable.ic_drain, R.string.type_drainage),
+            new Category(R.drawable.ic_light, R.string.type_lighting),
+            new Category(R.drawable.ic_other, R.string.type_other),
     };
 
     private class Category {

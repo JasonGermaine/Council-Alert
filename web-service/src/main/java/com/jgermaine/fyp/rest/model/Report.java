@@ -1,5 +1,7 @@
 package com.jgermaine.fyp.rest.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,8 +23,8 @@ public class Report {
 	private String name;
 	
 	private double longitude;
-	
 	private double latitude;
+	private Date timestamp;
 	
 	public Report() { 
 		
@@ -60,4 +62,12 @@ public class Report {
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
+	
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
 } 

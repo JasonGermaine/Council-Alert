@@ -1,5 +1,7 @@
 package com.jgermaine.fyp.android_client.model;
 
+import java.util.Date;
+
 /**
  * Created by jason on 09/11/14.
  */
@@ -8,6 +10,7 @@ public class Report {
     private String name;
     private double longitude;
     private double latitude;
+    private Date timestamp;
 
     public int getId() {
         return id;
@@ -25,7 +28,9 @@ public class Report {
         this.name = name;
     }
 
-    public double getLongitude() { return longitude; }
+    public double getLongitude() {
+        return longitude;
+    }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
@@ -37,5 +42,13 @@ public class Report {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 }

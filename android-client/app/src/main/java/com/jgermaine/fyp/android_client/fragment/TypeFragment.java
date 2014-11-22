@@ -97,17 +97,10 @@ public class TypeFragment extends ListFragment {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                          int arg3) {
-                // TODO Auto-generated method stub
-
-            }
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {  }
 
             @Override
-            public void afterTextChanged(Editable arg0) {
-                // TODO Auto-generated method stub
-
-            }
+            public void afterTextChanged(Editable arg0) { }
         });
 
     }
@@ -139,7 +132,6 @@ public class TypeFragment extends ListFragment {
     }
 
     public interface OnTypeInteractionListener {
-
         public void onTypeInteraction(String type);
     }
 

@@ -39,6 +39,10 @@ import com.jgermaine.fyp.android_client.util.LocationUtil;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ReportActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
@@ -123,7 +127,7 @@ public class ReportActivity extends FragmentActivity implements
     private void getCategoryFragment() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.slide_from_left, R.anim.slide_to_right);
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.add(R.id.fragment_container, CategoryFragment.newInstance());
         ft.commit();
     }
@@ -132,7 +136,7 @@ public class ReportActivity extends FragmentActivity implements
         // replace
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.slide_from_left, R.anim.slide_to_right, R.anim.slide_from_right, R.anim.slide_to_left);
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
         ft.replace(R.id.fragment_container, TypeFragment.newInstance(category));
         ft.addToBackStack(null);
         ft.commit();
@@ -259,6 +263,7 @@ public class ReportActivity extends FragmentActivity implements
         report.setName(mMarker.getTitle());
         report.setLatitude(mCurrentLocation.getLatitude());
         report.setLongitude(mCurrentLocation.getLongitude());
+        report.setTimestamp(new Date());
         new HttpRequestTask(this, report).execute();
     }
 
@@ -302,7 +307,10 @@ public class ReportActivity extends FragmentActivity implements
             dialog.dismiss();
             String message;
             if (report != null) {
-                message= "Reported: " + report.getName() + ". ID: " + report.getId();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                message= "Reported: " + report.getName() + ". \nID: " + report.getId()
+                    + ". \nLatLng: " + report.getLatitude() + " " + report.getLongitude()
+                    + ". \nTime: " + dateFormat.format(report.getTimestamp());
             } else {
                 message = "Well done Jason, you broke it!";
             }
