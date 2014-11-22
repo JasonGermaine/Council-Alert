@@ -227,13 +227,13 @@ public class SendReportActivity extends FragmentActivity implements
             @Override
             public void onFinish() {
                 if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, "Sample");
+                    setMarker(title, "Anonymous User");
                 }
             }
             @Override
             public void onCancel() {
                 if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, "Sample");
+                    setMarker(title, "Anonymous User");
                 }
             }
         });

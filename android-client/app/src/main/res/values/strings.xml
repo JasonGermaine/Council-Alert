@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- App Strings -->
     <string name="app_name">Council Alert!</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_cloud_messaging">CloudMessagingActivity</string>
+    <string name="title_activity_cloud">CloudActivity</string>
+    <string name="title_activity_setup">SetupActivity</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_report">Send Report</string>
+
+    <!-- REST Activity -->
     <string name="report_id">ID</string>
     <string name="name">Name</string>
     <string name="retrieve">Retrieve</string>
@@ -11,15 +20,10 @@
     <string name="ip">IP Address:</string>
     <string name="submit">Submit</string>
     <string name="clear">Clear</string>
-    <string name="title_activity_cloud_messaging">CloudMessagingActivity</string>
-    <string name="title_activity_cloud">CloudActivity</string>
-    <string name="title_activity_setup">SetupActivity</string>
-    <string name="title_activity_map">MapActivity</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="title_activity_report">ReportActivity</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    
+
+    <!-- Send Report -->
+
     <!-- Type Group -->
     <string name="type_waste">WASTE</string>
     <string name="type_road">ROADS</string>
@@ -29,7 +33,6 @@
     <string name="type_drainage">DRAINAGE</string>
     <string name="type_lighting">LIGHTING</string>
     <string name="type_other">OTHER</string>
-
 
     <string-array name="list_types">
         <item>@string/type_waste</item>
@@ -53,8 +56,8 @@
 
     <!-- Roads -->
     <string-array name="list_road">
-        <item>Replace/Repair Damaged Bollard</item>
-        <item>Replace/Replace Cycle Stand</item>
+        <item>Repair Damaged Bollard</item>
+        <item>Repair Cycle Stand</item>
         <item>Faulty Manhole Cover</item>
         <item>Cycle Track</item>
         <item>Footpath</item>
@@ -62,7 +65,6 @@
         <item>Ramps</item>
         <item>Street Name Plate</item>
     </string-array>
-
 
     <!-- Vandalism -->
     <string-array name="list_vandalism">
@@ -111,8 +113,8 @@
         <item>Graffiti</item>
         <item>Abandoned Vehicle Inspection</item>
         <item>Abandoned Bike/Trolley</item>
-        <item>Replace/Repair Damaged Bollard</item>
-        <item>Replace/Replace Cycle Stand</item>
+        <item>Repair Damaged Bollard</item>
+        <item>Repair Cycle Stand</item>
         <item>Faulty Manhole Cover</item>
         <item>Cycle Track</item>
         <item>Footpath</item>
@@ -125,4 +127,12 @@
         <item>Report Litter Offence</item>
         <item>Sweep Your Street</item>
     </string-array>
+
+    <!-- Error Messages -->
+
+    <!-- 'Other' Send Report -->
+    <string name="error_field_required">You must enter in a title</string>
+    <string name="error_field_length">Title must not be long than 30 characters</string>
+    <string name="error_field_invalid_char">Title must not contain special characters</string>
+
 </resources>

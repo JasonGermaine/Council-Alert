@@ -3,16 +3,20 @@ package com.jgermaine.fyp.android_client.fragment;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -64,9 +68,53 @@ public class TypeFragment extends ListFragment {
             mSearchBox = (EditText) view.findViewById(R.id.search);
             mSearchClearButton = (Button) view.findViewById(R.id.clear_txt);
             setupSearch(view);
+            setNextButtonListener(view);
         }
 
         return view;
+    }
+
+
+    private void setNextButtonListener(View view) {
+        view.findViewById(R.id.type_next).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String title = mSearchBox.getText().toString();
+                if (isValid(title)) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mSearchBox.getWindowToken(), 0);
+                    mListener.onTypeInteraction(title);
+                }
+            }
+        });
+    }
+
+    private boolean isValid(String title) {
+        boolean valid = false;
+        String error = "";
+        View focusView = null;
+
+        if (TextUtils.isEmpty(title)) {
+            error = getString(R.string.error_field_required);
+        } else if (!title.replaceAll("\\s","").matches("[a-zA-Z0-9',-.]*")) {
+            error = getString(R.string.error_field_invalid_char);
+        } else if (title.length() > 30) {
+            error = getString(R.string.error_field_length);
+        } else {
+            valid = true;
+        }
+
+        if(!valid) {
+            setFocus(error);
+        }
+
+        return valid;
+    }
+
+    private void setFocus(String error) {
+        mSearchBox.setError(error);
+        mSearchBox.requestFocus();
+        mSearchBox.setText("");
     }
 
     private void setupSearch(View view) {
@@ -93,10 +141,16 @@ public class TypeFragment extends ListFragment {
             }
 
             @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {  }
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+            }
 
             @Override
-            public void afterTextChanged(Editable arg0) { }
+            public void afterTextChanged(Editable arg0) {
+                if (arg0.length() > 30) {
+                    mSearchBox.setError(getString(R.string.error_field_length));
+                }
+            }
         });
 
     }

@@ -52,19 +52,18 @@ public class ReportController {
 	}
 
 	@RequestMapping("/display")
-	public ModelAndView getListUsersView() {
-		//model.put("reports", reportService.getReports());
-		//return "displayReport";
-		/*
-		 * ModelMap model = new ModelMap(); model.addAttribute("reports",
-		 * reportService.getReports()); return new ModelAndView("displayReport",
-		 * model);
-		 */
-		
+	public ModelAndView getListUsersView() {	
 		 ModelAndView model = new ModelAndView();
 		 model.setViewName("displayReport"); 
 		 model.addObject("reports",reportService.getReports()); 
 		 return model;
 	}
 
+	@RequestMapping("/map")
+	public ModelAndView getMapView() {	
+		 ModelAndView model = new ModelAndView();
+		 model.setViewName("displayMap"); 
+		 model.addObject("reports",reportService.getReports()); 
+		 return model;
+	}
 }

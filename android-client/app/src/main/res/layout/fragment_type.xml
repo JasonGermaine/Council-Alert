@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/bg_gradient"
+    android:orientation="vertical"
     tools:context="com.jgermaine.fyp.android_client.fragment.TypeFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -11,37 +11,62 @@
         android:id="@+id/type_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"/>
+        android:gravity="center" />
 
-
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/search_frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:orientation="horizontal"
         android:visibility="gone">
-        <EditText
-            android:id="@+id/search"
-            android:layout_width="match_parent"
+
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences|textAutoCorrect"
-            android:imeOptions="actionDone"
-            />
-        <Button
-            android:id="@+id/clear_txt"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:padding="10dp"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="right|center_vertical"
-            android:background="@android:drawable/ic_delete"/>
-    </FrameLayout>
+            android:layout_weight="6"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp">
+
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/edittext_rounded"
+                android:imeOptions="actionDone"
+                android:inputType="textCapSentences|textAutoCorrect"
+                android:maxLength ="31"
+                android:paddingLeft="15dp"
+                android:paddingRight="25dp"/>
+
+            <Button
+                android:id="@+id/clear_txt"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="5dp"
+                android:background="@android:drawable/ic_delete"
+                android:padding="20dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:layout_marginLeft="3dp"
+            android:id="@+id/type_next">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_next" />
+        </FrameLayout>
+    </LinearLayout>
 
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
+        android:layout_height="wrap_content"></ListView>
 
 </LinearLayout>
