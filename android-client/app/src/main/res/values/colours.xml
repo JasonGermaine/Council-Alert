@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="pale_green_light" type="color">#F2F7EC</item>
+    <item name="pale_green_dark" type="color">#E4EEDA</item>
+    <item name="dark_shadow" type="color">#404040</item>
+</resources>

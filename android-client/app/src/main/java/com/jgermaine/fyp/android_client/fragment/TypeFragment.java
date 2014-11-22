@@ -57,7 +57,7 @@ public class TypeFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_type, container, false);
-        mTextViewCategory = (TextView) view.findViewById(R.id.sampleText);
+        mTextViewCategory = (TextView) view.findViewById(R.id.type_title);
         mTextViewCategory.setText(mCategory);
         String[] values = setupTypes(mCategory);
         mAdapter = new ArrayAdapter<>(getActivity(),

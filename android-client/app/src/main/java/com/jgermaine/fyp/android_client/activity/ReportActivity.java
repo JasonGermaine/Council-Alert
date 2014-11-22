@@ -232,6 +232,9 @@ public class ReportActivity extends FragmentActivity implements
             }
             @Override
             public void onCancel() {
+                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
+                    setMarker(title, "Sample");
+                }
             }
         });
     }
@@ -249,6 +252,7 @@ public class ReportActivity extends FragmentActivity implements
             findViewById(R.id.map_shadow).setVisibility(View.GONE);
             findViewById(R.id.footer).setVisibility(View.VISIBLE);
         }
+        mMap.setMyLocationEnabled(backPressed);
     }
 
     @Override

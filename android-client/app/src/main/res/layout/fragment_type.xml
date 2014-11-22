@@ -3,11 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/bg_gradient"
     tools:context="com.jgermaine.fyp.android_client.fragment.TypeFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:id="@+id/sampleText"
+        android:id="@+id/type_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"/>
