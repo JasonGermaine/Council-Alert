@@ -34,7 +34,7 @@ public class SetupActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SendReportActivity.class);
+            Intent intent = new Intent(this, RestActivity.class);
             startActivity(intent);
             return true;
         }
@@ -48,7 +48,7 @@ public class SetupActivity extends Activity {
         if (!ip.isEmpty() && ip != null) {
             IP_ADDR = ip;
         }
-        Intent intent = new Intent(this, RestActivity.class);
+        Intent intent = new Intent(this, SendReportActivity.class);
         startActivity(intent);
 
     }

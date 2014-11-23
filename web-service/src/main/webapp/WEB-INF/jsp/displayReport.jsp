@@ -20,7 +20,7 @@
 	<h1>
 		Reports
 	</h1>
-		<table class="table">
+		<table class="table" style="margin-top: 50px;">
 			<tr>
 			<th>ID</th>
 			<th>Name</th>
