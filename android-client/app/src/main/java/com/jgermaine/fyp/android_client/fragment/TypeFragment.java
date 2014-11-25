@@ -90,6 +90,7 @@ public class TypeFragment extends ListFragment {
     }
 
     private boolean isValid(String title) {
+        mSearchBox.setError(null);
         boolean valid = false;
         String error = "";
         View focusView = null;
@@ -185,6 +186,11 @@ public class TypeFragment extends ListFragment {
         public void onTypeInteraction(String type);
     }
 
+    /**
+     * Returns the appropriate array of String based on a given category
+     * @param category
+     * @return
+     */
     private String[] setupTypes(String category) {
         String[] types;
         Resources res = getResources();

@@ -4,15 +4,20 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_password_confirm">Confirm Password</string>
     <string name="action_sign_in">Sign in with email</string>
+    <string name="action_register">Register with email</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="plus_sign_out">Switch Google+ account</string>
     <string name="plus_disconnect">Disconnect from Google+</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password_confirm">Password does not match</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
 
     <string name="ask_new_user">New to Council Alert?</string>
-    <string name="action_register_new"><u>Register Here</u></string>
+    <string name="ask_registered">Already Registered?</string>
+    <string name="action_register_new">Register Here</string>
+    <string name="action_back_login">Sign In Here</string>
 </resources>

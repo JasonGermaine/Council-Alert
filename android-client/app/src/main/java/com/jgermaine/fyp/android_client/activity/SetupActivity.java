@@ -48,7 +48,7 @@ public class SetupActivity extends Activity {
         if (!ip.isEmpty() && ip != null) {
             IP_ADDR = ip;
         }
-        Intent intent = new Intent(this, SendReportActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
 
     }

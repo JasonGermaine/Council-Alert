@@ -26,7 +26,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
@@ -51,8 +50,7 @@ public class SendReportActivity extends FragmentActivity implements
         TypeFragment.OnTypeInteractionListener {
 
     private LocationClient mLocationClient;
-    private Location mCurrentLocation;
-    private Location mCachedLocation;
+    private Location mCurrentLocation, mCachedLocation;
     private LocationRequest mLocationRequest;
     private Marker mMarker;
     private GoogleMap mMap;
@@ -62,18 +60,264 @@ public class SendReportActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report);
+        setContentView(R.layout.activity_send_report);
         mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
         getMap();
         registerLocationListener();
         getCategoryFragment();
-        mURL = String.format("http://%s:8080/web-service/report/post",SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s:8080/web-service/report/post", SetupActivity.IP_ADDR);
+    }
+
+    /**
+     * Sets up the GoogleMap object by retrieving it from SupportFragmentManager
+     */
+    private void getMap() {
+        if (mMap == null) {
+            // Try to obtain the map from the SupportMapFragment.
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            // Check if we were successful in obtaining the map.
+            if (mMap != null) {
+                mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setZoomControlsEnabled(false);
+            }
+        }
+    }
+
+    /**
+     * Loads a Category Fragment
+     */
+    private void getCategoryFragment() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        ft.add(R.id.fragment_container, CategoryFragment.newInstance());
+        ft.commit();
+    }
+
+    /**
+     * Loads the corresponding Type Fragment based on the category data passed in
+     *
+     * @param category
+     */
+    public void getTypeFragment(String category) {
+        // replace
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        ft.replace(R.id.fragment_container, TypeFragment.newInstance(category));
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+
+    // GooglePlayServicesClient.ConnectionCallbacks
+    @Override
+    public void onConnected(Bundle arg0) {
+        if (mLocationClient != null) {
+            try {
+                mLocationClient.requestLocationUpdates(mLocationRequest, this);
+                mCurrentLocation = mLocationClient.getLastLocation();
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
+            } catch (NullPointerException e) {
+                suggestRedirect();
+            }
+        }
+    }
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mCurrentLocation = mLocationClient.getLastLocation();
+
+        // Animate to the current location if it changes
+        if (!LocationUtil.isLocationEquals(mCachedLocation, mCurrentLocation)) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
+        }
+
+        mCachedLocation = mCurrentLocation;
+    }
+
+    /**
+     * Registers the LocationListener with the appropriate properties
+     */
+    public void registerLocationListener() {
+        mLocationClient = new LocationClient(this, this, this);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(LocationUtil.INTERVAL);
+        mLocationRequest.setFastestInterval(LocationUtil.INTERVAL);
+    }
+
+    /**
+     * Displays an alert to user suggesting that they enable location services
+     */
+    public void suggestRedirect() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Connection Error")
+                .setMessage("You need to enable location services")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    /**
+     * Displays a marker on the Google map along with a title and description
+     *
+     * @param title
+     * @param desc
+     */
+    public void setMarker(String title, String desc) {
+        mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation, title, desc);
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getFragmentManager();
+        mMarker = LocationUtil.removeMarker(mMarker);
+        if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
+            toggleUI(true);
+        } else if (fm.getBackStackEntryCount() > 0) {
+            fm.popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onCategoryInteraction(String category) {
+        getTypeFragment(category);
+    }
+
+    /**
+     * Animates the Google Map using a user defined callback
+     *
+     * @param title
+     */
+    private void animateMap(final String title) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
+                mZoomLevel), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
+            @Override
+            public void onFinish() {
+                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
+                    setMarker(title, "Anonymous User");
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
+                    setMarker(title, "Anonymous User");
+                }
+            }
+        });
+    }
+
+    /**
+     * Toggles the UI elements based on forward or backward navigation
+     *
+     * @param backPressed
+     */
+    private void toggleUI(boolean backPressed) {
+        findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
+        findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
+        findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
+        mMap.setMyLocationEnabled(backPressed);
+        if (backPressed) {
+            mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
+                    mZoomLevel));
+        }
+    }
+
+    /**
+     * OnClick listener for SEND button
+     * Creates a new Report object using the data collected and spawns a HttpRequestTask
+     *
+     * @param view
+     */
+    public void submitData(View view) {
+        Report report = new Report();
+        report.setName(mMarker.getTitle());
+        report.setLatitude(mCurrentLocation.getLatitude());
+        report.setLongitude(mCurrentLocation.getLongitude());
+        report.setTimestamp(new Date());
+        new HttpRequestTask(this, report).execute();
+    }
+
+    @Override
+    public void onTypeInteraction(String type) {
+        mZoomLevel = LocationUtil.COMPLETE_ZOOM_LEVEL;
+        toggleUI(false);
+        animateMap(type);
+    }
+
+    /**
+     * Asynchronous Thread used to POST data to web service
+     */
+    private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
+        private Context context;
+        private Report report;
+        private ProgressDialog dialog;
+
+        public HttpRequestTask(Context context, Report report) {
+            super();
+            this.context = context;
+            this.report = report;
+        }
+
+        private void showDialog() {
+            dialog = DialogUtil.getSpinningDialog(context);
+            dialog.setMessage("Sending Report...");
+            dialog.show();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDialog();
+        }
+
+        @Override
+        protected Report doInBackground(Void... params) {
+            try {
+                RestTemplate restTemplate = new RestTemplate(true);
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                return restTemplate.postForObject(mURL, report, Report.class);
+            } catch (Exception e) {
+                Log.i("TAG", e.getLocalizedMessage());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Report report) {
+            dialog.dismiss();
+            String message;
+            if (report != null) {
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                message = "Reported: " + report.getName() + ". \nID: " + report.getId()
+                        + ". \nLatLng: " + report.getLatitude() + " " + report.getLongitude()
+                        + ". \nTime: " + dateFormat.format(report.getTimestamp());
+            } else {
+                message = "Well done Jason, you broke it!";
+            }
+            DialogUtil.showToast(context, message);
+            getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            finish();
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        // 1. connect the client.
         mLocationClient.connect();
     }
 
@@ -111,218 +355,13 @@ public class SendReportActivity extends FragmentActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    private void getMap() {
-        if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setZoomControlsEnabled(false);
-            }
-        }
-    }
-
-    private void getCategoryFragment() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.add(R.id.fragment_container, CategoryFragment.newInstance());
-        ft.commit();
-    }
-
-    public void getTypeFragment(String category) {
-        // replace
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.replace(R.id.fragment_container, TypeFragment.newInstance(category));
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
     // GooglePlayServicesClient.OnConnectionFailedListener
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
 
-    // GooglePlayServicesClient.ConnectionCallbacks
-    @Override
-    public void onConnected(Bundle arg0) {
-        if (mLocationClient != null) {
-            mLocationClient.requestLocationUpdates(mLocationRequest, this);
-            mCurrentLocation = mLocationClient.getLastLocation();
-            try {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
-            } catch (NullPointerException e) {
-                suggestRedirect();
-            }
-        }
-    }
-
     @Override
     public void onDisconnected() {
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mCurrentLocation = mLocationClient.getLastLocation();
-        if (!LocationUtil.isLocationEquals(mCachedLocation, mCurrentLocation)) {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
-        }
-        mCachedLocation = mCurrentLocation;
-    }
-
-    public void registerLocationListener() {
-        mLocationClient = new LocationClient(this, this, this);
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(LocationUtil.INTERVAL);
-        mLocationRequest.setFastestInterval(LocationUtil.INTERVAL);
-    }
-
-    public void suggestRedirect() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Connection Error")
-                .setMessage("You need to enable location services")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
-
-    public void setMarker(String title, String desc) {
-        mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation, title, desc);
-    }
-
-    @Override
-    public void onBackPressed() {
-        FragmentManager fm = getFragmentManager();
-        mMarker = LocationUtil.removeMarker(mMarker);
-        if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
-            toggleUI(true);
-        } else if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onCategoryInteraction(String category) {
-        getTypeFragment(category);
-    }
-
-    private void animateMap(final String title) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
-                mZoomLevel), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, "Anonymous User");
-                }
-            }
-            @Override
-            public void onCancel() {
-                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, "Anonymous User");
-                }
-            }
-        });
-    }
-
-    private void toggleUI(boolean backPressed) {
-        if (backPressed) {
-            findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
-            findViewById(R.id.map_shadow).setVisibility(View.VISIBLE);
-            findViewById(R.id.footer).setVisibility(View.GONE);
-            mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
-                    mZoomLevel));
-        } else {
-            findViewById(R.id.fragment_container).setVisibility(View.GONE);
-            findViewById(R.id.map_shadow).setVisibility(View.GONE);
-            findViewById(R.id.footer).setVisibility(View.VISIBLE);
-        }
-        mMap.setMyLocationEnabled(backPressed);
-    }
-
-    @Override
-    public void onTypeInteraction(String type) {
-        mZoomLevel = LocationUtil.COMPLETE_ZOOM_LEVEL;
-        toggleUI(false);
-        animateMap(type);
-    }
-
-    public void postData(View view) {
-        Report report = new Report();
-        report.setName(mMarker.getTitle());
-        report.setLatitude(mCurrentLocation.getLatitude());
-        report.setLongitude(mCurrentLocation.getLongitude());
-        report.setTimestamp(new Date());
-        new HttpRequestTask(this, report).execute();
-    }
-
-    private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
-        private Context context;
-        private Report report;
-        private ProgressDialog dialog;
-
-        public HttpRequestTask(Context context, Report report) {
-            super();
-            this.context = context;
-            this.report = report;
-        }
-
-        private void showDialog() {
-            dialog = DialogUtil.getSpinningDialog(context);
-            dialog.setMessage("Reporting...");
-            dialog.show();
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-               showDialog();
-        }
-
-        @Override
-        protected Report doInBackground(Void... params) {
-            try {
-                RestTemplate restTemplate = new RestTemplate(true);
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                return restTemplate.postForObject(mURL, report, Report.class);
-            } catch (Exception e) {
-                Log.i("TAG", e.getLocalizedMessage());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Report report) {
-            dialog.dismiss();
-            String message;
-            if (report != null) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                message= "Reported: " + report.getName() + ". \nID: " + report.getId()
-                    + ". \nLatLng: " + report.getLatitude() + " " + report.getLongitude()
-                    + ". \nTime: " + dateFormat.format(report.getTimestamp());
-            } else {
-                message = "Well done Jason, you broke it!";
-            }
-            Toast.makeText(context,
-                    message,
-                    Toast.LENGTH_LONG).show();
-            getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            finish();
-        }
     }
 }

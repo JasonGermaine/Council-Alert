@@ -30,9 +30,7 @@ public final class LocationUtil {
 
 
     public static Marker getMarker(GoogleMap map, Marker marker, Location current, String title, String desc) {
-
         marker = removeMarker(marker);
-
         marker = map.addMarker(
                 new MarkerOptions()
                         .position(getCoordinates(current))

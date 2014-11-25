@@ -37,7 +37,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view =  inflater.inflate(R.layout.fragment_category, container, false);
+        View view = inflater.inflate(R.layout.fragment_category, container, false);
         final GridView gridview = (GridView) view.findViewById(R.id.gridview);
         gridview.setAdapter(new CategoryAdapter(getActivity()));
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {

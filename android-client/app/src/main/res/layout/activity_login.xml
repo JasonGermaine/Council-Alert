@@ -33,7 +33,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="80dp"
+                android:layout_marginBottom="50dp"
                 android:orientation="vertical">
 
                 <ImageView
@@ -99,13 +99,24 @@
                     android:background="@drawable/edittext_rounded"
                     android:hint="@string/prompt_password"
                     android:paddingRight="15dp"
-                    android:imeActionId="@+id/login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
+                    android:layout_marginBottom="10dp"
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:paddingLeft="15dp"
                     android:singleLine="true" />
+
+                <EditText
+                    android:id="@+id/password_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edittext_rounded"
+                    android:hint="@string/prompt_password_confirm"
+                    android:paddingRight="15dp"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:paddingLeft="15dp"
+                    android:singleLine="true"
+                    android:visibility="gone"/>
 
                 <LinearLayout
                     android:id="@+id/email_sign_in_button"
@@ -126,6 +137,7 @@
                         android:src="@android:drawable/ic_dialog_email" />
 
                     <TextView
+                        android:id="@+id/text_sign_in"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:gravity="center_vertical|center_horizontal"
@@ -147,6 +159,7 @@
             <!-- Link to Registration Screen -->
 
             <TextView
+                android:id="@+id/toggle_login_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dip"
@@ -156,12 +169,14 @@
                 android:textColor="@android:color/black"/>
 
             <TextView
+                android:id="@+id/toggle_login_clickable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/action_register_new"
                 android:textSize="20sp"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                android:textStyle="bold"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

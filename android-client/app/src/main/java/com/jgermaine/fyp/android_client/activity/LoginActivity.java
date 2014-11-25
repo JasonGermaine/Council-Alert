@@ -32,6 +32,11 @@ import com.google.android.gms.common.SignInButton;
 import java.util.ArrayList;
 import java.util.List;
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor>{
 
@@ -49,18 +54,23 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
     // UI references.
     private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private EditText mPasswordView, mConfirmPasswordView;
     private View mProgressView;
     private View mEmailLoginFormView;
     private SignInButton mPlusSignInButton;
     private View mSignOutButtons;
     private View mLoginFormView;
+    private boolean mLoginFlag;
+    private TextView mClickableText, mDisplayText, mSignInText;
+    private String mURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mLoginFlag = true;
 
+        mURL = String.format("http://%s:8080/web-service/citizen/post", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -84,16 +94,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+
+        mConfirmPasswordView = (EditText) findViewById(R.id.password_confirm);
 
         findViewById(R.id.email_sign_in_button).setOnClickListener(new OnClickListener() {
             @Override
@@ -102,6 +104,16 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             }
         });
 
+        mSignInText = (TextView) findViewById(R.id.text_sign_in);
+        mDisplayText = (TextView) findViewById(R.id.toggle_login_text);
+        mClickableText = (TextView) findViewById(R.id.toggle_login_clickable);
+        mClickableText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mLoginFlag = !mLoginFlag;
+                toggleUI();
+            }
+        });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mEmailLoginFormView = findViewById(R.id.email_login_form);
@@ -112,6 +124,12 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         getLoaderManager().initLoader(0, null, this);
     }
 
+    private void toggleUI() {
+        mClickableText.setText(mLoginFlag ? getString(R.string.action_register_new) : getString(R.string.action_back_login));
+        mDisplayText.setText(mLoginFlag ? getString(R.string.ask_new_user) : getString(R.string.ask_registered));
+        mConfirmPasswordView.setVisibility(mLoginFlag ? View.GONE : View.VISIBLE );
+        mSignInText.setText(mLoginFlag ? getString(R.string.action_sign_in) : getString(R.string.action_register));
+    }
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -130,16 +148,22 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String passwordConfirm = mConfirmPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
+        }
+        if (!mLoginFlag &&  !passwordConfirm.equals(password)) {
+            mPasswordView.setError(getString(R.string.error_incorrect_password_confirm));
+            focusView = mPasswordView;
+            cancel = true;
+            mConfirmPasswordView.setText("");
         }
 
         // Check for a valid email address.
@@ -156,12 +180,13 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+            mPasswordView.setText("");
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(email, password, mLoginFlag);
             mAuthTask.execute((Void) null);
         }
     }
@@ -329,32 +354,48 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
         private final String mEmail;
         private final String mPassword;
+        private final boolean mIsLogin;
+        private String mMessage;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String email, String password, boolean login) {
             mEmail = email;
             mPassword = password;
+            mIsLogin = login;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            if (mIsLogin) {
+                try {
+                    // Simulate network access.
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    return false;
+                }
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+                for (String credential : DUMMY_CREDENTIALS) {
+                    String[] pieces = credential.split(":");
+                    if (pieces[0].equals(mEmail)) {
+                        // Account exists, return true if the password matches.
+                        return pieces[1].equals(mPassword);
+                    }
+                }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                // TODO: register the new account here.
+            } else {
+                Citizen c = new Citizen();
+                c.setEmail(mEmail);
+                c.setPassword(mPassword);
+                RestTemplate restTemplate = new RestTemplate(true);
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                Citizen citizen = restTemplate.postForObject(mURL, c, Citizen.class);
+                if (citizen != null) {
+                    mMessage = "Citizen " + citizen.getEmail() + ". Password " + citizen.getPassword();
+                } else {
+                    mMessage = "Well done Jason, you broke it!";
                 }
             }
-
-            // TODO: register the new account here.
             return true;
         }
 
@@ -363,8 +404,11 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mAuthTask = null;
             showProgress(false);
 
+            if (mMessage != null) {
+                DialogUtil.showToast(getApplicationContext(), mMessage);
+            }
             if (success) {
-                Intent intent = new Intent(getApplicationContext(), SetupActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
                 startActivity(intent);
 
                 finish();
