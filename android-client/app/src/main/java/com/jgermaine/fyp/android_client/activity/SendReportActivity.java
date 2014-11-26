@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -250,6 +251,14 @@ public class SendReportActivity extends FragmentActivity implements
         report.setLongitude(mCurrentLocation.getLongitude());
         report.setTimestamp(new Date());
         new HttpRequestTask(this, report).execute();
+
+        /*
+        // Code to Google Nav
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr="
+                + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude() + "&daddr=" + 53.331078 + "," + -6.375185));
+        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+        startActivity(intent);
+        */
     }
 
     @Override

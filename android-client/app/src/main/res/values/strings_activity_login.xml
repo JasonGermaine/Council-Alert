@@ -15,7 +15,7 @@
     <string name="error_incorrect_password_confirm">Password does not match</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-
+    <string name="error_incorrect_login">This username/password is incorrect</string>
     <string name="ask_new_user">New to Council Alert?</string>
     <string name="ask_registered">Already Registered?</string>
     <string name="action_register_new">Register Here</string>

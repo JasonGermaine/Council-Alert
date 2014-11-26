@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -37,4 +38,14 @@ public class CitizenController {
 		 return model;
 	}
 
+	@RequestMapping("/login")
+	public Boolean getPage(@RequestParam(value="email", required=true) String email, 
+		    @RequestParam(value="password", required =true) String password) {
+		Citizen citizen = citizenService.getCitizen(email);	
+		if (citizen != null && password.equals(citizen.getPassword())) {
+				return true;
+		} else {
+			return false;
+		}
+	}
 }

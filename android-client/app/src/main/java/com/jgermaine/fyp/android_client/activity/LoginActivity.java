@@ -70,7 +70,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_login);
         mLoginFlag = true;
 
-        mURL = String.format("http://%s:8080/web-service/citizen/post", SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s:8080/web-service/citizen", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -129,6 +129,15 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mDisplayText.setText(mLoginFlag ? getString(R.string.ask_new_user) : getString(R.string.ask_registered));
         mConfirmPasswordView.setVisibility(mLoginFlag ? View.GONE : View.VISIBLE );
         mSignInText.setText(mLoginFlag ? getString(R.string.action_sign_in) : getString(R.string.action_register));
+        mPasswordView.setText("");
+        mConfirmPasswordView.setText("");
+        mEmailView.setText("");
+    }
+
+    public void shortcut(View v) {
+        Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     /**
@@ -367,29 +376,18 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
             if (mIsLogin) {
-                try {
-                    // Simulate network access.
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    return false;
-                }
-
-                for (String credential : DUMMY_CREDENTIALS) {
-                    String[] pieces = credential.split(":");
-                    if (pieces[0].equals(mEmail)) {
-                        // Account exists, return true if the password matches.
-                        return pieces[1].equals(mPassword);
-                    }
-                }
-
-                // TODO: register the new account here.
+                final String url = String.format("%s/login?email=%s&password=%s", mURL, mEmail, mPassword);
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                return restTemplate.getForObject(url, Boolean.class);
             } else {
+                final String url = mURL + "/post";
                 Citizen c = new Citizen();
                 c.setEmail(mEmail);
                 c.setPassword(mPassword);
                 RestTemplate restTemplate = new RestTemplate(true);
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                Citizen citizen = restTemplate.postForObject(mURL, c, Citizen.class);
+                Citizen citizen = restTemplate.postForObject(url, c, Citizen.class);
                 if (citizen != null) {
                     mMessage = "Citizen " + citizen.getEmail() + ". Password " + citizen.getPassword();
                 } else {
@@ -413,8 +411,9 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                mPasswordView.setError(getString(R.string.error_incorrect_login));
                 mPasswordView.requestFocus();
+                mPasswordView.setText("");
             }
         }
 

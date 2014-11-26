@@ -50,10 +50,14 @@ public class CitizenDao {
    * Return the Citizen having the passed name.
    */
   public Citizen getByEmail(String email) {
-    return (Citizen) entityManager.createQuery(
-        "from Citizen where email = :email")
-        .setParameter("email", email)
-        .getSingleResult();
+	try {
+	    return (Citizen) entityManager.createQuery(
+	        "from Citizen where email = :email")
+	        .setParameter("email", email)
+	        .getSingleResult();
+	} catch (Exception e) {
+		return null;
+	}
   }
  
   /**
