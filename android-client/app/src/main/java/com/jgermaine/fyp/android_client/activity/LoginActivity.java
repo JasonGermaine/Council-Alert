@@ -32,6 +32,7 @@ import com.google.android.gms.common.SignInButton;
 import java.util.ArrayList;
 import java.util.List;
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
@@ -69,7 +70,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         mLoginFlag = true;
-
+        ((CouncilAlertApplication) getApplication()).eraseCitizen();
         mURL = String.format("http://%s:8080/web-service/citizen", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
@@ -390,6 +391,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 Citizen citizen = restTemplate.postForObject(url, c, Citizen.class);
                 if (citizen != null) {
                     mMessage = "Citizen " + citizen.getEmail() + ". Password " + citizen.getPassword();
+                    ((CouncilAlertApplication) getApplication()).setCitizen(citizen);
                 } else {
                     mMessage = "Well done Jason, you broke it!";
                 }

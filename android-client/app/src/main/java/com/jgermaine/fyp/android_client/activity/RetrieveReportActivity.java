@@ -1,8 +1,8 @@
 package com.jgermaine.fyp.android_client.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,27 +12,25 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
-
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.jgermaine.fyp.android_client.R;
-import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
-import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
-import com.jgermaine.fyp.android_client.fragment.TypeFragment;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
@@ -40,16 +38,10 @@ import com.jgermaine.fyp.android_client.util.LocationUtil;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class SendReportActivity extends FragmentActivity implements
+public class RetrieveReportActivity extends FragmentActivity implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
-        LocationListener,
-        CategoryFragment.OnCategoryInteractionListener,
-        TypeFragment.OnTypeInteractionListener {
+        LocationListener {
 
     private LocationClient mLocationClient;
     private Location mCurrentLocation, mCachedLocation;
@@ -58,16 +50,26 @@ public class SendReportActivity extends FragmentActivity implements
     private GoogleMap mMap;
     private int mZoomLevel;
     private String mURL;
+    private ImageView mNavigation;
+    private Report mReport;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_report);
+        setContentView(R.layout.activity_retrieve_report);
         mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
         getMap();
         registerLocationListener();
-        getCategoryFragment();
-        mURL = String.format("http://%s:8080/web-service/report/post", SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s:8080/web-service/report/get", SetupActivity.IP_ADDR);
+        new HttpRequestTask(this).execute();
+
+        mNavigation = (ImageView) findViewById(R.id.retrieve_button);
+        mNavigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                redirectToNavigation(mReport);
+            }
+        });
     }
 
     /**
@@ -85,33 +87,6 @@ public class SendReportActivity extends FragmentActivity implements
             }
         }
     }
-
-    /**
-     * Loads a Category Fragment
-     */
-    private void getCategoryFragment() {
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.add(R.id.fragment_container, CategoryFragment.newInstance());
-        ft.commit();
-    }
-
-    /**
-     * Loads the corresponding Type Fragment based on the category data passed in
-     *
-     * @param category
-     */
-    public void getTypeFragment(String category) {
-        // replace
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-        ft.replace(R.id.fragment_container, TypeFragment.newInstance(category));
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
 
     // GooglePlayServicesClient.ConnectionCallbacks
     @Override
@@ -172,112 +147,45 @@ public class SendReportActivity extends FragmentActivity implements
 
     /**
      * Displays a marker on the Google map along with a title and description
-     *
-     * @param title
-     * @param desc
      */
-    public void setMarker(String title, String desc) {
-        mMarker = LocationUtil.getMarker(mMap, mMarker, mCurrentLocation, title, desc);
-    }
-
-    @Override
-    public void onBackPressed() {
-        FragmentManager fm = getFragmentManager();
+    public void setMarker(Report report) {
         mMarker = LocationUtil.removeMarker(mMarker);
-        if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
-            toggleUI(true);
-        } else if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onCategoryInteraction(String category) {
-        getTypeFragment(category);
+        mMarker = mMap.addMarker(
+                new MarkerOptions()
+                        .position(new LatLng(report.getLatitude(), report.getLongitude()))
+                        .title(report.getName())
+                        .snippet(report.getName()));
+        mMarker.showInfoWindow();
     }
 
     /**
-     * Animates the Google Map using a user defined callback
-     *
-     * @param title
+     * @param report
      */
-    private void animateMap(final String title) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
-                mZoomLevel), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
-            @Override
-            public void onFinish() {
-                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication)getApplication()).getCitizen().getEmail());
-                }
-            }
+    public void redirectToNavigation(Report report) {
+        // Code to Google Nav
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr="
+                + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude() + "&daddr="
+                + report.getLatitude() + "," + report.getLongitude()));
+        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+        startActivity(intent);
 
-            @Override
-            public void onCancel() {
-                if (mZoomLevel == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication)getApplication()).getCitizen().getEmail());
-                }
-            }
-        });
-    }
-
-    /**
-     * Toggles the UI elements based on forward or backward navigation
-     *
-     * @param backPressed
-     */
-    private void toggleUI(boolean backPressed) {
-        findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
-        findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
-        findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
-        mMap.setMyLocationEnabled(backPressed);
-        if (backPressed) {
-            mZoomLevel = LocationUtil.START_ZOOM_LEVEL;
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation),
-                    mZoomLevel));
-        }
-    }
-
-    /**
-     * OnClick listener for SEND button
-     * Creates a new Report object using the data collected and spawns a HttpRequestTask
-     *
-     * @param view
-     */
-    public void submitData(View view) {
-        Report report = new Report();
-        report.setName(mMarker.getTitle());
-        report.setLatitude(mCurrentLocation.getLatitude());
-        report.setLongitude(mCurrentLocation.getLongitude());
-        report.setTimestamp(new Date());
-        new HttpRequestTask(this, report).execute();
-    }
-
-    @Override
-    public void onTypeInteraction(String type) {
-        mZoomLevel = LocationUtil.COMPLETE_ZOOM_LEVEL;
-        toggleUI(false);
-        animateMap(type);
     }
 
     /**
      * Asynchronous Thread used to POST data to web service
      */
     private class HttpRequestTask extends AsyncTask<Void, Void, Report> {
-        private Context context;
-        private Report report;
+        private Activity activity;
         private ProgressDialog dialog;
 
-        public HttpRequestTask(Context context, Report report) {
+        public HttpRequestTask(Activity activity) {
             super();
-            this.context = context;
-            this.report = report;
+            this.activity = activity;
         }
 
         private void showDialog() {
-            dialog = DialogUtil.getSpinningDialog(context);
-            dialog.setMessage("Sending Report...");
+            dialog = DialogUtil.getSpinningDialog(activity);
+            dialog.setMessage("Retrieving Report...");
             dialog.show();
         }
 
@@ -289,31 +197,19 @@ public class SendReportActivity extends FragmentActivity implements
 
         @Override
         protected Report doInBackground(Void... params) {
-            try {
-                RestTemplate restTemplate = new RestTemplate(true);
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                return restTemplate.postForObject(mURL, report, Report.class);
-            } catch (Exception e) {
-                Log.i("TAG", e.getLocalizedMessage());
-            }
-            return null;
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Report report = restTemplate.getForObject(mURL, Report.class);
+            return report;
         }
 
         @Override
         protected void onPostExecute(Report report) {
+            mReport = report;
+            mLocationClient.disconnect();
+            ((RetrieveReportActivity) activity).setMarker(report);
+
             dialog.dismiss();
-            String message;
-            if (report != null) {
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                message = "Reported: " + report.getName() + ". \nID: " + report.getId()
-                        + ". \nLatLng: " + report.getLatitude() + " " + report.getLongitude()
-                        + ". \nTime: " + dateFormat.format(report.getTimestamp());
-            } else {
-                message = "Well done Jason, you broke it!";
-            }
-            DialogUtil.showToast(context, message);
-            getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            finish();
         }
     }
 
@@ -352,8 +248,6 @@ public class SendReportActivity extends FragmentActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, RetrieveReportActivity.class);
-            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
