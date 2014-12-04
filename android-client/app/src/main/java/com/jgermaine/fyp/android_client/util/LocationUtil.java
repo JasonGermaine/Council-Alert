@@ -15,6 +15,7 @@ public final class LocationUtil {
     public static final int START_ZOOM_LEVEL = 15;
     public static final int COMPLETE_ZOOM_LEVEL = 17;
     public static final int CUSTOM_ZOOM_TIME = 1000;
+    public static final int RETRIEVE_ZOOM_LEVEL = 10;
 
     public static boolean isLocationEquals(Location prev, Location current) {
         boolean isEqual = false;

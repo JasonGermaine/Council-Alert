@@ -24,31 +24,39 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:alpha=".8"
-            android:background="@android:color/darker_gray">
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true">
+                android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
 
                 <ImageView
-                    android:id="@+id/retrieve_button"
+                    android:id="@+id/action_nav"
                     android:layout_width="75dp"
                     android:layout_height="75dp"
+                    android:layout_marginLeft="20dp"
                     android:gravity="center"
-                    android:src="@drawable/ic_retrieve_report"
-                    android:layout_marginRight="20dp"/>
+                    android:src="@drawable/ic_car" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/get_navigation"
-                    android:layout_gravity="center_vertical"
-                    android:textSize="32sp" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:id="@+id/action_complete"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    android:layout_marginRight="20dp"
+                    android:gravity="center"
+                    android:src="@drawable/ic_complete" />
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>

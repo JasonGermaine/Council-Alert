@@ -33,6 +33,12 @@ public class ReportController {
 		return reportService.getReport(1);
 	}
 
+	// This is a GET request
+	@RequestMapping("/retrieve")
+	public Report retrieveReport() {
+		return reportService.getReport(2);
+	}
+	
 	public void sendNotifcation() {
 		try {
 			GcmOperations.sendNotifcation();
@@ -42,7 +48,7 @@ public class ReportController {
 		}
 	}
 
-	@RequestMapping("/post")
+	@RequestMapping("/send")
 	public Report postReportDetails(@RequestBody Report report) {
 		LOGGER.info(String.format("Report id: %s, name: %s, long: %s, lat: %s",
 				report.getId(), report.getName(), report.getLongitude(),
@@ -51,6 +57,15 @@ public class ReportController {
 		return report;
 	}
 
+	@RequestMapping("/complete")
+	public Report completeReport(@RequestBody Report report) {
+		LOGGER.info(String.format("Report id: %s, name: %s, long: %s, lat: %s",
+				report.getId(), report.getName(), report.getLongitude(),
+				report.getLatitude()));
+		reportService.updateReport(report);
+		return report;
+	}
+	
 	@RequestMapping("/display")
 	public ModelAndView getListUsersView() {	
 		 ModelAndView model = new ModelAndView();

@@ -17,4 +17,6 @@ public interface IReportService {
 	public Report getReport(String name);
 	
 	public Report getReport(int id);
+	
+	public void updateReport(Report report);
 }

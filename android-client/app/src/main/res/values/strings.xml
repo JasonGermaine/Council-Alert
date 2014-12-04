@@ -21,8 +21,8 @@
     <string name="submit">Submit</string>
     <string name="clear">Clear</string>
 
-
     <!-- Send Report -->
+
 
     <!-- Type Group -->
     <string name="type_waste">WASTE</string>
@@ -98,7 +98,6 @@
         <item>Lamp Post Repair</item>
         <item>Cats Eye Repair</item>
     </string-array>
-
     <string-array name="list_all">
         <item>Lamp Post Repair</item>
         <item>Cats Eye Repair</item>
@@ -130,10 +129,13 @@
 
     <!-- Error Messages -->
 
+
     <!-- 'Other' Send Report -->
     <string name="error_field_required1">You must enter in a title</string>
     <string name="error_field_length">Title must not be long than 30 characters</string>
     <string name="error_field_invalid_char">Title must not contain special characters</string>
-
     <string name="get_navigation">Get Navigation</string>
+    <string name="title_activity_location">LocationActivity</string>
+    <string name="title_activity_samepl">Samepl</string>
+
 </resources>

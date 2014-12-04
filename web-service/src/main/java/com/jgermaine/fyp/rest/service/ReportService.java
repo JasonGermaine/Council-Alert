@@ -41,4 +41,8 @@ public class ReportService implements IReportService {
 	public Report getReport(int id) {
 		return reportDao.getById(id);
 	}
+	
+	public void updateReport(Report report) {
+		reportDao.update(report);
+	}
 } 

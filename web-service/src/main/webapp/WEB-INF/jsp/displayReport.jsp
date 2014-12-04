@@ -27,6 +27,7 @@
 			<th>Longitude</th>
 			<th>Latitude</th>
 			<th>Timestamp</th>
+			<th>Complete</th>
 			</tr>
 			<c:forEach items="${reports}" var="report">
 				<tr>
@@ -35,6 +36,7 @@
 				<td><c:out value="${report.getLongitude()}" /></td>
 				<td><c:out value="${report.getLatitude()}" /></td>
 				<td><c:out value="${report.getTimestamp()}" /></td>
+				<td><c:out value="${report.getStatus()}" /></td>
 				</tr>
 			</c:forEach>
 		</table>

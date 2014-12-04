@@ -11,6 +11,7 @@ public class Report {
     private double longitude;
     private double latitude;
     private Date timestamp;
+    private boolean status;
 
     public int getId() {
         return id;
@@ -51,4 +52,8 @@ public class Report {
     public Date getTimestamp() {
         return timestamp;
     }
+
+    public boolean getStatus() { return status; }
+
+    public void setStatus(boolean status) { this.status = status; }
 }
