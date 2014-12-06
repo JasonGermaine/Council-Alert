@@ -67,6 +67,13 @@ public class RetrieveReportActivity extends LocationActivity {
 
     public void completeReport(Report report) {
         report.setStatus(true);
+
+        if (getDesc() != null)
+            report.setComment(getDesc());
+
+        if (getImageBytes() != null)
+            report.setImageAfter(getImageBytes());
+
         new CompleteReportTask(report, this).execute();
     }
 
@@ -95,6 +102,10 @@ public class RetrieveReportActivity extends LocationActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void selectComment(View view) {
+        createDescriptionDialog();
     }
 
     /**

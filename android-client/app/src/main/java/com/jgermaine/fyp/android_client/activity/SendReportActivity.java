@@ -19,6 +19,7 @@ import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.SendReportTask;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import java.util.Date;
@@ -102,14 +103,14 @@ public class SendReportActivity extends LocationActivity implements
             @Override
             public void onFinish() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication)getApplication()).getCitizen().getEmail());
+                    setMarker(title, ((CouncilAlertApplication) getApplication()).getCitizen().getEmail());
                 }
             }
 
             @Override
             public void onCancel() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication)getApplication()).getCitizen().getEmail());
+                    setMarker(title, ((CouncilAlertApplication) getApplication()).getCitizen().getEmail());
                 }
             }
         });
@@ -124,6 +125,8 @@ public class SendReportActivity extends LocationActivity implements
         findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
+        findViewById(R.id.send_options).setVisibility(backPressed ? View.GONE : View.VISIBLE);
+        findViewById(R.id.options_shadow).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         getMap().setMyLocationEnabled(backPressed);
         if (backPressed) {
             setZoomLevel(LocationUtil.START_ZOOM_LEVEL);
@@ -145,6 +148,13 @@ public class SendReportActivity extends LocationActivity implements
         report.setLongitude(getCurrentLocation().getLongitude());
         report.setTimestamp(new Date());
         report.setStatus(false);
+
+        if (getImageBytes() != null)
+            report.setImageBefore(getImageBytes());
+
+        if (getDesc() != null)
+            report.setDescription(getDesc());
+
 
         new SendReportTask(report, this).execute();
     }
@@ -172,5 +182,9 @@ public class SendReportActivity extends LocationActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void selectDesc(View view) {
+        createDescriptionDialog();
     }
 }

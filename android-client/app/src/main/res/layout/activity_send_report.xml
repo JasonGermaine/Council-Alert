@@ -8,11 +8,46 @@
     android:orientation="vertical"
     tools:context="com.jgermaine.fyp.android_client.activity.SendReportActivity">
 
+    <LinearLayout
+        android:id="@+id/send_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_gradient"
+        android:visibility="gone">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:text="Description"
+            android:textAlignment="center"
+            android:onClick="selectDesc"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:background="@drawable/options_border_black"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:text="Image"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:textAlignment="center"
+            android:onClick="selectImage"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/options_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dip"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/stroke_shadow" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1.5">
-
 
         <fragment
             android:id="@+id/map"
