@@ -36,7 +36,7 @@ public class ReportController {
 	// This is a GET request
 	@RequestMapping("/retrieve")
 	public Report retrieveReport() {
-		return reportService.getReport(2);
+		return reportService.getReport(12);
 	}
 	
 	public void sendNotifcation() {

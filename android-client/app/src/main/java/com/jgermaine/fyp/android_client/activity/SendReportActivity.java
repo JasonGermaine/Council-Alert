@@ -1,9 +1,12 @@
 package com.jgermaine.fyp.android_client.activity;
 
 
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
@@ -95,22 +100,21 @@ public class SendReportActivity extends LocationActivity implements
     /**
      * Animates the Google Map using a user defined callback
      *
-     * @param title
      */
-    private void animateMap(final String title) {
+    private void animateMap() {
         getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(getCurrentLocation()),
                 getZoomLevel()), LocationUtil.CUSTOM_ZOOM_TIME, new GoogleMap.CancelableCallback() {
             @Override
             public void onFinish() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication) getApplication()).getCitizen().getEmail());
+                    setMarker(getReport().getName(), "Tap to see more detail");
                 }
             }
 
             @Override
             public void onCancel() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(title, ((CouncilAlertApplication) getApplication()).getCitizen().getEmail());
+                    setMarker(getReport().getName(), "Tap to see more detail");
                 }
             }
         });
@@ -128,7 +132,13 @@ public class SendReportActivity extends LocationActivity implements
         findViewById(R.id.send_options).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         findViewById(R.id.options_shadow).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         getMap().setMyLocationEnabled(backPressed);
+
         if (backPressed) {
+            if(getDesc() != null)
+                setDesc(null);
+            if(getImageBytes() != null)
+                setImageBytes(null);
+
             setZoomLevel(LocationUtil.START_ZOOM_LEVEL);
             getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(getCurrentLocation()),
                     getZoomLevel()));
@@ -163,7 +173,10 @@ public class SendReportActivity extends LocationActivity implements
     public void onTypeInteraction(String type) {
         setZoomLevel(LocationUtil.COMPLETE_ZOOM_LEVEL);
         toggleUI(false);
-        animateMap(type);
+        Report report = new Report();
+        report.setName(type);
+        setReport(report);
+        animateMap();
     }
 
     @Override
@@ -184,7 +197,48 @@ public class SendReportActivity extends LocationActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void selectDesc(View view) {
-        createDescriptionDialog();
+    public void createReportDisplay(Report report) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_display_report_single);
+        dialog.setTitle(report.getName());
+
+        if ( getImageBytes() != null) {
+            ((ImageView) dialog.findViewById(R.id.report_image))
+                    .setImageBitmap(BitmapFactory.decodeByteArray(getImageBytes(), 0, getImageBytes().length));
+            dialog.findViewById(R.id.add_image).setVisibility(View.GONE);
+        } else {
+            dialog.findViewById(R.id.report_image).setVisibility(View.GONE);
+            dialog.findViewById(R.id.add_image).setVisibility(View.VISIBLE);
+        }
+
+        if (getDesc() != null && !getDesc().isEmpty()) {
+            ((TextView) dialog.findViewById(R.id.report_details)).setText(getDesc());
+            dialog.findViewById(R.id.add_details).setVisibility(View.GONE);
+        } else {
+            dialog.findViewById(R.id.report_details).setVisibility(View.GONE);
+            dialog.findViewById(R.id.add_details).setVisibility(View.VISIBLE);
+        }
+
+        dialog.show();
+        dialog.findViewById(R.id.action_report_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.findViewById(R.id.add_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createImageDialog();
+            }
+        });
+
+        dialog.findViewById(R.id.add_details).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createDescriptionDialog();
+            }
+        });
     }
 }

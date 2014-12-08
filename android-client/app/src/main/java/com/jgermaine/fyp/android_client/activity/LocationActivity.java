@@ -22,8 +22,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
@@ -53,7 +55,8 @@ public abstract class LocationActivity extends FragmentActivity
         implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        GoogleMap.OnMarkerClickListener {
 
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -70,6 +73,8 @@ public abstract class LocationActivity extends FragmentActivity
     private int mZoomLevel;
     private byte[] mImageBytes;
     private String mDesc;
+    private Report mReport;
+    private Bitmap mBitmap;
 
     public LocationClient getLocationClient() {
         return mLocationClient;
@@ -103,7 +108,26 @@ public abstract class LocationActivity extends FragmentActivity
         return mImageBytes;
     }
 
+    public void setReport(Report report) {
+        this.mReport = report;
+    }
+
+    public Report getReport() {
+        return mReport;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.mBitmap = bitmap;
+    }
+
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
+
     public void setImageBytes(byte[] bytes) {
+        //int icon = bytes != null ? R.drawable.ic_complete : R.drawable.ic_add;
+        //((ImageView) findViewById(R.id.image_icon)).setImageDrawable(getResources().getDrawable(icon));
         this.mImageBytes = bytes;
     }
 
@@ -153,6 +177,7 @@ public abstract class LocationActivity extends FragmentActivity
             if (mMap != null) {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setZoomControlsEnabled(false);
+                mMap.setOnMarkerClickListener(this);
             }
         }
     }
@@ -350,6 +375,7 @@ public abstract class LocationActivity extends FragmentActivity
             Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), mat, true);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            setBitmap(bitmap);
             bytes = getBytesFromBitmap(bitmap);
         } catch (IOException e) {
             Log.w("TAG", "-- Error in setting image");
@@ -397,16 +423,16 @@ public abstract class LocationActivity extends FragmentActivity
         dialog.findViewById(R.id.action_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
                 sendCameraIntent(createImageFile());
+                dialog.dismiss();
             }
         });
 
         dialog.findViewById(R.id.action_gallery).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dialog.dismiss();
                 sendGalleryIntent();
+                dialog.dismiss();
             }
         });
     }
@@ -418,6 +444,10 @@ public abstract class LocationActivity extends FragmentActivity
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_description);
         dialog.setTitle("Description");
+
+        if(mDesc != null && !mDesc.isEmpty())
+            ((EditText) dialog.findViewById(R.id.input_description)).setText(mDesc);
+
         dialog.show();
 
         dialog.findViewById(R.id.action_desc_close).setOnClickListener(new View.OnClickListener() {
@@ -432,7 +462,7 @@ public abstract class LocationActivity extends FragmentActivity
             public void onClick(View view) {
                 dialog.dismiss();
                 EditText input = (EditText) dialog.findViewById(R.id.input_description);
-                mDesc = input.getText().toString();
+                setDesc(input.getText().toString());
             }
         });
     }
@@ -460,7 +490,25 @@ public abstract class LocationActivity extends FragmentActivity
         createImageDialog();
     }
 
+    protected void setDesc(String desc) {
+        //int icon = desc != null && !desc.isEmpty() ? R.drawable.ic_complete : R.drawable.ic_add;
+        //((ImageView) findViewById(R.id.desc_icon)).setImageDrawable(getResources().getDrawable(icon));
+        this.mDesc = desc;
+    }
+
     protected String getDesc() {
         return mDesc;
     }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+        if (getReport() != null)
+            createReportDisplay(getReport());
+        return true;
+    }
+    public void selectDesc(View view) {
+        createDescriptionDialog();
+    }
+
+    protected abstract void createReportDisplay(Report report);
 }

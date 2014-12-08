@@ -16,8 +16,8 @@
 
 <style>
 	.image {
-		height: 300px;
-		width: 300px;
+		height: 150px;
+		width: 150px;
 	}
 </style>
 </head>

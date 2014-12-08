@@ -13,30 +13,71 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:background="@drawable/bg_gradient"
         android:orientation="horizontal"
-        android:background="@drawable/bg_gradient">
+        android:visibility="gone"
+        android:paddingTop="7.5dp"
+        android:paddingBottom="7.5dp">
 
-        <Button
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Comments"
-            android:textAlignment="center"
-            android:onClick="selectComment"
-            android:textSize="@dimen/abc_text_size_large_material"
-            android:background="@drawable/options_border_black"/>
-
-        <Button
+            android:background="@drawable/options_border_black"
+            android:onClick="selectDesc"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_height="25dp"
+                    android:layout_toLeftOf="@+id/desc_text"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/ic_add" />
+                <TextView
+                    android:id="@+id/desc_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="DETAIL"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/abc_text_size_large_material" />
+            </RelativeLayout>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_weight=".5"
-            android:text="Image"
-            android:textSize="@dimen/abc_text_size_large_material"
-            android:textAlignment="center"
             android:onClick="selectImage"
-            android:background="@android:color/transparent"/>
-
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/image_text"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/ic_add" />
+                <TextView
+                    android:id="@+id/image_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="IMAGE"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/abc_text_size_large_material" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
+
     <View
         android:id="@+id/options_shadow"
         android:layout_width="match_parent"
