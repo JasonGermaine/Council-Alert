@@ -27,7 +27,7 @@ public abstract class PostReportTask extends AsyncTask<Void, Void, Report> {
         super();
         mReport = report;
         mActivity = activity;
-        mURL = String.format("http://%s:8080/web-service/report/%s", SetupActivity.IP_ADDR, postfix);
+        mURL = String.format("http://%s/web-service/report/%s", SetupActivity.IP_ADDR, postfix);
     }
 
 

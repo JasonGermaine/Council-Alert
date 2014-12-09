@@ -65,7 +65,7 @@ public class RetrieveReportActivity extends LocationActivity {
                 new MarkerOptions()
                         .position(new LatLng(report.getLatitude(), report.getLongitude()))
                         .title(report.getName())
-                        .snippet(report.getDescription() != null ? report.getDescription() : "No Details Available")));
+                        .snippet("Tap for more detail")));
         getMarker().showInfoWindow();
     }
 
@@ -113,7 +113,6 @@ public class RetrieveReportActivity extends LocationActivity {
         super.onLocationChanged(location);
         if (getReport() != null) {
             float distance = location.distanceTo(mReportLocation);
-            findViewById(R.id.send_options).setVisibility(distance < 100 ? View.VISIBLE : View.GONE);
             findViewById(R.id.action_complete).setVisibility(distance < 100 ? View.VISIBLE : View.GONE);
             findViewById(R.id.action_nav).setVisibility(distance < 100 ? View.GONE : View.VISIBLE);
         }
@@ -132,17 +131,15 @@ public class RetrieveReportActivity extends LocationActivity {
         @Override
         protected void onPostExecute(Report report) {
             getDialog().dismiss();
-            getLocationClient().disconnect();
             String message;
             if (report == null) {
-                message = "Error with REST service";
+                message = "Error with REST service ";
             } else {
                 mReportLocation = new Location("Report Location");
                 mReportLocation.setLatitude(report.getLatitude());
                 mReportLocation.setLongitude(report.getLongitude());
                 float result = mReportLocation.distanceTo(getCurrentLocation());
                 message = "Distance to result: " + result + "metres";
-                findViewById(R.id.send_options).setVisibility(result < 100 ? View.VISIBLE : View.GONE);
                 findViewById(R.id.action_complete).setVisibility(result < 100 ? View.VISIBLE : View.GONE);
                 findViewById(R.id.action_nav).setVisibility(result < 100 ? View.GONE : View.VISIBLE);
                 ((RetrieveReportActivity) getActivity()).setMarker(report);
@@ -155,7 +152,6 @@ public class RetrieveReportActivity extends LocationActivity {
     public void createReportDisplay(final Report report) {
         final ReportMultipleDialog dialog = new ReportMultipleDialog(this);
         dialog.setTitle(report.getName());
-
         if(report.getImageBefore() != null) {
             ((ImageView) dialog.findViewById(R.id.report_image_before))
                     .setImageBitmap(BitmapFactory.decodeByteArray(report.getImageBefore(), 0, report.getImageBefore().length));
@@ -180,12 +176,9 @@ public class RetrieveReportActivity extends LocationActivity {
             dialog.findViewById(R.id.add_details).setVisibility(View.VISIBLE);
             dialog.findViewById(R.id.report_details).setVisibility(View.GONE);
         }
-
         SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a");
         ((TextView) dialog.findViewById(R.id.report_time_before)).setText(ft.format(report.getTimestamp()));
-
         ((TextView) dialog.findViewById(R.id.report_user_before)).setText("example@example.com");
-
         dialog.show();
         dialog.findViewById(R.id.action_report_close).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -193,18 +186,18 @@ public class RetrieveReportActivity extends LocationActivity {
                 dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.add_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createImageDialog();
+                dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.add_details).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createDescriptionDialog();
+                dialog.dismiss();
             }
         });
     }

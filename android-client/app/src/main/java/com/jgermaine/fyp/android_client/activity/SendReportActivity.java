@@ -107,14 +107,13 @@ public class SendReportActivity extends LocationActivity implements
             @Override
             public void onFinish() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(getReport().getName(), "Tap to see more detail");
+                    setMarker(getReport().getName(), "Tap for more detail");
                 }
             }
-
             @Override
             public void onCancel() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(getReport().getName(), "Tap to see more detail");
+                    setMarker(getReport().getName(), "Tap for more detail");
                 }
             }
         });
@@ -129,11 +128,11 @@ public class SendReportActivity extends LocationActivity implements
         findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
-        findViewById(R.id.send_options).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         findViewById(R.id.options_shadow).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         getMap().setMyLocationEnabled(backPressed);
 
         if (backPressed) {
+            // Reset user inputted data
             if(getDesc() != null)
                 setDesc(null);
             if(getImageBytes() != null)
@@ -197,11 +196,17 @@ public class SendReportActivity extends LocationActivity implements
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Creates a dialog displaying the Report information if available.
+     * Otherwise it offers the option to add information.
+     * @param report
+     */
     public void createReportDisplay(Report report) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_display_report_single);
         dialog.setTitle(report.getName());
 
+        // Set the data if it's available
         if ( getImageBytes() != null) {
             ((ImageView) dialog.findViewById(R.id.report_image))
                     .setImageBitmap(BitmapFactory.decodeByteArray(getImageBytes(), 0, getImageBytes().length));
@@ -210,7 +215,6 @@ public class SendReportActivity extends LocationActivity implements
             dialog.findViewById(R.id.report_image).setVisibility(View.GONE);
             dialog.findViewById(R.id.add_image).setVisibility(View.VISIBLE);
         }
-
         if (getDesc() != null && !getDesc().isEmpty()) {
             ((TextView) dialog.findViewById(R.id.report_details)).setText(getDesc());
             dialog.findViewById(R.id.add_details).setVisibility(View.GONE);
@@ -226,18 +230,18 @@ public class SendReportActivity extends LocationActivity implements
                 dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.add_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createImageDialog();
+                dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.add_details).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createDescriptionDialog();
+                dialog.dismiss();
             }
         });
     }

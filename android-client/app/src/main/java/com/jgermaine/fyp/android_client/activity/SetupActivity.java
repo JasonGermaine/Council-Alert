@@ -12,7 +12,7 @@ import com.jgermaine.fyp.android_client.R;
 
 public class SetupActivity extends Activity {
 
-    public static String IP_ADDR = "192.168.0.9";
+    public static String IP_ADDR = "***";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

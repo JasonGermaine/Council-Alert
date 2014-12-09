@@ -71,7 +71,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_login);
         mLoginFlag = true;
         ((CouncilAlertApplication) getApplication()).eraseCitizen();
-        mURL = String.format("http://%s:8080/web-service/citizen", SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s:80/web-service/citizen", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);

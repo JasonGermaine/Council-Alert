@@ -1,7 +1,17 @@
 #!/bin/bash
-rm -rf  $CATALINA_HOME/webapps/web-service*
-source $CATALINA_HOME/bin/catalina.sh stop
+
+echo "Removing war from $REMOTE_HOST"
+ssh $REMOTE_HOST "rm -rf  home/jason/tomcat/webapps/web-service*"
+
+echo "Stopping tomcat on $REMOTE_HOST"
+ssh $REMOTE_HOST "/home/jason/tomcat/bin/shutdown.sh"
+
+echo "Building Web Service"
 cd $PROJECT_HOME/web-service
 mvn clean install -Dmaven.test.skip
-cp target/web-service.war $CATALINA_HOME/webapps/
-source $CATALINA_HOME/bin/catalina.sh start
+
+echo "Copying war to $REMOTE_HOST"
+scp target/web-service.war $REMOTE_HOST:/home/jason/tomcat/webapps/
+
+echo "Starting tomcat on $REMOTE_HOST"
+ssh $REMOTE_HOST "/home/jason/tomcat/bin/startup.sh"

@@ -76,62 +76,6 @@ public abstract class LocationActivity extends FragmentActivity
     private Report mReport;
     private Bitmap mBitmap;
 
-    public LocationClient getLocationClient() {
-        return mLocationClient;
-    }
-
-    public Location getCurrentLocation() {
-        return mCurrentLocation;
-    }
-
-    public Marker getMarker() {
-        return mMarker;
-    }
-
-    public void setMarker(Marker mMarker) {
-        this.mMarker = mMarker;
-    }
-
-    public GoogleMap getMap() {
-        return mMap;
-    }
-
-    public int getZoomLevel() {
-        return mZoomLevel;
-    }
-
-    public void setZoomLevel(int mZoomLevel) {
-        this.mZoomLevel = mZoomLevel;
-    }
-
-    public byte[] getImageBytes() {
-        return mImageBytes;
-    }
-
-    public void setReport(Report report) {
-        this.mReport = report;
-    }
-
-    public Report getReport() {
-        return mReport;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.mBitmap = bitmap;
-    }
-
-    public Bitmap getBitmap() {
-        return mBitmap;
-    }
-
-
-    public void setImageBytes(byte[] bytes) {
-        //int icon = bytes != null ? R.drawable.ic_complete : R.drawable.ic_add;
-        //((ImageView) findViewById(R.id.image_icon)).setImageDrawable(getResources().getDrawable(icon));
-        this.mImageBytes = bytes;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -263,6 +207,11 @@ public abstract class LocationActivity extends FragmentActivity
     public void onDisconnected() {
     }
 
+
+    /**
+     * Creates a new file for the image
+     * @return uri of file created
+     */
     protected Uri createImageFile() {
         Uri uri = null;
         try {
@@ -279,6 +228,10 @@ public abstract class LocationActivity extends FragmentActivity
         return uri;
     }
 
+    /**
+     * Sends an intent to the device camera
+     * @param uri
+     */
     protected void sendCameraIntent(Uri uri) {
         Intent i = new Intent("android.media.action.IMAGE_CAPTURE");
         i.putExtra("output", uri);
@@ -287,6 +240,9 @@ public abstract class LocationActivity extends FragmentActivity
         startActivityForResult(i, REQUEST_IMAGE_CAPTURE);
     }
 
+    /**
+     * Sends an intent to the device gallery
+     */
     protected void sendGalleryIntent() {
         Intent i = new Intent();
         i.setType("image/*");
@@ -311,6 +267,11 @@ public abstract class LocationActivity extends FragmentActivity
         }
     }
 
+    /**
+     * This method gets the data from the gallery image selected and returns the file path
+     * @param data
+     * @return path to image
+     */
     protected String readImageFromGallery(Intent data) {
         String path = null;
         try {
@@ -327,6 +288,11 @@ public abstract class LocationActivity extends FragmentActivity
         return path;
     }
 
+    /**
+     * Returns an image path from the URI
+     * @param contentURI
+     * @return path
+     */
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
@@ -341,18 +307,21 @@ public abstract class LocationActivity extends FragmentActivity
         return result;
     }
 
-    /*
-     * Method to convert Bitmap to bytes to be encoded to a String
-	 */
+    /**
+     * Returns the bytes from a bitmap
+     * @param bitmap
+     * @return bytes
+     */
     public byte[] getBytesFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         return stream.toByteArray();
     }
 
-    /*
- * Write the image taken to the phone's storage
- */
+    /**
+     * Writes the image to the phones storage
+     * @param path
+     */
     public void galleryAddPic(String path) {
         // Create and execute the intent to write to gallery
         Intent i = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
@@ -360,9 +329,12 @@ public abstract class LocationActivity extends FragmentActivity
         sendBroadcast(i);
     }
 
-    /*
-	 * Once a photo is taken, format it and set the image view with image taken
-	 */
+    /**
+     * Creates a bitmap based on the given file path.
+     * Applies formatting to the image.
+     * @param path
+     * @return bytes
+     */
     protected byte[] createBitmap(String path) {
         byte[] bytes = null;
         try {
@@ -385,6 +357,11 @@ public abstract class LocationActivity extends FragmentActivity
         return bytes;
     }
 
+    /**
+     * Calculates the angle in which a file needs to be rotated
+     * @param image
+     * @return
+     */
     private int getRotationAngle(File image) {
         int angle = 0;
         try {
@@ -407,19 +384,16 @@ public abstract class LocationActivity extends FragmentActivity
 
     protected void createImageDialog()
     {
-        // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_image);
         dialog.setTitle("Select Image Option");
         dialog.show();
-
         dialog.findViewById(R.id.action_image_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.action_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -427,7 +401,6 @@ public abstract class LocationActivity extends FragmentActivity
                 dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.action_gallery).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -437,7 +410,6 @@ public abstract class LocationActivity extends FragmentActivity
         });
     }
 
-
     protected void createDescriptionDialog()
     {
         // custom dialog
@@ -445,11 +417,13 @@ public abstract class LocationActivity extends FragmentActivity
         dialog.setContentView(R.layout.dialog_description);
         dialog.setTitle("Description");
 
+        // Fill field with text that has been inputted already
         if(mDesc != null && !mDesc.isEmpty())
             ((EditText) dialog.findViewById(R.id.input_description)).setText(mDesc);
 
         dialog.show();
 
+        // Close button listener
         dialog.findViewById(R.id.action_desc_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -457,6 +431,7 @@ public abstract class LocationActivity extends FragmentActivity
             }
         });
 
+        // Save button listener
         dialog.findViewById(R.id.action_desc_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -467,48 +442,71 @@ public abstract class LocationActivity extends FragmentActivity
         });
     }
 
-
-    private void setImagePath(String path) {
-        mImagePath = path;
-    }
-    protected String getImagePath() {
-        return mImagePath;
-    }
-
-    protected byte[] getByteFromFile(String path) {
-        File image = new File(path);
-        byte[] bytes = null;
-        try {
-            bytes = FileUtils.readFileToByteArray(image);
-        } catch (IOException io) {
-            io.printStackTrace();
-        }
-        return bytes;
-    }
-
-    public void selectImage(View view) {
-        createImageDialog();
-    }
-
-    protected void setDesc(String desc) {
-        //int icon = desc != null && !desc.isEmpty() ? R.drawable.ic_complete : R.drawable.ic_add;
-        //((ImageView) findViewById(R.id.desc_icon)).setImageDrawable(getResources().getDrawable(icon));
-        this.mDesc = desc;
-    }
-
-    protected String getDesc() {
-        return mDesc;
-    }
-
     @Override
     public boolean onMarkerClick(final Marker marker) {
         if (getReport() != null)
             createReportDisplay(getReport());
         return true;
     }
-    public void selectDesc(View view) {
-        createDescriptionDialog();
-    }
 
     protected abstract void createReportDisplay(Report report);
+
+    public LocationClient getLocationClient() {
+        return mLocationClient;
+    }
+
+    public Location getCurrentLocation() {
+        return mCurrentLocation;
+    }
+
+    public Marker getMarker() {
+        return mMarker;
+    }
+
+    public void setMarker(Marker mMarker) {
+        this.mMarker = mMarker;
+    }
+
+    public GoogleMap getMap() {
+        return mMap;
+    }
+
+    public int getZoomLevel() {
+        return mZoomLevel;
+    }
+
+    public void setZoomLevel(int mZoomLevel) {
+        this.mZoomLevel = mZoomLevel;
+    }
+
+    public byte[] getImageBytes() {
+        return mImageBytes;
+    }
+
+    public void setReport(Report report) {
+        this.mReport = report;
+    }
+
+    public Report getReport() {
+        return mReport;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.mBitmap = bitmap;
+    }
+
+    public Bitmap getBitmap() {
+        return mBitmap;
+    }
+
+    private void setImagePath(String path) { mImagePath = path; }
+
+    protected String getImagePath() { return mImagePath; }
+
+    protected void setDesc(String desc) { this.mDesc = desc; }
+
+    protected String getDesc() { return mDesc; }
+
+    protected void setImageBytes(byte[] bytes) { this.mImageBytes = bytes; }
+
 }

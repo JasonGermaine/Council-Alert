@@ -8,6 +8,7 @@
     android:orientation="vertical"
     tools:context="com.jgermaine.fyp.android_client.activity.SendReportActivity">
 
+<!--
     <LinearLayout
         android:id="@+id/send_options"
         android:layout_width="match_parent"
@@ -48,6 +49,7 @@
                     android:textSize="@dimen/abc_text_size_large_material" />
             </RelativeLayout>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -79,7 +81,7 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-
+-->
     <View
         android:id="@+id/options_shadow"
         android:layout_width="match_parent"

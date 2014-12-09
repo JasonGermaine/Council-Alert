@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
     <Properties>
-        <Property name="log-path">/home/jason/Council-Alert/logs</Property>
+        <Property name="log-path">/home/jason/logs</Property>
     </Properties>
     <Appenders>
         <Console name="console-log" target="SYSTEM_OUT">
