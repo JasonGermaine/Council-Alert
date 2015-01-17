@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jgermaine.fyp.rest.model.Citizen;
-import com.jgermaine.fyp.rest.service.CitizenService;
+import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 
 @RestController
 @RequestMapping("/citizen")
 public class CitizenController {
 
 	private static final Logger LOGGER = LogManager
-			.getLogger(ReportController.class.getName());
+			.getLogger(CitizenController.class.getName());
 
 	@Autowired
-	private CitizenService citizenService;
+	private CitizenServiceImpl citizenService;
 
 	@RequestMapping("/post")
 	public Citizen postReportDetails(@RequestBody Citizen citizen) {

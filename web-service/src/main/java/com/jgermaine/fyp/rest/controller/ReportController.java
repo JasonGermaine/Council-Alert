@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Report;
-import com.jgermaine.fyp.rest.service.ReportService;
+import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
 @RestController
 @RequestMapping("/report")
@@ -24,8 +24,14 @@ public class ReportController {
 			.getLogger(ReportController.class.getName());
 
 	@Autowired
-	private ReportService reportService;
+	private ReportServiceImpl reportService;
 
+	
+	@RequestMapping("/push")
+	public void sendPush() {
+		sendNotifcation();
+	}
+	
 	// This is a GET request
 	@RequestMapping("/get")
 	public Report getReportDetail() {
@@ -71,6 +77,14 @@ public class ReportController {
 		 ModelAndView model = new ModelAndView();
 		 model.setViewName("displayReport"); 
 		 model.addObject("reports",reportService.getReports()); 
+		 return model;
+	}
+	
+	@RequestMapping("/proximity")
+	public ModelAndView getCloseReports() {	
+		 ModelAndView model = new ModelAndView();
+		 model.setViewName("displayReport"); 
+		 model.addObject("reports",reportService.getReports(53.2895758,-6.3623403)); 
 		 return model;
 	}
 

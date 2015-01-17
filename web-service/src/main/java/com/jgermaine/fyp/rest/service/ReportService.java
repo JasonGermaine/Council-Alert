@@ -2,47 +2,23 @@ package com.jgermaine.fyp.rest.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.jgermaine.fyp.rest.model.Report;
-import com.jgermaine.fyp.rest.model.ReportDao;
 
-@Service
-public class ReportService implements IReportService {
+public interface ReportService {
 
-	@Autowired
-	private ReportDao reportDao;
+	public Report getReport();
 	
+	public void addReport(Report report);
 	
-	public Report getReport(){
-		Report report = new Report();
-		report.setId(1);
-		report.setName("PotHole");
-		return report;
-	}
+	public void removeReport(Report report);
 	
-	public void addReport(Report report) {
-		reportDao.create(report);
-	}
+	public List<Report> getReports();
 	
-	public void removeReport(Report report) {
-		reportDao.delete(report);;
-	}
+	public Report getReport(String name);
 	
-	public List<Report> getReports() {
-		return reportDao.getAll();
-	}
+	public Report getReport(int id);
 	
-	public Report getReport(String name) {
-		return reportDao.getByName(name);
-	}
+	public void updateReport(Report report);
 	
-	public Report getReport(int id) {
-		return reportDao.getById(id);
-	}
-	
-	public void updateReport(Report report) {
-		reportDao.update(report);
-	}
-} 
+	public List<Report> getReports(double lat, double lon);
+}

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Removing war from $REMOTE_HOST"
-ssh $REMOTE_HOST "rm -rf  home/jason/tomcat/webapps/web-service*"
+ssh $REMOTE_HOST "rm -rf  /home/jason/tomcat/webapps/web-service*"
 
 echo "Stopping tomcat on $REMOTE_HOST"
 ssh $REMOTE_HOST "/home/jason/tomcat/bin/shutdown.sh"

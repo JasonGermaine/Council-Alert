@@ -1,4 +1,4 @@
-package com.jgermaine.fyp.rest.model;
+package com.jgermaine.fyp.rest.model.dao;
 
 import java.util.List;
 
@@ -7,6 +7,8 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
+
+import com.jgermaine.fyp.rest.model.Citizen;
 
 /**
  * This class is used to access data for the Citizen entity.

@@ -140,8 +140,8 @@ public class RetrieveReportActivity extends LocationActivity {
                 mReportLocation.setLongitude(report.getLongitude());
                 float result = mReportLocation.distanceTo(getCurrentLocation());
                 message = "Distance to result: " + result + "metres";
-                findViewById(R.id.action_complete).setVisibility(result < 100 ? View.VISIBLE : View.GONE);
-                findViewById(R.id.action_nav).setVisibility(result < 100 ? View.GONE : View.VISIBLE);
+                findViewById(R.id.action_complete).setVisibility(View.VISIBLE);
+                findViewById(R.id.action_nav).setVisibility(View.VISIBLE);
                 ((RetrieveReportActivity) getActivity()).setMarker(report);
                 ((RetrieveReportActivity) getActivity()).setReport(report);
             }

@@ -9,10 +9,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 
 public class SetupActivity extends Activity {
 
-    public static String IP_ADDR = "***";
+    public static String IP_ADDR = ConnectionUtil.CONN_URL;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

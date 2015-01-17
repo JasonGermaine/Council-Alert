@@ -1,0 +1,5 @@
+CREATE TABLE employee (
+email VARCHAR2(255) NOT NULL,
+password VARCHAR (16) NOT NULL,
+PRIMARY KEY (email)
+);

@@ -18,8 +18,7 @@ public class GcmOperations {
 	public static void sendNotifcation() throws IOException {  
 	    
 		Map<String,String> data = new HashMap<String,String>();
-	    data.put("title", "Hello-World.\nThis has been sent from "
-	    		+ "Google's Cloud Messaging Service");
+	    data.put("title", "Pot Hole");
 		
 	    // Sender API Key
 	    Sender sender = new Sender("AIzaSyCFZkkdRYr-xnhmk_wbvVPAX6eu6pVc4eU");
