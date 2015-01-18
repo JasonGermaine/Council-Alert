@@ -5,18 +5,19 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
-@RestController
+@Controller
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -27,33 +28,31 @@ public class EmployeeController {
 	private EmployeeServiceImpl employeeService;
 
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
-	public ModelAndView getRegisterView(Model m) {
-		return new ModelAndView("addEmployee", "employeeForm", new Employee());
+	public String getNewEmployee(Model model) {
+		Employee emp = new Employee();
+		model.addAttribute("employeeForm", emp);
+		return "addEmployee";
 	}
 
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ModelAndView postUser(@Valid Employee employee, BindingResult result) {
-		ModelAndView model;
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public String registerEmployee(
+			@Valid @ModelAttribute("employeeForm") Employee employee,
+			BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			model = new ModelAndView("addEmployee", "employeeForm", employee);
+			return "addEmployee";
 		} else {
 			employeeService.addEmployee(employee);
-			model = new ModelAndView();
-			model.setViewName("displayEmployee");
-			model.addObject("employees", employeeService.getEmployees());
+			return "redirect:/employee/display";
 		}
-
-		return model;
 	}
 
-	@RequestMapping("/display")
-	public ModelAndView getListUsersView() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("displayEmployee");
-		model.addObject("employees", employeeService.getEmployees());
-		return model;
+	@RequestMapping(value = "/display", method = RequestMethod.GET)
+	public String getListUsersView(Model model) {
+		model.addAttribute("employees", employeeService.getEmployees());
+		return "displayEmployee";
 	}
 
+	@ResponseBody
 	@RequestMapping("/login")
 	public Boolean getPage(
 			@RequestParam(value = "email", required = true) String email,
@@ -66,11 +65,10 @@ public class EmployeeController {
 		}
 	}
 
-	@RequestMapping("/slackers")
-	public ModelAndView getUnassignedWorkers() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("displayUnassignedWorkers");
-		model.addObject("employees", employeeService.getUnassignedEmployees());
-		return model;
+	@RequestMapping(value = "/slackers", method = RequestMethod.GET)
+	public String getUnassignedWorkers(Model model) {
+		model.addAttribute("employees",
+				employeeService.getUnassignedEmployees());
+		return "displayUnassignedWorkers";
 	}
 }

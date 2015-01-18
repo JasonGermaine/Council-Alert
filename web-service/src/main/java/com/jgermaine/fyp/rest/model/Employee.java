@@ -14,21 +14,21 @@ public class Employee {
 
 	
 	@Id
-    @NotEmpty(message = "Please enter your email addresss.")
-	@Email
+    @NotEmpty(message = "Please enter an email addresss.")
+	@Email(message = "Please enter a valid email")
     private String email;
 	
-    @NotEmpty
-    @Pattern(regexp="[a-zA-Z0-9]")
+    @NotEmpty(message = "Please enter a password")
+    @Pattern(regexp="[a-zA-Z0-9]", message="Password does not match criteria")
     private String password;
     
-    @NotEmpty
+    @NotEmpty(message="Please enter a first name")
     private String firstName;
     
-    @NotEmpty
+    @NotEmpty(message="Please enter a last name")
     private String lastName;
     
-    @NotEmpty
+    @NotEmpty(message="Please enter a phone number")
     private String phoneNum;
     
     
