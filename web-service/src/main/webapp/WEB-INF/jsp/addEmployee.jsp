@@ -37,7 +37,7 @@
 		<h2 class="col-lg-offset-2 col-md-offset-2"
 			style="padding-bottom: 50px">Register New Employee</h2>
 		<form:form class="form-horizontal" role="form" method="POST"
-			action="register" commandName="employeeForm" modelattribute="employee">
+			action="new" commandName="employeeForm" modelattribute="employee">
 			<div class="form-group">
 				<form:label path="firstName"
 					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-12"
