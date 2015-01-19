@@ -19,7 +19,7 @@ public class Employee {
     private String email;
 	
     @NotEmpty(message = "Please enter a password")
-    @Pattern(regexp="[a-zA-Z0-9]", message="Password does not match criteria")
+    //@Pattern(regexp="[a-zA-Z0-9]", message="Password does not match criteria")
     private String password;
     
     @NotEmpty(message="Please enter a first name")

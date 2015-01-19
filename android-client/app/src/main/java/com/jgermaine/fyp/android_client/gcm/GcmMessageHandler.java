@@ -90,7 +90,7 @@ public class GcmMessageHandler extends IntentService {
                 );
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setAutoCancel(true);
-        mBuilder.setTicker("Job Alert");
+        mBuilder.setTicker("New job awaiting");
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

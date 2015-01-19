@@ -113,8 +113,8 @@ public class RetrieveReportActivity extends LocationActivity {
         super.onLocationChanged(location);
         if (getReport() != null) {
             float distance = location.distanceTo(mReportLocation);
-            findViewById(R.id.action_complete).setVisibility(distance < 100 ? View.VISIBLE : View.GONE);
-            findViewById(R.id.action_nav).setVisibility(distance < 100 ? View.GONE : View.VISIBLE);
+            //findViewById(R.id.action_complete).setVisibility(distance < 100 ? View.VISIBLE : View.GONE);
+            //findViewById(R.id.action_nav).setVisibility(distance < 100 ? View.GONE : View.VISIBLE);
         }
     }
     /**

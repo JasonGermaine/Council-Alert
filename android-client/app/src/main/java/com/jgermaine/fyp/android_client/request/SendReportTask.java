@@ -7,6 +7,9 @@ import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -22,16 +25,13 @@ public class SendReportTask extends PostReportTask {
     }
 
     @Override
-    protected void onPostExecute(Report report) {
+    protected void onPostExecute(ResponseEntity<String> response) {
         getDialog().dismiss();
         String message;
-        if (report != null) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            message = "Reported: " + report.getName() + ". \nID: " + report.getId()
-                    + ". \nLatLng: " + report.getLatitude() + " " + report.getLongitude()
-                    + ". \nTime: " + dateFormat.format(report.getTimestamp());
+        if (response.getStatusCode() != HttpStatus.OK) {
+            message = response.getBody();
         } else {
-            message = "Well done Jason, you broke it!";
+            message = "POST Success";
         }
         DialogUtil.showToast(getActivity(), message);
         getActivity().getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);

@@ -244,10 +244,7 @@ public abstract class LocationActivity extends FragmentActivity
      * Sends an intent to the device gallery
      */
     protected void sendGalleryIntent() {
-        Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction("android.intent.action.GET_CONTENT");
-        i.addCategory(Intent.CATEGORY_OPENABLE);
+        Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_IMAGE_GALLERY);
     }
 

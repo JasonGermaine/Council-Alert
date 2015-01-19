@@ -1,5 +1,7 @@
 package com.jgermaine.fyp.rest.controller;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.apache.logging.log4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
@@ -48,6 +51,13 @@ public class EmployeeController {
 
 	@RequestMapping(value = "/display", method = RequestMethod.GET)
 	public String getListUsersView(Model model) {
+		model.addAttribute("employees", employeeService.getEmployees());
+		return "displayEmployee";
+	}
+	
+	@RequestMapping(value = "/assignAndDisplay", method = RequestMethod.GET)
+	public String getListUsersViewAndSendNotification(Model model) throws IOException {
+		GcmOperations.sendNotifcation();
 		model.addAttribute("employees", employeeService.getEmployees());
 		return "displayEmployee";
 	}
