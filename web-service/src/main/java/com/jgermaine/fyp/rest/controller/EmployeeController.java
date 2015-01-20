@@ -22,10 +22,8 @@ import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
-
 /**
- * @author jason
- * Controller to handle Employee based requests
+ * @author jason Controller to handle Employee based requests
  */
 @Controller
 @RequestMapping("/employee")
@@ -49,14 +47,14 @@ public class EmployeeController {
 	 * Attempts to validate an employee form.
 	 * <ul>
 	 * <li>
-	 * Failed validations will return the {@link #getNewEmployee(Model) new employee}
-	 * page with updated error messaging
-	 * </li>
+	 * Failed validations will return the {@link #getNewEmployee(Model) new
+	 * employee} page with updated error messaging</li>
 	 * <li>
-	 * Successful validations will persist the employee and return @link {@link #getListUsersView(Model)
-	 * all employee} view with updated employee.
-	 * </li> 
+	 * Successful validations will persist the employee and return @link
+	 * {@link #getListUsersView(Model) all employee} view with updated employee.
+	 * </li>
 	 * <ul>
+	 * 
 	 * @param employee
 	 * @param result
 	 * @param model
@@ -75,10 +73,10 @@ public class EmployeeController {
 			return "redirect:/employee/display";
 		}
 	}
-	
-	@RequestMapping(value = "/assignAndDisplay", method = RequestMethod.GET)
-	public String getListUsersViewAndSendNotification(Model model) throws IOException {
-		GcmOperations.sendNotifcation();
+
+	@RequestMapping(value = "/display", method = RequestMethod.GET)
+	public String getListUsersView(Model model) {
+		LOGGER.debug("Returning view to display all employees");
 		model.addAttribute("employees", employeeService.getEmployees());
 		return "displayEmployee";
 	}
@@ -103,9 +101,11 @@ public class EmployeeController {
 				employeeService.getUnassignedEmployees());
 		return "displayUnassignedWorkers";
 	}
-	
+
 	@RequestMapping(value = "/assign", method = RequestMethod.GET)
-	public String assignWorker(Model model, @RequestParam(value = "email", required = true) String email) throws IOException {
+	public String assignWorker(Model model,
+			@RequestParam(value = "email", required = true) String email)
+			throws IOException {
 		GcmOperations.sendNotifcation();
 		LOGGER.debug("Returning view to display all employees with unassigned jobs");
 		return "displayUnassignedWorkers";
