@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -17,29 +16,36 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
+import org.apache.http.HttpRequest;
+import org.apache.http.protocol.HTTP;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor>{
+public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -71,7 +77,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_login);
         mLoginFlag = true;
         ((CouncilAlertApplication) getApplication()).eraseCitizen();
-        mURL = String.format("http://%s:80/web-service/citizen", SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s:80/web-service/employee", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -128,7 +134,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private void toggleUI() {
         mClickableText.setText(mLoginFlag ? getString(R.string.action_register_new) : getString(R.string.action_back_login));
         mDisplayText.setText(mLoginFlag ? getString(R.string.ask_new_user) : getString(R.string.ask_registered));
-        mConfirmPasswordView.setVisibility(mLoginFlag ? View.GONE : View.VISIBLE );
+        mConfirmPasswordView.setVisibility(mLoginFlag ? View.GONE : View.VISIBLE);
         mSignInText.setText(mLoginFlag ? getString(R.string.action_sign_in) : getString(R.string.action_register));
         mPasswordView.setText("");
         mConfirmPasswordView.setText("");
@@ -169,7 +175,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             focusView = mPasswordView;
             cancel = true;
         }
-        if (!mLoginFlag &&  !passwordConfirm.equals(password)) {
+        if (!mLoginFlag && !passwordConfirm.equals(password)) {
             mPasswordView.setError(getString(R.string.error_incorrect_password_confirm));
             focusView = mPasswordView;
             cancel = true;
@@ -200,6 +206,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mAuthTask.execute((Void) null);
         }
     }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -312,7 +319,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
                         " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                                                                     .CONTENT_ITEM_TYPE},
+                .CONTENT_ITEM_TYPE},
 
                 // Show primary email addresses first. Note that there won't be
                 // a primary email address if the user hasn't specified one.
@@ -360,7 +367,7 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
 
         private final String mEmail;
         private final String mPassword;
@@ -374,45 +381,46 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            if (mIsLogin) {
-                final String url = String.format("%s/login?email=%s&password=%s", mURL, mEmail, mPassword);
+        protected Integer doInBackground(Void... params) {
+            Integer statusCode = 500;
+            try {
                 RestTemplate restTemplate = new RestTemplate();
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                return restTemplate.getForObject(url, Boolean.class);
-            } else {
-                final String url = mURL + "/post";
-                Citizen c = new Citizen();
-                c.setEmail(mEmail);
-                c.setPassword(mPassword);
-                RestTemplate restTemplate = new RestTemplate(true);
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                Citizen citizen = restTemplate.postForObject(url, c, Citizen.class);
-                if (citizen != null) {
-                    mMessage = "Citizen " + citizen.getEmail() + ". Password " + citizen.getPassword();
-                    ((CouncilAlertApplication) getApplication()).setCitizen(citizen);
+                String url;
+                ResponseEntity<String> response;
+                if (mIsLogin) {
+                    url = String.format("%s/login?email=%s&password=%s", mURL, mEmail, mPassword);
+                    response = restTemplate.getForEntity(url, null, String.class);
                 } else {
-                    mMessage = "Well done Jason, you broke it!";
+                    url = mURL + "/post";
+                    Citizen c = new Citizen();
+                    c.setEmail(mEmail);
+                    c.setPassword(mPassword);
+                    response = restTemplate.postForEntity(url, c, String.class);
                 }
+                statusCode = response.getStatusCode().value();
+            } catch (HttpClientErrorException e) {
+                statusCode = e.getStatusCode().value();
+            } finally {
+                return statusCode;
             }
-            return true;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Integer statusCode) {
             mAuthTask = null;
             showProgress(false);
 
             if (mMessage != null) {
                 DialogUtil.showToast(getApplicationContext(), mMessage);
             }
-            if (success) {
+            if (statusCode == HttpStatus.OK.value()) {
                 Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
                 startActivity(intent);
 
                 finish();
             } else {
+                DialogUtil.showToast(getApplicationContext(), statusCode.toString());
                 mPasswordView.setError(getString(R.string.error_incorrect_login));
                 mPasswordView.requestFocus();
                 mPasswordView.setText("");

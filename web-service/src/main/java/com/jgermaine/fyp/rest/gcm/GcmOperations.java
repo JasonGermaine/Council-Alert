@@ -4,12 +4,19 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Message.Builder;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 
 public class GcmOperations {
+	
+	private static final Logger LOGGER = LogManager
+			.getLogger(GcmOperations.class.getName());
+	
 	
 	/**
 	 * Sends dummy notification to dummy client
@@ -35,7 +42,7 @@ public class GcmOperations {
 				+ "bJcyYO51XqflzAp0Bv0RMWmP5HvJe3Hav1w1daKlJTDQoIgAg";
 		
 		Result response = sender.send(message, devices, 5);
-		
+		LOGGER.debug("Sent message using Google Cloud Messaging");
 		// TODO: Manage response
 	}
 }

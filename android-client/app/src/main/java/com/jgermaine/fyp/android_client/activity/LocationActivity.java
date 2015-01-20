@@ -38,6 +38,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
+import com.jgermaine.fyp.android_client.util.FileUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import org.apache.commons.io.FileUtils;
@@ -58,11 +59,9 @@ public abstract class LocationActivity extends FragmentActivity
         LocationListener,
         GoogleMap.OnMarkerClickListener {
 
-
+    private static final String TAG = "LocationActivity";
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_IMAGE_GALLERY = 2;
-    private static final String DIR = Environment
-            .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/CouncilAlert/";
     private String mImagePath;
 
     private LocationClient mLocationClient;
@@ -79,12 +78,6 @@ public abstract class LocationActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        File imageDir = new File(DIR);
-        if (!imageDir.exists() || !imageDir.isDirectory()) {
-            // Create directory
-            imageDir.mkdirs();
-        }
     }
 
     @Override
@@ -100,6 +93,7 @@ public abstract class LocationActivity extends FragmentActivity
     public void onConnected(Bundle arg0) {
         if (mLocationClient != null) {
             try {
+                Log.d(TAG, "Connecting to Location Client");
                 mLocationClient.requestLocationUpdates(mLocationRequest, this);
                 mCurrentLocation = mLocationClient.getLastLocation();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
@@ -119,6 +113,7 @@ public abstract class LocationActivity extends FragmentActivity
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
+                Log.d(TAG, "Setting up map.");
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setZoomControlsEnabled(false);
                 mMap.setOnMarkerClickListener(this);
@@ -209,27 +204,8 @@ public abstract class LocationActivity extends FragmentActivity
 
 
     /**
-     * Creates a new file for the image
-     * @return uri of file created
-     */
-    protected Uri createImageFile() {
-        Uri uri = null;
-        try {
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss").format(new Date());
-            String path = DIR + timestamp + ".jpg";
-            File image = new File(path);
-            image.createNewFile();
-            setImagePath(path);
-            uri = Uri.fromFile(image);
-            //sendCameraIntent(mUri);
-        } catch (IOException ie) {
-            Log.e("TAKE PHOTO", "Error accessing the camera", ie);
-        }
-        return uri;
-    }
-
-    /**
      * Sends an intent to the device camera
+     *
      * @param uri
      */
     protected void sendCameraIntent(Uri uri) {
@@ -244,7 +220,7 @@ public abstract class LocationActivity extends FragmentActivity
      * Sends an intent to the device gallery
      */
     protected void sendGalleryIntent() {
-        Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_IMAGE_GALLERY);
     }
 
@@ -260,12 +236,13 @@ public abstract class LocationActivity extends FragmentActivity
             setImageBytes(createBitmap(getImagePath()));
             DialogUtil.showToast(this, "BYTE ARRAY LENGTH: " + getImageBytes().length);
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            Log.d("INTENT","User cancelled operation");
+            Log.d("INTENT", "User cancelled operation");
         }
     }
 
     /**
      * This method gets the data from the gallery image selected and returns the file path
+     *
      * @param data
      * @return path to image
      */
@@ -275,37 +252,20 @@ public abstract class LocationActivity extends FragmentActivity
             InputStream stream = getContentResolver().openInputStream(data.getData());
             stream.close();
             Uri uri = data.getData();
-            File image = new File(getRealPathFromURI(uri));
-            path = image.getAbsolutePath();
+            path = FileUtil.getPathFromURI(uri, this);
         } catch (FileNotFoundException fe) {
-            fe.printStackTrace();
+            Log.e(TAG, fe.getMessage(), fe);
         } catch (IOException ie) {
-            ie.printStackTrace();
+            Log.e(TAG, ie.getMessage(), ie);
         }
         return path;
     }
 
-    /**
-     * Returns an image path from the URI
-     * @param contentURI
-     * @return path
-     */
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
-    }
+
 
     /**
      * Returns the bytes from a bitmap
+     *
      * @param bitmap
      * @return bytes
      */
@@ -317,6 +277,7 @@ public abstract class LocationActivity extends FragmentActivity
 
     /**
      * Writes the image to the phones storage
+     *
      * @param path
      */
     public void galleryAddPic(String path) {
@@ -329,6 +290,7 @@ public abstract class LocationActivity extends FragmentActivity
     /**
      * Creates a bitmap based on the given file path.
      * Applies formatting to the image.
+     *
      * @param path
      * @return bytes
      */
@@ -336,10 +298,14 @@ public abstract class LocationActivity extends FragmentActivity
         byte[] bytes = null;
         try {
             File image = new File(path);
+
+            // rotate image if needed
             Matrix mat = new Matrix();
             mat.postRotate(getRotationAngle(image));
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 2;
+
+            // decode the file at the given path
             Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(image), null, options);
             Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), mat, true);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -356,6 +322,7 @@ public abstract class LocationActivity extends FragmentActivity
 
     /**
      * Calculates the angle in which a file needs to be rotated
+     *
      * @param image
      * @return
      */
@@ -379,8 +346,9 @@ public abstract class LocationActivity extends FragmentActivity
     }
 
 
-    protected void createImageDialog()
-    {
+
+
+    protected void createImageDialog() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_image);
         dialog.setTitle("Select Image Option");
@@ -394,7 +362,9 @@ public abstract class LocationActivity extends FragmentActivity
         dialog.findViewById(R.id.action_camera).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendCameraIntent(createImageFile());
+                File image = FileUtil.createImageFile();
+                setImagePath(image.getAbsolutePath());
+                sendCameraIntent(Uri.fromFile(image));
                 dialog.dismiss();
             }
         });
@@ -407,15 +377,14 @@ public abstract class LocationActivity extends FragmentActivity
         });
     }
 
-    protected void createDescriptionDialog()
-    {
+    protected void createDescriptionDialog() {
         // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_description);
         dialog.setTitle("Description");
 
         // Fill field with text that has been inputted already
-        if(mDesc != null && !mDesc.isEmpty())
+        if (mDesc != null && !mDesc.isEmpty())
             ((EditText) dialog.findViewById(R.id.input_description)).setText(mDesc);
 
         dialog.show();
@@ -445,6 +414,7 @@ public abstract class LocationActivity extends FragmentActivity
             createReportDisplay(getReport());
         return true;
     }
+
 
     protected abstract void createReportDisplay(Report report);
 
@@ -496,14 +466,24 @@ public abstract class LocationActivity extends FragmentActivity
         return mBitmap;
     }
 
-    private void setImagePath(String path) { mImagePath = path; }
+    private void setImagePath(String path) {
+        mImagePath = path;
+    }
 
-    protected String getImagePath() { return mImagePath; }
+    protected String getImagePath() {
+        return mImagePath;
+    }
 
-    protected void setDesc(String desc) { this.mDesc = desc; }
+    protected void setDesc(String desc) {
+        this.mDesc = desc;
+    }
 
-    protected String getDesc() { return mDesc; }
+    protected String getDesc() {
+        return mDesc;
+    }
 
-    protected void setImageBytes(byte[] bytes) { this.mImageBytes = bytes; }
+    protected void setImageBytes(byte[] bytes) {
+        this.mImageBytes = bytes;
+    }
 
 }

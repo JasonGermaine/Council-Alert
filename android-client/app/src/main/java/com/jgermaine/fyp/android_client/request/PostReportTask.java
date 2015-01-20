@@ -13,12 +13,13 @@ import com.jgermaine.fyp.android_client.util.DialogUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by jason on 04/12/14.
  */
-public abstract class PostReportTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
+public abstract class PostReportTask extends AsyncTask<Void, Void, Integer> {
     private String mURL;
     private Report mReport;
     private Activity mActivity;
@@ -54,17 +55,19 @@ public abstract class PostReportTask extends AsyncTask<Void, Void, ResponseEntit
     }
 
     @Override
-    protected ResponseEntity<String> doInBackground(Void... params) {
+    protected Integer doInBackground(Void... params) {
+        Integer statusCode;
         try {
             RestTemplate restTemplate = new RestTemplate(true);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            return restTemplate.postForEntity(mURL, mReport, String.class);
-        } catch (Exception e) {
-            Log.i("TAG", e.getLocalizedMessage());
+            ResponseEntity<String> response = restTemplate.postForEntity(mURL, mReport, String.class);
+            statusCode = response.getStatusCode().value();
+        } catch (HttpClientErrorException e) {
+            statusCode = e.getStatusCode().value();
         }
-        return null;
+        return statusCode;
     }
 
     @Override
-    protected abstract void onPostExecute(ResponseEntity<String> response);
+    protected abstract void onPostExecute(Integer response);
 }

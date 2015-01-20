@@ -26,12 +26,11 @@ public class ReportController {
 	@Autowired
 	private ReportServiceImpl reportService;
 
-	
 	@RequestMapping("/push")
 	public void sendPush() {
 		sendNotifcation();
 	}
-	
+
 	// This is a GET request
 	@RequestMapping("/get")
 	public Report getReportDetail() {
@@ -44,13 +43,12 @@ public class ReportController {
 	public Report retrieveReport() {
 		return reportService.getReport(1);
 	}
-	
+
 	public void sendNotifcation() {
 		try {
 			GcmOperations.sendNotifcation();
 		} catch (IOException e) {
 			LOGGER.error("Couldnt send GCM post", e);
-			e.printStackTrace();
 		}
 	}
 
@@ -71,28 +69,31 @@ public class ReportController {
 		reportService.updateReport(report);
 		return report;
 	}
-	
+
 	@RequestMapping("/display")
-	public ModelAndView getListUsersView() {	
-		 ModelAndView model = new ModelAndView();
-		 model.setViewName("displayReport"); 
-		 model.addObject("reports",reportService.getReports()); 
-		 return model;
+	public ModelAndView getListUsersView() {
+		LOGGER.debug("Returning all reports");
+		ModelAndView model = new ModelAndView();
+		model.setViewName("displayReport");
+		model.addObject("reports", reportService.getReports());
+		return model;
 	}
-	
+
 	@RequestMapping("/proximity")
-	public ModelAndView getCloseReports() {	
-		 ModelAndView model = new ModelAndView();
-		 model.setViewName("displayReport"); 
-		 model.addObject("reports",reportService.getReports(53.2895758,-6.3623403)); 
-		 return model;
+	public ModelAndView getCloseReports() {
+		LOGGER.debug("Returning reports based on a proximity");
+		ModelAndView model = new ModelAndView();
+		model.setViewName("displayReport");
+		model.addObject("reports",
+				reportService.getReports(53.2895758, -6.3623403));
+		return model;
 	}
 
 	@RequestMapping("/map")
-	public ModelAndView getMapView() {	
-		 ModelAndView model = new ModelAndView();
-		 model.setViewName("displayMap"); 
-		 model.addObject("reports",reportService.getReports()); 
-		 return model;
+	public ModelAndView getMapView() {
+		ModelAndView model = new ModelAndView();
+		model.setViewName("displayMap");
+		model.addObject("reports", reportService.getReports());
+		return model;
 	}
 }

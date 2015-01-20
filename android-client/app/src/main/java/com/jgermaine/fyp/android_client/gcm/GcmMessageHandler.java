@@ -31,7 +31,6 @@ public class GcmMessageHandler extends IntentService {
 
     @Override
     public void onCreate() {
-        // TODO Auto-generated method stub
         super.onCreate();
         handler = new Handler();
     }
@@ -41,8 +40,6 @@ public class GcmMessageHandler extends IntentService {
         Bundle extras = intent.getExtras();
 
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-        // The getMessageType() intent parameter must be the intent you received
-        // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
 
         mes = extras.getString("title");
@@ -69,16 +66,10 @@ public class GcmMessageHandler extends IntentService {
                         .setContentTitle("Job Update")
                         .setContentText(task);
 
-        // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, LoginActivity.class);
 
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
+        // ensures that navigating backward from the Activity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(LoginActivity.class);
 
         // Adds the Intent that starts the Activity to the top of the stack
@@ -93,8 +84,6 @@ public class GcmMessageHandler extends IntentService {
         mBuilder.setTicker("New job awaiting");
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // mId allows you to update the notification later on.
         mNotificationManager.notify(001, mBuilder.build());
     }
 }

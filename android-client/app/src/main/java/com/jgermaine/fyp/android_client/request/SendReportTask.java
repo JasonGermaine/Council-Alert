@@ -25,11 +25,11 @@ public class SendReportTask extends PostReportTask {
     }
 
     @Override
-    protected void onPostExecute(ResponseEntity<String> response) {
+    protected void onPostExecute(Integer response) {
         getDialog().dismiss();
         String message;
-        if (response.getStatusCode() != HttpStatus.OK) {
-            message = response.getBody();
+        if (response != HttpStatus.OK.value()) {
+            message = response.toString();
         } else {
             message = "POST Success";
         }
