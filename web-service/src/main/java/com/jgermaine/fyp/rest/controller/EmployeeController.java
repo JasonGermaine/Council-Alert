@@ -75,13 +75,6 @@ public class EmployeeController {
 			return "redirect:/employee/display";
 		}
 	}
-
-	@RequestMapping(value = "/display", method = RequestMethod.GET)
-	public String getListUsersView(Model model) {
-		LOGGER.debug("Returning view to display all employees");
-		model.addAttribute("employees", employeeService.getEmployees());
-		return "displayEmployee";
-	}
 	
 	@RequestMapping(value = "/assignAndDisplay", method = RequestMethod.GET)
 	public String getListUsersViewAndSendNotification(Model model) throws IOException {
@@ -108,6 +101,13 @@ public class EmployeeController {
 		LOGGER.debug("Returning view to display all employees with unassigned jobs");
 		model.addAttribute("employees",
 				employeeService.getUnassignedEmployees());
+		return "displayUnassignedWorkers";
+	}
+	
+	@RequestMapping(value = "/assign", method = RequestMethod.GET)
+	public String assignWorker(Model model, @RequestParam(value = "email", required = true) String email) throws IOException {
+		GcmOperations.sendNotifcation();
+		LOGGER.debug("Returning view to display all employees with unassigned jobs");
 		return "displayUnassignedWorkers";
 	}
 }

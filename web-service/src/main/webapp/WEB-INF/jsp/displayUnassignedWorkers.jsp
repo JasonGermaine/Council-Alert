@@ -28,13 +28,12 @@
 			<th>Email</th>
 		</tr>
 		<c:forEach items="${employees}" var="employee">
+		<c:set var="email"><c:out value="${xyz}" /></c:set>
 			<tr>
 				<td><c:out value="${employee.getFirstName()}" /></td>
 				<td><c:out value="${employee.getLastName()}" /></td>
-				<td><c:out value="${employee.getEmail()}" /></td>
-				<td><input type="button" value="Assign Task"
-					class="btn btn-primary"
-					onclick="location.href='/web-service/employee/assignAndDisplay'"></td>
+				<td><c:out value="${employee.getEmail()}"/></td>
+				<td><a href='${pageContext.request.contextPath}/employee/assign?email=<c:out value="${employee.getEmail()}"/>'/>Assign Task</a></td>
 			</tr>
 		</c:forEach>
 	</table>
