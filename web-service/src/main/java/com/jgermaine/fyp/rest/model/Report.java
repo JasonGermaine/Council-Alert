@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "report")
-@JsonIgnoreProperties(value={"imageBeforeUrl", "imageAfterUrl"})
+@JsonIgnoreProperties(value={"imageBeforeUrl", "imageAfterUrl", "employee"})
 public class Report {
 	
 	@Id
@@ -50,6 +51,9 @@ public class Report {
 	
 	@Transient
 	private String imageAfterUrl;
+	
+	@OneToOne (mappedBy="report")
+	private Employee employee;
 	
 	public Report() { 
 		
@@ -146,5 +150,13 @@ public class Report {
     
     public void setComment(String comment) {
     	this.comment = comment;
+    }
+    
+    public Employee getEmployee() {
+    	return employee;
+    }
+    
+    public void setEmployee(Employee emp) {
+    	this.employee = emp;
     }
 } 

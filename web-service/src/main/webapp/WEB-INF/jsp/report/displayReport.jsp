@@ -33,6 +33,7 @@
 			<th>Description</th>
 			<th>Comment</th>
 			<th>Complete</th>
+			<th>Worker</th>
 			<th>Image - Before</th>
 			<th>Image - After</th>
 			<th>Longitude</th>
@@ -46,6 +47,14 @@
 				<td><c:out value="${report.getDescription()}" /></td>
 				<td><c:out value="${report.getComment()}" /></td>
 				<td><c:out value="${report.getStatus()}" /></td>
+				<c:choose>
+					<c:when test="${empty report.getEmployee()}">
+						<td>None</td>
+					</c:when>
+					<c:otherwise>
+						<td><c:out value="${report.getEmployee().getEmail()}" /></td>
+					</c:otherwise>
+				</c:choose>
 				<c:choose>
 					<c:when test="${empty report.getImageBefore()}">
 						<td>None</td>

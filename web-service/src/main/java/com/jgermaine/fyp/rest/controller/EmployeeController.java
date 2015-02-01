@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
+import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
 /**
  * @author jason Controller to handle Employee based requests
@@ -29,12 +30,16 @@ import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 @RequestMapping("/employee")
 public class EmployeeController {
 
+	private static final String PREFIX = "employee";
 	private static final Logger LOGGER = LogManager
 			.getLogger(EmployeeController.class.getName());
 
 	@Autowired
 	private EmployeeServiceImpl employeeService;
 
+	@Autowired
+	private ReportServiceImpl reportService;
+	
 	@RequestMapping(value = "/new", method = RequestMethod.GET)
 	public String getNewEmployee(Model model) {
 		LOGGER.debug("Returning new model view");
@@ -66,7 +71,7 @@ public class EmployeeController {
 			BindingResult result, Model model) {
 		if (result.hasErrors()) {
 			LOGGER.debug("Returning new model view with error messages");
-			return "addEmployee";
+			return PREFIX + "/addEmployee";
 		} else {
 			LOGGER.debug("Valid Employee - persistenting object");
 			employeeService.addEmployee(employee);
@@ -78,7 +83,7 @@ public class EmployeeController {
 	public String getListUsersView(Model model) {
 		LOGGER.debug("Returning view to display all employees");
 		model.addAttribute("employees", employeeService.getEmployees());
-		return "displayEmployee";
+		return PREFIX + "/displayEmployee";
 	}
 
 	@ResponseBody
@@ -94,12 +99,23 @@ public class EmployeeController {
 		}
 	}
 
+	@RequestMapping("/task")
+	public String assignTask(
+			@RequestParam(value = "email", required = true) String email,
+			@RequestParam(value = "id", required = true) String reportId) throws IOException {
+		Employee employee = employeeService.getEmployee(email);
+		employee.setReport(reportService.getReport(Integer.parseInt(reportId)));
+		employeeService.updateEmployee(employee);
+		GcmOperations.sendReportIdAsNotification(reportId);
+		return "redirect:/employee/display";
+	}
+	
 	@RequestMapping(value = "/slackers", method = RequestMethod.GET)
 	public String getUnassignedWorkers(Model model) {
 		LOGGER.debug("Returning view to display all employees with unassigned jobs");
 		model.addAttribute("employees",
 				employeeService.getUnassignedEmployees());
-		return "displayUnassignedWorkers";
+		return PREFIX + "/displayUnassignedWorkers";
 	}
 
 	@RequestMapping(value = "/assign", method = RequestMethod.GET)
@@ -108,6 +124,6 @@ public class EmployeeController {
 			throws IOException {
 		GcmOperations.sendNotifcation();
 		LOGGER.debug("Returning view to display all employees with unassigned jobs");
-		return "displayUnassignedWorkers";
+		return PREFIX + "/displayUnassignedWorkers";
 	}
 }

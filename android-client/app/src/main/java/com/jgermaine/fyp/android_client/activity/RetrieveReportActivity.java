@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,7 +52,18 @@ public class RetrieveReportActivity extends LocationActivity {
             }
         });
 
-        new RetrieveReportTask(this).execute();
+        String reportId = null;
+        try {
+            reportId = getIntent().getExtras().getString("reportId");
+        } catch (NullPointerException e) {
+            Log.d("Report ID Retriever" ,"No intent data detected");
+        }
+
+        if (reportId == null || reportId.isEmpty()) {
+            new RetrieveReportTask(this).execute();
+        } else {
+            new RetrieveReportTask(this, reportId).execute();
+        }
 
     }
 
@@ -123,6 +135,10 @@ public class RetrieveReportActivity extends LocationActivity {
     private class RetrieveReportTask extends GetReportTask {
 
         private static final String POSTFIX = "retrieve";
+
+        public RetrieveReportTask(Activity activity, String id) {
+            super(activity, POSTFIX + "?id=" + id);
+        }
 
         public RetrieveReportTask(Activity activity) {
             super(activity, POSTFIX);

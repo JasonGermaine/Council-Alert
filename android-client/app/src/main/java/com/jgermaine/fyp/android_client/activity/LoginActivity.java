@@ -14,8 +14,11 @@ import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PatternMatcher;
 import android.provider.ContactsContract;
+import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -31,6 +34,8 @@ import com.google.android.gms.common.SignInButton;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
@@ -42,6 +47,7 @@ import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -208,8 +214,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+        Matcher matcher = Patterns.EMAIL_ADDRESS.matcher(email);
+        return matcher.matches() || email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {

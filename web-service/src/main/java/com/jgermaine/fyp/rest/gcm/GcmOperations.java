@@ -45,4 +45,27 @@ public class GcmOperations {
 		LOGGER.debug("Sent message using Google Cloud Messaging");
 		// TODO: Manage response
 	}
+	
+	public static void sendReportIdAsNotification(String id) throws IOException {
+		Map<String,String> data = new HashMap<String,String>();
+	    data.put("reportId", id);
+		
+	    // Sender API Key
+	    Sender sender = new Sender("AIzaSyCFZkkdRYr-xnhmk_wbvVPAX6eu6pVc4eU");
+		Builder b = new Builder();
+		
+		// Set data
+		b.setData(data);
+		Message message = b.build();
+		
+		// Add Android device key
+		String devices ="APA91bEV76JLm4l4KETI7hgefz6lcfeqWJ_oYGUC5WG_"
+				+ "-Dvvs1t--eaBVKPTx9hMCLd3dAPeq7BafgqkFrJyNX1BVn1X-"
+				+ "7ECId4BKPP9say2-ztQXuoyXQTwxRNsGzbOndfwJ-"
+				+ "bJcyYO51XqflzAp0Bv0RMWmP5HvJe3Hav1w1daKlJTDQoIgAg";
+		
+		Result response = sender.send(message, devices, 5);
+		LOGGER.debug("Sent message using Google Cloud Messaging");
+		// TODO: Manage response
+	}
 }

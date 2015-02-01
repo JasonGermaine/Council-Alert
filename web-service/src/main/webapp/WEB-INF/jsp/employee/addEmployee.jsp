@@ -106,7 +106,7 @@
 					<button type="reset" class="btn btn-primary">Clear</button>
 				</div>
 			</div>
-			<form:hidden path="assigned" value="false" />
+			<form:hidden path="report" value="null" />
 		</form:form>
 	</div>
 </body>

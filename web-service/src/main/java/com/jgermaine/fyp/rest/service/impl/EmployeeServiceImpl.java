@@ -27,6 +27,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		EmployeeDao.create(employee);
 	}
 	
+	public void updateEmployee(Employee employee) {
+		EmployeeDao.update(employee);
+	}
+	
 	public void removeEmployee(Employee employee) {
 		EmployeeDao.delete(employee);
 	}

@@ -7,6 +7,7 @@ package com.jgermaine.fyp.android_client.gcm;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.activity.LoginActivity;
+import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -42,7 +43,7 @@ public class GcmMessageHandler extends IntentService {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
 
-        mes = extras.getString("title");
+        mes = extras.getString("reportId");
         showToast();
         showNotification(mes);
         Log.i("GCM", "Received : (" + messageType + ")  " + extras.getString("title"));
@@ -66,11 +67,12 @@ public class GcmMessageHandler extends IntentService {
                         .setContentTitle("Job Update")
                         .setContentText(task);
 
-        Intent resultIntent = new Intent(this, LoginActivity.class);
+        Intent resultIntent = new Intent(this, RetrieveReportActivity.class);
+        resultIntent.putExtra("reportId", task);
 
         // ensures that navigating backward from the Activity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(LoginActivity.class);
+        stackBuilder.addParentStack(RetrieveReportActivity.class);
 
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
