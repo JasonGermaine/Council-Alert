@@ -1,0 +1,5 @@
+#!/bin/bash
+
+date=$(date +"%Y-%m-%d-%S")
+mysqldump -u root -ppassword jgermaine > $date.backup.sql
+

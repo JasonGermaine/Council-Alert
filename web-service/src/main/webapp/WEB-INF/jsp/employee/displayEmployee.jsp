@@ -28,6 +28,7 @@
 			<th>Email</th>
 			<th>Password</th>
 			<th>Assigned</th>
+			<th>Device</th>
 		</tr>
 		<c:forEach items="${employees}" var="employee">
 			<tr>
@@ -43,6 +44,7 @@
 						<td><c:out value="${employee.getReport().getId()}" /></td>
 					</c:otherwise>
 				</c:choose>
+				<td><c:out value="${employee.getDeviceId()}"/></td>
 			</tr>
 		</c:forEach>
 	</table>

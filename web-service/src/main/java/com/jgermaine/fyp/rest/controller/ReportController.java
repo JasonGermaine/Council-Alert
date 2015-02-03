@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.jgermaine.fyp.rest.gcm.GcmOperations;
+import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
@@ -29,6 +30,14 @@ public class ReportController {
 	@Autowired
 	private ReportServiceImpl reportService;
 
+	
+	@RequestMapping("/")
+	public String getListUsersView(Model model) {
+		LOGGER.debug("Returning all reports");
+		model.addAttribute("reports", reportService.getReports());
+		return PREFIX + "/displayReport";
+	}
+	
 	@RequestMapping("/push")
 	public void sendPush() {
 		sendNotifcation();
@@ -40,6 +49,16 @@ public class ReportController {
 	public Report getReportDetail() {
 		sendNotifcation();
 		return reportService.getReport(1);
+	}
+	
+	@RequestMapping("/add")
+	public String pushNewReport(Model model) {
+		Report r = new Report();
+		r.setName("SampleReport");
+		r.setEmployee(getDefaultEmp());
+		reportService.addReport(r);
+		model.addAttribute("reports", reportService.getReports());
+		return PREFIX + "/displayReport";
 	}
 
 	// This is a GET request
@@ -68,9 +87,10 @@ public class ReportController {
 	@RequestMapping("/send")
 	@ResponseBody
 	public ResponseEntity<String> postReportDetails(@RequestBody Report report) {
-		LOGGER.info(String.format("Report id: %s, name: %s, long: %s, lat: %s",
-				report.getId(), report.getName(), report.getLongitude(),
+		LOGGER.info(String.format("Report name: %s, long: %s, lat: %s",
+				report.getName(), report.getLongitude(),
 				report.getLatitude()));
+		report.setEmployee(getDefaultEmp());
 		reportService.addReport(report);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
@@ -86,13 +106,6 @@ public class ReportController {
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
-	@RequestMapping("/display")
-	public String getListUsersView(Model model) {
-		LOGGER.debug("Returning all reports");
-		model.addAttribute("reports", reportService.getReports());
-		return PREFIX + "/displayReport";
-	}
-
 	@RequestMapping("/proximity")
 	public String getCloseReports(Model model) {
 		LOGGER.debug("Returning reports based on a proximity");
@@ -105,5 +118,12 @@ public class ReportController {
 	public String getMapView(Model model) {
 		model.addAttribute("reports", reportService.getReports());
 		return PREFIX + "/displayMap";
+	}
+	
+	public Employee getDefaultEmp() {
+		Employee emp = new Employee();
+		emp.setEmail("admin");
+		emp.setPassword("password");
+		return emp;
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -52,11 +53,11 @@ public class Report {
 	@Transient
 	private String imageAfterUrl;
 	
-	@OneToOne (mappedBy="report")
+	@OneToOne (mappedBy="report", optional=true,  fetch = FetchType.LAZY)
 	private Employee employee;
 	
 	public Report() { 
-		
+		employee = null;
 	}
 	 
 	public Report(int id) { 

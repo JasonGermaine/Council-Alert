@@ -18,6 +18,7 @@ import android.os.PatternMatcher;
 import android.provider.ContactsContract;
 import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,15 +32,19 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.model.LoginRequest;
+import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
 import org.apache.http.HttpRequest;
@@ -47,8 +52,11 @@ import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
@@ -76,14 +84,18 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
     private boolean mLoginFlag;
     private TextView mClickableText, mDisplayText, mSignInText;
     private String mURL;
+    private static GoogleCloudMessaging sGCM;
+    private Cache cache;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        cache = Cache.getCurrentCache(this);
         mLoginFlag = true;
         ((CouncilAlertApplication) getApplication()).eraseCitizen();
-        mURL = String.format("http://%s:80/web-service/employee", SetupActivity.IP_ADDR);
+        mURL = String.format("http://%s/employee", SetupActivity.IP_ADDR);
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
         mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
@@ -386,6 +398,28 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mIsLogin = login;
         }
 
+        protected String getDeviceId() {
+            String id = cache.getDeviceKey();
+            if (id != null) {
+                return id;
+            } else {
+                return getIdFromGCM();
+            }
+        }
+
+        protected String getIdFromGCM() {
+            try {
+                if (sGCM == null) {
+                    sGCM = GoogleCloudMessaging.getInstance(getApplicationContext());
+                }
+                String id = sGCM.register(CloudActivity.PROJECT_NUMBER);
+                cache.putDeviceKey(id);
+                return id;
+            } catch (IOException ex) {
+                return null;
+            }
+        }
+
         @Override
         protected Integer doInBackground(Void... params) {
             Integer statusCode = 500;
@@ -395,8 +429,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 String url;
                 ResponseEntity<String> response;
                 if (mIsLogin) {
-                    url = String.format("%s/login?email=%s&password=%s", mURL, mEmail, mPassword);
-                    response = restTemplate.getForEntity(url, null, String.class);
+                    url = String.format("%s/login", mURL);
+                    LoginRequest data = new LoginRequest();
+                    data.setEmail(mEmail);
+                    data.setPassword(mPassword);
+                    data.setDeviceId(getDeviceId());
+                    Log.i("REQUEST", "SENDING");
+                    response = restTemplate.postForEntity(url, data, String.class);
+                    Log.i("RECEIVED", Integer.toString(response.getStatusCode().value()));
                 } else {
                     url = mURL + "/post";
                     Citizen c = new Citizen();
@@ -407,6 +447,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
                 statusCode = response.getStatusCode().value();
             } catch (HttpClientErrorException e) {
                 statusCode = e.getStatusCode().value();
+            } catch(RestClientException e) {
+                Log.e("BAD REQUEST", "Something went wrong", e);
             } finally {
                 return statusCode;
             }
