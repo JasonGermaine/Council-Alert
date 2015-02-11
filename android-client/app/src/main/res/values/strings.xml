@@ -11,6 +11,7 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_report">Send Report</string>
+    <string name="title_activity_comment">Comment</string>
 
     <!-- REST Activity -->
     <string name="report_id">ID</string>
@@ -137,5 +138,6 @@
     <string name="get_navigation">Get Navigation</string>
     <string name="title_activity_location">LocationActivity</string>
     <string name="title_activity_samepl">Samepl</string>
+
 
 </resources>

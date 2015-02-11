@@ -50,4 +50,8 @@ public class ReportServiceImpl implements ReportService {
 	public List<Report> getReports(double lat, double lon) {
 		return reportDao.getNearestReport(lat, lon);
 	}
+	
+	public List<Report> getUnassignedNearReports(double lat, double lon) {
+		return reportDao.getUnassignedNearestReport(lat, lon);
+	}
 } 

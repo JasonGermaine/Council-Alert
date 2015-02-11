@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/")
 public class HomeController {
 	
 	private static final String PREFIX = "home";
@@ -16,7 +17,13 @@ public class HomeController {
 	@RequestMapping("/")
 	public String getMapView(Model model) {
 		LOGGER.debug("Returning Default Page");
-		return PREFIX + "/index";
+		return "index";
+	}
+	
+	@RequestMapping("/sample")
+	public String getSample(Model model) {
+		LOGGER.debug("Returning Default Page");
+		return PREFIX + "/sample";
 	}
 	
 }

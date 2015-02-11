@@ -84,11 +84,11 @@ public class RetrieveReportActivity extends LocationActivity {
     public void completeReport(Report report) {
         report.setStatus(true);
 
-        if (getDesc() != null)
-            report.setComment(getDesc());
+        //if (getDesc() != null)
+            //report.setComment(getDesc());
 
-        if (getImageBytes() != null)
-            report.setImageAfter(getImageBytes());
+        //if (getImageBytes() != null)
+            //report.setImageAfter(getImageBytes());
 
         new CompleteReportTask(report, this).execute();
     }
@@ -166,7 +166,7 @@ public class RetrieveReportActivity extends LocationActivity {
     }
 
     public void createReportDisplay(final Report report) {
-        final ReportMultipleDialog dialog = new ReportMultipleDialog(this);
+        /*final ReportMultipleDialog dialog = new ReportMultipleDialog(this);
         dialog.setTitle(report.getName());
         if(report.getImageBefore() != null) {
             ((ImageView) dialog.findViewById(R.id.report_image_before))
@@ -216,5 +216,6 @@ public class RetrieveReportActivity extends LocationActivity {
                 dialog.dismiss();
             }
         });
+        */
     }
 }

@@ -1,6 +1,8 @@
 package com.jgermaine.fyp.rest.controller;
 
-import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -14,10 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jgermaine.fyp.rest.gcm.GcmOperations;
-import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
+
 
 @Controller
 @RequestMapping("/report")
@@ -30,7 +31,6 @@ public class ReportController {
 	@Autowired
 	private ReportServiceImpl reportService;
 
-	
 	@RequestMapping("/")
 	public String getListUsersView(Model model) {
 		LOGGER.debug("Returning all reports");
@@ -38,24 +38,40 @@ public class ReportController {
 		return PREFIX + "/displayReport";
 	}
 	
-	@RequestMapping("/push")
-	public void sendPush() {
-		sendNotifcation();
+	@ResponseBody
+	@RequestMapping("/list")
+	public List<Report> getListUsers() {
+		LOGGER.debug("Returning all reports");
+		return reportService.getReports();
 	}
 
-	// This is a GET request
+	@ResponseBody
+	@RequestMapping("/unassigned")
+	public List<Report> getReportDetail(
+			@RequestParam(value = "lat", required = true) Double lat,
+			@RequestParam(value = "lon", required = true) Double lon) {
+		return reportService.getUnassignedNearReports(lat, lon);
+	}
+
 	@ResponseBody
 	@RequestMapping("/get")
-	public Report getReportDetail() {
-		sendNotifcation();
-		return reportService.getReport(1);
+	public Report getReportDetail(HttpServletResponse response) {
+
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods",
+				"POST, GET, OPTIONS, DELETE");
+		response.setHeader("Access-Control-Max-Age", "3600");
+		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+
+		return reportService.getReport(11);
 	}
-	
+
 	@RequestMapping("/add")
 	public String pushNewReport(Model model) {
 		Report r = new Report();
 		r.setName("SampleReport");
-		r.setEmployee(getDefaultEmp());
+		r.setLongitude(-6.3623403);
+		r.setLatitude(53.2895758);
 		reportService.addReport(r);
 		model.addAttribute("reports", reportService.getReports());
 		return PREFIX + "/displayReport";
@@ -64,33 +80,24 @@ public class ReportController {
 	// This is a GET request
 	@RequestMapping("/retrieve")
 	@ResponseBody
-	public Report retrieveReport(@RequestParam(value = "id", required = false) String id) {
+	public Report retrieveReport(
+			@RequestParam(value = "id", required = false) String id) {
 		int reportId = 1;
 		if (id != null && !id.isEmpty()) {
 			try {
 				reportId = Integer.parseInt(id);
-			} catch(NumberFormatException nfe) {
+			} catch (NumberFormatException nfe) {
 				LOGGER.error(nfe);
 			}
 		}
 		return reportService.getReport(reportId);
 	}
 
-	public void sendNotifcation() {
-		try {
-			GcmOperations.sendNotifcation();
-		} catch (IOException e) {
-			LOGGER.error("Couldnt send GCM post", e);
-		}
-	}
-
 	@RequestMapping("/send")
 	@ResponseBody
 	public ResponseEntity<String> postReportDetails(@RequestBody Report report) {
 		LOGGER.info(String.format("Report name: %s, long: %s, lat: %s",
-				report.getName(), report.getLongitude(),
-				report.getLatitude()));
-		report.setEmployee(getDefaultEmp());
+				report.getName(), report.getLongitude(), report.getLatitude()));
 		reportService.addReport(report);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
@@ -118,12 +125,5 @@ public class ReportController {
 	public String getMapView(Model model) {
 		model.addAttribute("reports", reportService.getReports());
 		return PREFIX + "/displayMap";
-	}
-	
-	public Employee getDefaultEmp() {
-		Employee emp = new Employee();
-		emp.setEmail("admin");
-		emp.setPassword("password");
-		return emp;
 	}
 }

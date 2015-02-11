@@ -9,16 +9,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
-@Table(name = "employee")
+@Table(name = "Employees")
+@JsonIgnoreProperties(value={"report"})
 public class Employee {
-	
-	private static int counter = 0;
 	
 	@Id
     @NotEmpty(message = "Please enter an email addresss.")
@@ -38,16 +40,29 @@ public class Employee {
     //@NotEmpty(message="Please enter a phone number")
     private String phoneNum;
     
+    private double longitude, latitude;
+    
     private String deviceId;
     
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="id", nullable=true)
+    @OneToOne
+    @JoinColumn(name="report_id", nullable=true)
     private Report report;
+    
+    @Transient
+    private String reportId;
     
     public Employee() {
 
     }
 
+    public String getReportId() {
+    	String id = null;
+    	if(report != null) {
+    		id = Integer.toString(report.getId());
+    	}
+    	return id;
+    }
+    
     public String getEmail() {
         return email;
     }
@@ -95,7 +110,22 @@ public class Employee {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
     
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
     
     public Report getReport() {
     	return report;
@@ -105,11 +135,14 @@ public class Employee {
     	this.report = report;
     }
     
-    @PrePersist
-    void preInsert() {
-       if (email == null) {
-    	   email += "admin" + Integer.toString(counter);
-    	   counter++;
-       }
+    //public String getReportId() {
+    //    return Integer.toString(report.getId());
+    //}
+    
+    @Override
+    public String toString() {
+    	return String.format(
+    			"Email: %s \tPassword: %s \nName: %s %s \nPhoneNumber: %s", 
+    			getEmail(), getPassword(), getFirstName(), getLastName(), getPhoneNum());
     }
 }

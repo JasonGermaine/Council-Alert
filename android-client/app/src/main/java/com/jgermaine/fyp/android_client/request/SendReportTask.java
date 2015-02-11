@@ -34,7 +34,7 @@ public class SendReportTask extends PostReportTask {
             message = "POST Success";
         }
         DialogUtil.showToast(getActivity(), message);
-        getActivity().getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        //getActivity().getFragmentManager().popBackStack(R.id.fragment_container, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         getActivity().finish();
     }
 }

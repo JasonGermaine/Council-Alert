@@ -16,6 +16,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
+
 /**
  * Created by jason on 04/12/14.
  */
@@ -60,6 +62,7 @@ public abstract class PostReportTask extends AsyncTask<Void, Void, Integer> {
         try {
             RestTemplate restTemplate = new RestTemplate(true);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            mReport.setTimestamp(new Date());
             ResponseEntity<String> response = restTemplate.postForEntity(mURL, mReport, String.class);
             statusCode = response.getStatusCode().value();
         } catch (HttpClientErrorException e) {

@@ -21,4 +21,6 @@ public interface ReportService {
 	public void updateReport(Report report);
 	
 	public List<Report> getReports(double lat, double lon);
+	
+	public List<Report> getUnassignedNearReports(double lat, double lon);
 }

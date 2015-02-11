@@ -1,60 +1,70 @@
 package com.jgermaine.fyp.rest.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.codec.binary.Base64;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @Entity
-@Table(name = "report")
-@JsonIgnoreProperties(value={"imageBeforeUrl", "imageAfterUrl", "employee"})
+@Table(name = "Reports")
+@JsonIgnoreProperties(value={"employee"})
 public class Report {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "report_id", unique = true, nullable = false)
 	private int id;
 	
 	@NotNull
 	@Size(max = 80)
 	private String name;
 	
-	private String description;
-	private String comment;
 	private double longitude, latitude;
 	private Date timestamp;
 	private boolean status;
 	
-	@Lob
-	@Column(columnDefinition = "mediumblob")
-	private byte[] imageBefore;
-
-	@Lob
-	@Column(columnDefinition = "mediumblob")
-	private byte[] imageAfter;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.ALL)
+	private List<Entry> entries;
 	
 	@Transient
-	private String imageBeforeUrl;
-	
-	@Transient
-	private String imageAfterUrl;
+	private String employeeId;
 	
 	@OneToOne (mappedBy="report", optional=true,  fetch = FetchType.LAZY)
 	private Employee employee;
+	
+	public List<Entry> getEntries() {
+		return this.entries;
+	}
+	
+	public  void setEntries(List<Entry> entries) {
+		for(Entry entry : entries) {
+			addEntry(entry);
+		}
+	}
+	
+	public void addEntry(Entry entry) {
+		if (entries == null) {
+			entries = new ArrayList<Entry>();
+		}
+		entry.setReport(this);
+		entries.add(entry);
+	}
 	
 	public Report() { 
 		employee = null;
@@ -70,6 +80,7 @@ public class Report {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public String getName() {
 		return name;
 	}
@@ -109,50 +120,6 @@ public class Report {
     	this.status = status;
     }
     
-    public byte[] getImageBefore() {
-    	return imageBefore;
-    }
-    
-    public void setImageBefore(byte[] image) {
-    	this.imageBefore = image;
-    }
-    
-    public byte[] getImageAfter() {
-    	return imageAfter;
-    }
-    
-    public void setImageAfter(byte[] image) {
-    	this.imageAfter = image;
-    }
-    
-    public String getImageBeforeUrl() {
-    	String url = new String(Base64.encodeBase64(imageBefore));
-    	imageBeforeUrl = "data:image/png;base64," + url;
-    	return imageBeforeUrl;
-    }
-    
-    public String getImageAfterUrl() {
-    	String url = new String(Base64.encodeBase64(imageAfter));
-    	imageAfterUrl = "data:image/png;base64," + url;
-    	return imageAfterUrl;
-    }
-    
-    public String getDescription() {
-    	return description;
-    }
-    
-    public void setDescription(String description) {
-    	this.description = description;
-    }
-    
-    public String getComment() {
-    	return comment;
-    }
-    
-    public void setComment(String comment) {
-    	this.comment = comment;
-    }
-    
     public Employee getEmployee() {
     	return employee;
     }
@@ -160,4 +127,13 @@ public class Report {
     public void setEmployee(Employee emp) {
     	this.employee = emp;
     }
+    
+    public String getEmployeeId() {
+    	String id = null;
+    	if (employee != null) {
+    		id = employee.getEmail();
+    	}
+    	return id;
+    }    
+    
 } 

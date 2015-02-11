@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.model.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -27,7 +28,6 @@ public class ReportDao {
 	 */
 	public void create(Report report) {
 		entityManager.persist(report);
-		return;
 	}
 
 	/**
@@ -85,7 +85,34 @@ public class ReportDao {
 				.createNativeQuery(
 						"SELECT *, ( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
 								+ "* cos( radians( longitude ) - radians(:lon) ) + sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
-								+ "AS distance FROM report HAVING distance < 10 ORDER BY distance LIMIT 0 , 20;",
+								+ "AS distance FROM Reports HAVING distance < 10 ORDER BY distance LIMIT 0 , 6;",
+						Report.class);
+		query.setParameter("lat", lat);
+		query.setParameter("lon", lon);
+		return query.getResultList();
+	}
+	
+	/**
+	 * Returns a list of unassigned reports sorted by closest proximity
+	 * @param lat
+	 * @param lon
+	 * @return list of report
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Report> getUnassignedNearestReport(double lat, double lon) {
+		Query query = entityManager
+				.createNativeQuery(
+						"SELECT *, "
+							+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
+							+ "* cos( radians( longitude ) - radians(:lon) ) "
+							+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
+							+ "AS distance "
+							+ "FROM Reports "
+							+ "WHERE report_id not in(select e.report_id from Employees e WHERE e.report_id IS NOT NULL) "
+							+ "AND status = false  "
+							+ "HAVING distance < 10 "
+							+ "ORDER BY distance "
+							+ "LIMIT 0 , 6;",
 						Report.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);

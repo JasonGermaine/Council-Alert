@@ -2,6 +2,7 @@ package com.jgermaine.fyp.android_client.activity;
 
 
 import android.app.Dialog;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -14,24 +15,34 @@ import android.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
+import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
+import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.SendReportTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import java.util.Date;
+import java.util.List;
 
 public class SendReportActivity extends LocationActivity implements
         CategoryFragment.OnCategoryInteractionListener,
-        TypeFragment.OnTypeInteractionListener {
+        TypeFragment.OnTypeInteractionListener,
+        EntryFragment.OnEntryInteractionListener {
+
+    private ViewFlipper mFlipper;
+    private boolean mIsComments, stateSaved;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +52,11 @@ public class SendReportActivity extends LocationActivity implements
         getGoogleMap();
         registerLocationListener();
         getCategoryFragment();
+        mIsComments = false;
+        stateSaved = false;
+        mFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
     }
+
 
     /**
      * Loads a Category Fragment
@@ -69,6 +84,30 @@ public class SendReportActivity extends LocationActivity implements
         ft.commit();
     }
 
+
+    public void getCommentFragment() {
+        mIsComments = true;
+        flip(mIsComments);
+
+        if (!stateSaved) {
+           setupCommentFragment();
+        }
+    }
+
+    public void flip(boolean flipToComments) {
+        if (flipToComments) {
+            mFlipper.setInAnimation(this, R.anim.in_from_right);
+            mFlipper.setOutAnimation(this, R.anim.out_to_left);
+            mFlipper.showNext();
+        } else {
+            mFlipper.setInAnimation(this, R.anim.in_from_left);
+            mFlipper.setOutAnimation(this, R.anim.out_to_right);
+            mFlipper.showPrevious();
+        }
+        mMenu.findItem(R.id.action_comments).setVisible(!flipToComments);
+        mMenu.findItem(R.id.action_done).setVisible(flipToComments);
+    }
+
     /**
      * Displays a marker on the Google map along with a title and description
      *
@@ -79,16 +118,28 @@ public class SendReportActivity extends LocationActivity implements
         setMarker(LocationUtil.getMarker(getMap(), getMarker(), getCurrentLocation(), title, desc));
     }
 
+    public void flipBackToMain() {
+        getReport().setEntries(EntryFragment.getFragmentInstance().getEntries());
+        mIsComments = false;
+        flip(mIsComments);
+    }
+
+
     @Override
     public void onBackPressed() {
-        FragmentManager fm = getFragmentManager();
-        setMarker(LocationUtil.removeMarker(getMarker()));
-        if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
-            toggleUI(true);
-        } else if (fm.getBackStackEntryCount() > 0) {
-            fm.popBackStack();
+        if (mIsComments) {
+           flipBackToMain();
         } else {
-            super.onBackPressed();
+            FragmentManager fm = getFragmentManager();
+            setMarker(LocationUtil.removeMarker(getMarker()));
+            if (findViewById(R.id.fragment_container).getVisibility() == View.GONE) {
+                toggleUI(true);
+                //fm.beginTransaction().replace(R.id.comment_container, EntryFragment.newInstance()).commit();
+            } else if (fm.getBackStackEntryCount() > 0) {
+                fm.popBackStack();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -97,9 +148,13 @@ public class SendReportActivity extends LocationActivity implements
         getTypeFragment(category);
     }
 
+    @Override
+    public void OnEntryInteraction() {
+
+    }
+
     /**
      * Animates the Google Map using a user defined callback
-     *
      */
     private void animateMap() {
         getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(getCurrentLocation()),
@@ -110,6 +165,7 @@ public class SendReportActivity extends LocationActivity implements
                     setMarker(getReport().getName(), "Tap for more detail");
                 }
             }
+
             @Override
             public void onCancel() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
@@ -125,18 +181,16 @@ public class SendReportActivity extends LocationActivity implements
      * @param backPressed
      */
     private void toggleUI(boolean backPressed) {
+        stateSaved = !backPressed;
         findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
+        mMenu.findItem(R.id.action_comments).setVisible(!backPressed);
         findViewById(R.id.options_shadow).setVisibility(backPressed ? View.GONE : View.VISIBLE);
         getMap().setMyLocationEnabled(backPressed);
 
         if (backPressed) {
-            // Reset user inputted data
-            if(getDesc() != null)
-                setDesc(null);
-            if(getImageBytes() != null)
-                setImageBytes(null);
+            setReport(null);
 
             setZoomLevel(LocationUtil.START_ZOOM_LEVEL);
             getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(getCurrentLocation()),
@@ -151,46 +205,52 @@ public class SendReportActivity extends LocationActivity implements
      * @param view
      */
     public void submitData(View view) {
+        new SendReportTask(getReport(), this).execute();
+    }
+
+    public Report createNewReport(String type) {
         Report report = new Report();
-        report.setName(getMarker().getTitle());
+        report.setName(type);
         report.setLatitude(getCurrentLocation().getLatitude());
         report.setLongitude(getCurrentLocation().getLongitude());
-        report.setTimestamp(new Date());
         report.setStatus(false);
-
-        if (getImageBytes() != null)
-            report.setImageBefore(getImageBytes());
-
-        if (getDesc() != null)
-            report.setDescription(getDesc());
-
-
-        new SendReportTask(report, this).execute();
+        return report;
     }
 
     @Override
     public void onTypeInteraction(String type) {
+        setupCommentFragment();
         setZoomLevel(LocationUtil.COMPLETE_ZOOM_LEVEL);
         toggleUI(false);
-        Report report = new Report();
-        report.setName(type);
-        setReport(report);
+        setReport(createNewReport(type));
         animateMap();
+    }
+
+    public void setupCommentFragment() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
+        ft.replace(R.id.comment_container, EntryFragment.newInstance());
+        ft.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.report, menu);
+        menu.findItem(R.id.action_comments).setVisible(false);
+        menu.findItem(R.id.action_done).setVisible(false);
+        mMenu = menu;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, RetrieveReportActivity.class);
-            startActivity(intent);
-            finish();
+        if (id == R.id.action_comments) {
+            getCommentFragment();
+            return true;
+        } else if (id == R.id.action_done) {
+            flipBackToMain();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -199,6 +259,7 @@ public class SendReportActivity extends LocationActivity implements
     /**
      * Creates a dialog displaying the Report information if available.
      * Otherwise it offers the option to add information.
+     *
      * @param report
      */
     public void createReportDisplay(Report report) {
@@ -207,7 +268,7 @@ public class SendReportActivity extends LocationActivity implements
         dialog.setTitle(report.getName());
 
         // Set the data if it's available
-        if ( getImageBytes() != null) {
+        if (getImageBytes() != null) {
             ((ImageView) dialog.findViewById(R.id.report_image))
                     .setImageBitmap(BitmapFactory.decodeByteArray(getImageBytes(), 0, getImageBytes().length));
             dialog.findViewById(R.id.add_image).setVisibility(View.GONE);

@@ -1,0 +1,101 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="2dp"
+    android:background="@drawable/bg_gradient"
+    android:paddingTop="2dp"
+    tools:context="com.jgermaine.fyp.android_client.activity.CommentActivity">
+
+    <View
+        android:id="@+id/options_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dip"
+        android:background="@drawable/stroke_shadow" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:padding="10dp"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/comment_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="matrix"
+            android:layout_centerHorizontal="true"
+           android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.02"
+        android:background="@android:color/black" />
+
+    <EditText
+        android:padding="5dp"
+        android:id="@+id/comment_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="Add Comment.."
+        android:inputType="textMultiLine" />
+    <LinearLayout
+        android:id="@+id/image_selectors"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".75"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="capturePhoto">
+
+            <ImageView
+                android:id="@+id/capture"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_camera" />
+
+            <TextView
+                style="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/capture"
+                android:layout_centerHorizontal="true"
+                android:text="Camera" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="galleryPhoto">
+
+            <ImageView
+                android:id="@+id/gallery"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_gallery" />
+
+            <TextView
+                style="@style/Base.TextAppearance.AppCompat.Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/gallery"
+                android:layout_centerHorizontal="true"
+                android:text="Gallery" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

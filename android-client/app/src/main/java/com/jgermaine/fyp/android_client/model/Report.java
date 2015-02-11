@@ -1,17 +1,21 @@
 package com.jgermaine.fyp.android_client.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by jason on 09/11/14.
  */
 public class Report {
     private int id;
-    private String name, description, comment;
+    private String name;
     private double longitude, latitude;
     private Date timestamp;
     private boolean status;
-    private byte[] imageBefore, imageAfter;
+    private String employeeId;
+    private List<Entry> entries = new ArrayList<Entry>();
 
     public int getId() {
         return id;
@@ -57,23 +61,19 @@ public class Report {
 
     public void setStatus(boolean status) { this.status = status; }
 
-    public byte[] getImageBefore() { return imageBefore; }
+    public String getEmployeeId() { return employeeId; }
 
-    public void setImageBefore(byte[] image) { this.imageBefore = image; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
-    public byte[] getImageAfter() { return imageAfter; }
-
-    public void setImageAfter(byte[] image) { this.imageAfter = image; }
-
-    public String getDescription() {
-        return description;
+    public List<Entry> getEntries() {
+        return entries;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEntries(List<Entry> entries) {
+        this.entries = entries;
     }
 
-    public String getComment() { return comment; }
-
-    public void setComment(String comment) { this.comment = comment; }
+    public void addEntry(Entry entry) {
+        entries.add(entry);
+    }
 }
