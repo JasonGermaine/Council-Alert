@@ -16,9 +16,11 @@ import com.jgermaine.fyp.android_client.R;
 
 import com.jgermaine.fyp.android_client.activity.CommentActivity;
 import com.jgermaine.fyp.android_client.activity.RestActivity;
+import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +31,7 @@ public class EntryFragment extends Fragment {
 
     private OnEntryInteractionListener mListener;
     private EntryAdapter mAdapter;
+    private Activity mActivity;
     private static EntryFragment fragment;
 
     public static final String VIEW_TAG = "isView";
@@ -62,8 +65,14 @@ public class EntryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_entry, container, false);
         final ListView entries = (ListView) view.findViewById(android.R.id.list);
         mAdapter = new EntryAdapter(getActivity(), R.layout.row_entry);
-        entries.setAdapter(mAdapter);
 
+        if (mActivity != null && mActivity instanceof RetrieveReportActivity) {
+            List<Entry> reportEntries = ((RetrieveReportActivity) mActivity).getReport().getEntries();
+            if (reportEntries != null) {
+                mAdapter.addAll(reportEntries);
+            }
+        }
+        entries.setAdapter(mAdapter);
         entries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 Entry entry = mAdapter.getItem((int) id);
@@ -115,6 +124,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity = activity;
         try {
             mListener = (OnEntryInteractionListener) activity;
         } catch (ClassCastException e) {
@@ -126,6 +136,7 @@ public class EntryFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        mActivity = null;
         mListener = null;
     }
 

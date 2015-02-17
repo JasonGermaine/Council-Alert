@@ -74,7 +74,9 @@ public class EmployeeDao {
 	@SuppressWarnings("unchecked")
 	public List<Employee> getUnassigned() {
 		try {
-			return entityManager.createQuery("from Employee where report IS NULL")
+			return entityManager.createNativeQuery("Select * From Employees "
+					+ "WHERE emp_email not in(Select r.emp_email "
+					+ "from Reports r WHERE r.emp_email IS NOT NULL)", Employee.class)
 					.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(e);

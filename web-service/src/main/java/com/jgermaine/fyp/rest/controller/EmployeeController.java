@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.LoginRequest;
+import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
@@ -85,9 +86,10 @@ public class EmployeeController {
 	public String assignReport(
 			@RequestParam(value = "email", required = true) String email,
 			@RequestParam(value = "id", required = true) String reportId) throws IOException {
+		Report report = reportService.getReport(Integer.parseInt(reportId));
 		Employee employee = employeeService.getEmployee(email);
-		employee.setReport(reportService.getReport(Integer.parseInt(reportId)));
-		employeeService.updateEmployee(employee);
+		report.setEmployee(employee);
+		reportService.updateReport(report);
 		GcmOperations.sendReportIdAsNotification(reportId, employee.getDeviceId());
 		return "sucessResponse";
 	}

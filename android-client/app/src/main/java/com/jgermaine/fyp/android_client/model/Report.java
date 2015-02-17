@@ -73,7 +73,11 @@ public class Report {
         this.entries = entries;
     }
 
-    public void addEntry(Entry entry) {
+    public void setEntry(Entry entry) {
         entries.add(entry);
+    }
+
+    public Entry getEntry(int i) {
+        return entries.get(i);
     }
 }

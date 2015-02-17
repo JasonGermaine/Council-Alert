@@ -7,78 +7,7 @@
     android:animateLayoutChanges="true"
     android:orientation="vertical"
     tools:context="com.jgermaine.fyp.android_client.activity.RetrieveReportActivity">
-    <!--
-        <LinearLayout
-            android:id="@+id/send_options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/bg_gradient"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            android:paddingTop="7.5dp"
-            android:paddingBottom="7.5dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:background="@drawable/options_border_black"
-                android:onClick="selectDesc"
-                android:orientation="horizontal">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_centerVertical="true"
-                        android:layout_height="25dp"
-                        android:layout_toLeftOf="@+id/desc_text"
-                        android:layout_marginRight="5dp"
-                        android:layout_marginLeft="5dp"
-                        android:src="@drawable/ic_add" />
-                    <TextView
-                        android:id="@+id/desc_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="DETAIL"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/abc_text_size_large_material" />
-                </RelativeLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight=".5"
-                android:onClick="selectImage"
-                android:orientation="horizontal">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/image_text"
-                        android:layout_height="25dp"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:src="@drawable/ic_add" />
-                    <TextView
-                        android:id="@+id/image_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="IMAGE"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/abc_text_size_large_material" />
-                </RelativeLayout>
-            </LinearLayout>
-        </LinearLayout>
-    -->
     <View
         android:id="@+id/options_shadow"
         android:layout_width="match_parent"
@@ -86,56 +15,79 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/stroke_shadow" />
 
-    <RelativeLayout
+    <ViewFlipper
+        android:id="@+id/view_flipper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/footer"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <RelativeLayout
+                    android:id="@+id/footer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true">
+
+                        <ImageView
+                            android:id="@+id/action_nav"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:layout_marginLeft="20dp"
+                            android:gravity="center"
+                            android:src="@drawable/ic_car" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true">
+
+                        <ImageView
+                            android:id="@+id/action_complete"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:layout_marginRight="20dp"
+                            android:gravity="center"
+                            android:src="@drawable/ic_complete" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true">
-
-                <ImageView
-                    android:id="@+id/action_nav"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_marginLeft="20dp"
-                    android:gravity="center"
-                    android:src="@drawable/ic_car" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true">
-
-                <ImageView
-                    android:id="@+id/action_complete"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_marginRight="20dp"
-                    android:gravity="center"
-                    android:src="@drawable/ic_complete" />
-            </LinearLayout>
-        </RelativeLayout>
-    </RelativeLayout>
+            <FrameLayout
+                android:id="@+id/comment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ViewFlipper>
 </LinearLayout>

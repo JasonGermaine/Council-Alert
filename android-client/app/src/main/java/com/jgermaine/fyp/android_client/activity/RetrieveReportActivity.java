@@ -2,6 +2,8 @@ package com.jgermaine.fyp.android_client.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,21 +17,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.dialog.ReportMultipleDialog;
+import com.jgermaine.fyp.android_client.fragment.EntryFragment;
+import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.CompleteReportTask;
 import com.jgermaine.fyp.android_client.request.GetReportTask;
+import com.jgermaine.fyp.android_client.request.RetrieveReportTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RetrieveReportActivity extends LocationActivity {
+public class RetrieveReportActivity extends LocationActivity implements
+        EntryFragment.OnEntryInteractionListener,
+        RetrieveReportTask.OnTaskCompleted {
+
     private Location mReportLocation;
+    private List<Entry> entries = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,11 +50,13 @@ public class RetrieveReportActivity extends LocationActivity {
         setZoomLevel(LocationUtil.RETRIEVE_ZOOM_LEVEL);
         getGoogleMap();
         registerLocationListener();
+        mIsComments = false;
+        mFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
 
         findViewById(R.id.action_nav).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                redirectToNavigation(getReport());
+                redirectToNavigation(getReport().getLatitude(), getReport().getLongitude());
             }
         });
 
@@ -67,6 +82,14 @@ public class RetrieveReportActivity extends LocationActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mIsComments) {
+            flipBackToMain();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     /**
      * Displays a marker on the Google map along with a title and description
@@ -83,24 +106,18 @@ public class RetrieveReportActivity extends LocationActivity {
 
     public void completeReport(Report report) {
         report.setStatus(true);
-
-        //if (getDesc() != null)
-            //report.setComment(getDesc());
-
-        //if (getImageBytes() != null)
-            //report.setImageAfter(getImageBytes());
-
         new CompleteReportTask(report, this).execute();
     }
 
     /**
-     * @param report
+     * @param lat
+     * @param lon
      */
-    public void redirectToNavigation(Report report) {
+    public void redirectToNavigation(double lat, double lon) {
         // Code to Google Nav
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr="
                 + getCurrentLocation().getLatitude() + "," + getCurrentLocation().getLongitude() + "&daddr="
-                + report.getLatitude() + "," + report.getLongitude()));
+                + lat + "," + lon));
         intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
         startActivity(intent);
     }
@@ -108,13 +125,19 @@ public class RetrieveReportActivity extends LocationActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.report, menu);
+        menu.findItem(R.id.action_done).setVisible(false);
+        mMenu = menu;
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_comments) {
+            getCommentFragment();
+            return true;
+        } else if (id == R.id.action_done) {
+            flipBackToMain();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -129,93 +152,23 @@ public class RetrieveReportActivity extends LocationActivity {
             //findViewById(R.id.action_nav).setVisibility(distance < 100 ? View.GONE : View.VISIBLE);
         }
     }
-    /**
-     * Asynchronous Thread used to POST data to web service
-     */
-    private class RetrieveReportTask extends GetReportTask {
 
-        private static final String POSTFIX = "retrieve";
-
-        public RetrieveReportTask(Activity activity, String id) {
-            super(activity, POSTFIX + "?id=" + id);
-        }
-
-        public RetrieveReportTask(Activity activity) {
-            super(activity, POSTFIX);
-        }
-
-        @Override
-        protected void onPostExecute(Report report) {
-            getDialog().dismiss();
-            String message;
-            if (report == null) {
-                message = "Error with REST service ";
-            } else {
-                mReportLocation = new Location("Report Location");
-                mReportLocation.setLatitude(report.getLatitude());
-                mReportLocation.setLongitude(report.getLongitude());
-                float result = mReportLocation.distanceTo(getCurrentLocation());
-                message = "Distance to result: " + result + "metres";
-                findViewById(R.id.action_complete).setVisibility(View.VISIBLE);
-                findViewById(R.id.action_nav).setVisibility(View.VISIBLE);
-                ((RetrieveReportActivity) getActivity()).setMarker(report);
-                ((RetrieveReportActivity) getActivity()).setReport(report);
-            }
-            DialogUtil.showToast(getActivity(), message);
-        }
+    @Override
+    public void onTaskCompleted(Report report) {
+        setReportLocation(report.getLatitude(), report.getLongitude());
+        findViewById(R.id.action_complete).setVisibility(View.VISIBLE);
+        findViewById(R.id.action_nav).setVisibility(View.VISIBLE);
+        setMarker(report);
+        setReport(report);
+        setupCommentFragment();
     }
 
-    public void createReportDisplay(final Report report) {
-        /*final ReportMultipleDialog dialog = new ReportMultipleDialog(this);
-        dialog.setTitle(report.getName());
-        if(report.getImageBefore() != null) {
-            ((ImageView) dialog.findViewById(R.id.report_image_before))
-                    .setImageBitmap(BitmapFactory.decodeByteArray(report.getImageBefore(), 0, report.getImageBefore().length));
-        } else {
-            dialog.findViewById(R.id.report_image_before).setVisibility(View.GONE);
-        }
-        if(report.getDescription() != null && !report.getDescription().isEmpty()) {
-            ((TextView) dialog.findViewById(R.id.report_details_before)).setText(report.getDescription());
-        }
-        if ( getBitmap() != null) {
-            ((ImageView) dialog.findViewById(R.id.report_image))
-                    .setImageBitmap(getBitmap());
-            dialog.findViewById(R.id.add_image).setVisibility(View.GONE);
-        } else {
-            dialog.findViewById(R.id.report_image).setVisibility(View.GONE);
-            dialog.findViewById(R.id.add_image).setVisibility(View.VISIBLE);
-        }
-        if (getDesc() != null && !getDesc().isEmpty()) {
-            ((TextView) dialog.findViewById(R.id.report_details)).setText(getDesc());
-            dialog.findViewById(R.id.add_details).setVisibility(View.GONE);
-        } else {
-            dialog.findViewById(R.id.add_details).setVisibility(View.VISIBLE);
-            dialog.findViewById(R.id.report_details).setVisibility(View.GONE);
-        }
-        SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a");
-        ((TextView) dialog.findViewById(R.id.report_time_before)).setText(ft.format(report.getTimestamp()));
-        ((TextView) dialog.findViewById(R.id.report_user_before)).setText("example@example.com");
-        dialog.show();
-        dialog.findViewById(R.id.action_report_close).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.findViewById(R.id.add_image).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createImageDialog();
-                dialog.dismiss();
-            }
-        });
-        dialog.findViewById(R.id.add_details).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createDescriptionDialog();
-                dialog.dismiss();
-            }
-        });
-        */
+    public void setReportLocation(double lat, double lon) {
+        mReportLocation = new Location("Report Location");
+        mReportLocation.setLatitude(lat);
+        mReportLocation.setLongitude(lon);
     }
+
+    @Override
+    public void OnEntryInteraction() { }
 }

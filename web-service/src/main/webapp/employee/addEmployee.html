@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>Add Employee</title>
+<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<script type="text/javascript"
+	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script src="../js/locationpicker.js"></script>
+<link rel="stylesheet" href="../css/navbar.css">
+<style type="text/css">
+.error {
+	color: red;
+	font-weight: bold;
+}
+
+.glyphicon.glyphicon-map-marker {
+	font-size: 22px;
+}
+</style>
+</head>
+<body ng-controller="userController">
+
+	<nav class="navbar navbar-default">
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed"
+				data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+				aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="../index.html"> <img
+				style="height: 40px; width: 40px; margin-top: -10px; margin-left: -20px; margin-right: 10px;"
+				class="img-responsive pull-left" src="../img/ic_launcher.png"> <span
+				class="pull-right">Council Alert</span>
+			</a>
+		</div>
+		<div id="navbar" class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="../index.html">Home</a></li>
+				<li class="dropdown active">
+					<a href="#" class="dropdown-toggle"	data-toggle="dropdown" role="button" aria-expanded="false">
+						Employee
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="displayEmployee.html">ALL</a></li>
+						<li><a href="displayUnassignedEmployee.html">UNASSIGNED</a></li>
+						<li class="divider"></li>
+						<li><a href="#">ADD</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle"	data-toggle="dropdown" role="button" aria-expanded="false">
+						Report
+						<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="../report/displayReport.html">ALL</a></li>
+					</ul>
+				</li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="#">Login</a></li>
+			</ul>
+		</div>
+	</div>
+	</nav>
+	<div class="container">
+		<h2 class="col-lg-offset-2 col-md-offset-2"
+			style="padding-bottom: 25px">Register New Employee</h2>
+		<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="fname">First Name:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<input class="form-control" id="fname" placeholder="First Name"
+						ng-model="fName" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label path="lastName"
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="lname">Last Name:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<input class="form-control" id="lname" placeholder="Last Name"
+						ng-model="lName" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="email">Email:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<input type="email" class="form-control" id="email"
+						placeholder="Email" ng-model="email" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="phoneNum">Phone Number:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<input class="form-control" id="phoneNum"
+						placeholder="Phone Number" ng-model="phoneNum" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="pwd">Password:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10 controls">
+					<input type="password" class="form-control" id="pwd"
+						placeholder="Password" ng-model="pwd" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+					for="pwdConf">Confirm Password:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<input type="password" class="form-control" id="pwdConf"
+						placeholder="Confirm password" ng-model="pwd2" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label
+					class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
+				<div class="col-lg-6 col-md-6 col-sm-10">
+					<div class="controls form-inline">
+						<input type="text" class="form-control" placeholder="Address"
+							id="address" style="width: 90%" />
+						<button class="btn btn-primary" type="button"
+							data-toggle="collapse" data-target="#collapseMap"
+							aria-expanded="false" aria-controls="collapseMap"
+							style="padding: 5px;">
+							<span class="glyphicon glyphicon-map-marker"
+								data-toggle="tooltip" title="Select location on map"></span>
+						</button>
+					</div>
+					<div class="controls form-inline" style="margin-top: 10px">
+						<label for="lat" class="control-label">Latitude</label> <input
+							type="text" class="form-control" id="lat" ng-model="lat" /> <label
+							for="lon" class="control-label" style="margin-left: 20px;">Longitude</label>
+						<input type="text" class="form-control" id="lon" ng-model="lon" />
+					</div>
+					<div class="collapse" id="collapseMap">
+						<div style="margin-top: 10px">
+							<div id="mapLocation"
+								style="width: 100% px; height: 400px; clear: both;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-group form-actions">
+				<div
+					class="col-lg-offset-4 col-lg-1 col-md-offset-4 col-md-1 col-sm-offset-2 col-sm-2">
+					<button ng-click="register()" class="btn btn-primary"
+						ng-disabled="error || incomplete">Register</button>
+				</div>
+				<div class="col-lg-1 col-md-1 col-sm-2">
+					<button type="reset" class="btn btn-primary">Clear</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="../js/sample.js"></script>
+	<script>
+		$(function() {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
+		$('#mapLocation').locationpicker({
+			location : {
+				latitude : 53.2884615,
+				longitude : -6.3525261
+			},
+			zoom : 11,
+			radius : 2000,
+			inputBinding : {
+				latitudeInput : $('#lat'),
+				longitudeInput : $('#lon'),
+				radiusInput : null,
+				locationNameInput : $('#address')
+			},
+			enableAutocomplete : true
+		});
+
+		$('#collapseMap').on('shown.bs.collapse', function() {
+			$('#mapLocation').locationpicker('autosize');
+		});
+	</script>
+</body>
+</html>

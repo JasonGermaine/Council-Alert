@@ -25,7 +25,8 @@ public class Employee {
 	@Id
     @NotEmpty(message = "Please enter an email addresss.")
 	@Email(message = "Please enter a valid email")
-    private String email;
+    @Column(name="emp_email")
+	private String email;
 	
     @NotEmpty(message = "Please enter a password")
     //@Pattern(regexp="[a-zA-Z0-9]", message="Password does not match criteria")
@@ -44,8 +45,7 @@ public class Employee {
     
     private String deviceId;
     
-    @OneToOne
-    @JoinColumn(name="report_id", nullable=true)
+    @OneToOne (mappedBy="employee", optional=true, cascade=CascadeType.ALL)
     private Report report;
     
     @Transient

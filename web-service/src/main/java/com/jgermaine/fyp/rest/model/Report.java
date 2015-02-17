@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -45,7 +46,8 @@ public class Report {
 	@Transient
 	private String employeeId;
 	
-	@OneToOne (mappedBy="report", optional=true,  fetch = FetchType.LAZY)
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="emp_email", nullable=true)
 	private Employee employee;
 	
 	public List<Entry> getEntries() {

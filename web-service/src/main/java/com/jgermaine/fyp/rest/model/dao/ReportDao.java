@@ -108,7 +108,7 @@ public class ReportDao {
 							+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
 							+ "AS distance "
 							+ "FROM Reports "
-							+ "WHERE report_id not in(select e.report_id from Employees e WHERE e.report_id IS NOT NULL) "
+							+ "WHERE emp_email IS NULL "
 							+ "AND status = false  "
 							+ "HAVING distance < 10 "
 							+ "ORDER BY distance "

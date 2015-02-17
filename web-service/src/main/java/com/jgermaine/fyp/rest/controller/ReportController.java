@@ -67,14 +67,15 @@ public class ReportController {
 	}
 
 	@RequestMapping("/add")
-	public String pushNewReport(Model model) {
+	@ResponseBody
+	public String pushNewReport() {
 		Report r = new Report();
 		r.setName("SampleReport");
 		r.setLongitude(-6.3623403);
 		r.setLatitude(53.2895758);
+		r.setStatus(false);
 		reportService.addReport(r);
-		model.addAttribute("reports", reportService.getReports());
-		return PREFIX + "/displayReport";
+		return "TRUE";
 	}
 
 	// This is a GET request
