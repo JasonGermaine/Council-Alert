@@ -17,9 +17,11 @@ import android.view.View;
 import android.widget.ViewFlipper;
 
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
 import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
+import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.SendReportTask;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
@@ -197,7 +199,8 @@ public class SendReportActivity extends LocationActivity implements
      * @param view
      */
     public void submitData(View view) {
-        new SendReportTask(getReport(), this).execute();
+        Citizen citizen = (Citizen)((CouncilAlertApplication)getApplication()).getUser();
+        new SendReportTask(citizen.getEmail(), getReport(), this).execute();
     }
 
     public Report createNewReport(String type) {

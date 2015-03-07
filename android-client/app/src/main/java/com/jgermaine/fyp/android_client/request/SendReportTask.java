@@ -18,10 +18,10 @@ import java.text.SimpleDateFormat;
  */
 public class SendReportTask extends PostReportTask {
 
-    private static final String POSTFIX = "send";
+    private static String POSTFIX = "create?email=";
 
-    public SendReportTask(Report report, Activity activity) {
-        super(report, activity, POSTFIX);
+    public SendReportTask(String email, Report report, Activity activity) {
+        super(report, activity, POSTFIX + email);
     }
 
     @Override

@@ -15,4 +15,6 @@ public interface CitizenService {
 	public List<Citizen> getCitizens();
 	
 	public Citizen getCitizen(String email);
+	
+	public void updateCitizen(Citizen citizen);
 }

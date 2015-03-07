@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.codec.binary.Base64;
+import org.hibernate.validator.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -42,6 +43,9 @@ public class Entry {
 	
 	@Transient
 	private String imageString;
+	
+	@Email
+	private String author;
 	
 	public String getComment() {
 		return comment;
@@ -87,5 +91,13 @@ public class Entry {
     
     public void setReport(Report report) {
     	this.report = report;
+    }
+    
+    public String getAuthor() {
+    	return this.author;
+    }
+    
+    public void setAuthor(String author) {
+    	this.author = author;
     }
 }

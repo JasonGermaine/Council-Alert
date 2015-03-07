@@ -3,29 +3,25 @@ package com.jgermaine.fyp.android_client.application;
 import android.app.Application;
 
 import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.model.User;
 
 /**
  * Created by jason on 26/11/14.
  */
 public class CouncilAlertApplication extends Application {
 
-    private Citizen mCitizen;
+    private User mUser;
 
-    public Citizen getCitizen() {
-        if (mCitizen == null) {
-            mCitizen = new Citizen();
-            mCitizen.setEmail("sample@sample.com");
-        }
-        return mCitizen;
+    public User getUser() {
+        return mUser;
     }
 
-    public void setCitizen(Citizen citizen)
-    {
-        mCitizen = citizen;
+    public void setUser(User user) {
+
+        mUser = user;
     }
 
-    public void eraseCitizen()
-    {
-        mCitizen = null;
+    public void eraseUser() {
+        mUser = null;
     }
 }

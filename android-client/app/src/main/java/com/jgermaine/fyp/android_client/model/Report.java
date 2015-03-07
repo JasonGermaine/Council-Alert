@@ -15,6 +15,7 @@ public class Report {
     private Date timestamp;
     private boolean status;
     private String employeeId;
+    private String citizenId;
     private List<Entry> entries = new ArrayList<Entry>();
 
     public int getId() {
@@ -64,6 +65,10 @@ public class Report {
     public String getEmployeeId() { return employeeId; }
 
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+
+    public String getCitizenId() { return employeeId; }
+
+    public void setCitizenId(String citizenId) { this.citizenId = citizenId; }
 
     public List<Entry> getEntries() {
         return entries;

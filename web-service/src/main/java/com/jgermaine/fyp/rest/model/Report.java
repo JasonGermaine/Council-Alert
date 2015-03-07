@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Reports")
-@JsonIgnoreProperties(value={"employee"})
+@JsonIgnoreProperties(value={"employee", "citizen"})
 public class Report {
 	
 	@Id
@@ -45,11 +46,18 @@ public class Report {
 	
 	@Transient
 	private String employeeId;
+
+	@Transient
+	private String citizenId;
 	
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name="emp_email", nullable=true)
 	private Employee employee;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "citz_email", nullable=false)
+	private Citizen citizen;
+    
 	public List<Entry> getEntries() {
 		return this.entries;
 	}
@@ -130,12 +138,28 @@ public class Report {
     	this.employee = emp;
     }
     
+    public Citizen getCitizen() {
+    	return citizen;
+    }
+    
+    public void setCitizen(Citizen citz) {
+    	this.citizen = citz;
+    }
+    
     public String getEmployeeId() {
-    	String id = null;
+    	employeeId = null;
     	if (employee != null) {
-    		id = employee.getEmail();
+    		employeeId = employee.getEmail();
     	}
-    	return id;
-    }    
+    	return employeeId;
+    }
+    
+    public String getCitizenId() {
+    	citizenId = null;
+    	if (citizen != null) {
+    		citizenId = citizen.getEmail();
+    	}
+    	return citizenId;
+    }
     
 } 

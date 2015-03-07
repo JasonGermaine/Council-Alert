@@ -3,51 +3,85 @@
 	<Properties>
 		<Property name="log-path">/home/jason/Council-Alert/logs</Property>
 	</Properties>
+	
+	<!-- Configure Appenders -->
 	<Appenders>
-		<Console name="console-log" target="SYSTEM_OUT">
-			<PatternLayout
-				pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
-		</Console>
-		<RollingFile name="debug-log" fileName="${log-path}/webservice-debug.log"
-			filePattern="${log-path}/webservice-debug-%d{yyyy-MM-dd}.log">
+		<File name="debug-log" fileName="${log-path}/debug.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
-		</RollingFile>
-		<RollingFile name="info-log" fileName="${log-path}/webservice-info.log"
-			filePattern="${log-path}/webservice-info-%d{yyyy-MM-dd}.log">
+		</File>
+		
+		<!-- Controller Logs -->
+		<File name="controller-info-log" fileName="${log-path}/info_controller.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
-		</RollingFile>
-		<RollingFile name="error-log" fileName="${log-path}/webservice-error.log"
-			filePattern="${log-path}webservice-info-error-%d{yyyy-MM-dd}.log">
+		</File>
+		<File name="controller-error-log" fileName="${log-path}/error_controller.log">
 			<PatternLayout>
-				<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
-		</RollingFile>
+		</File>
+		
+		<!-- Config Logs -->
+		<File name="config-info-log" fileName="${log-path}/info_config.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
+		<File name="config-error-log" fileName="${log-path}/error_config.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
+
+		<!-- Database Logs -->
+		<File name="dao-info-log" fileName="${log-path}/info_dao.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
+		<File name="dao-error-log" fileName="${log-path}/error_dao.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
+				
+		<!-- Google Cloud Messaging Logs -->
+		<File name="gcm-log" fileName="${log-path}/gcm.log">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				</pattern>
+			</PatternLayout>
+		</File>
 	</Appenders>
+	
+	<!-- Configure Loggers -->
 	<Loggers>
-		<Logger name="com.jgermaine.fyp.rest" level="debug" additivity="false">
-			<appender-ref ref="info-log" level="info" />
-			<appender-ref ref="error-log" level="error" />
+		<Logger name="com.jgermaine.fyp.rest.controller" level="debug" additivity="false">
+			<appender-ref ref="controller-info-log" level="info" />
+			<appender-ref ref="controller-error-log" level="warn" />
 		</Logger>
-		<Root level="info" additivity="false">
+		<Logger name="com.jgermaine.fyp.rest.config" level="debug" additivity="false">
+			<appender-ref ref="config-info-log" level="info" />
+			<appender-ref ref="config-error-log" level="warn" />
+		</Logger>
+		<Logger name="com.jgermaine.fyp.rest.model.dao" level="debug" additivity="false">
+			<appender-ref ref="dao-info-log" level="info" />
+			<appender-ref ref="dao-error-log" level="warn" />
+		</Logger>
+		<Logger name="com.jgermaine.fyp.rest.gcm" level="debug" additivity="false">
+			<appender-ref ref="gcm-log" level="debug" />
+		</Logger>
+		<Root level="debug" additivity="false">
 			<AppenderRef ref="debug-log" />
 		</Root>
 	</Loggers>

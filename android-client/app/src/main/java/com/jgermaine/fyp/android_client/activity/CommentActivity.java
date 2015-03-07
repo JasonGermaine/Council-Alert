@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
@@ -278,6 +279,7 @@ public class CommentActivity extends Activity {
             if (mComment.getText().toString() != null)
                 entry.setComment(mComment.getText().toString());
 
+            entry.setAuthor(((CouncilAlertApplication)getApplication()).getUser().getEmail());
 
             EntryFragment.getFragmentInstance().addEntry(entry);
             finish();

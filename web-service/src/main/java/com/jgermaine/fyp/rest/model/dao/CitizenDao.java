@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.Citizen;
@@ -21,6 +23,8 @@ public class CitizenDao {
   @PersistenceContext
   private EntityManager entityManager;
    
+  private static final Logger LOGGER = LogManager.getLogger(CitizenDao.class
+			.getName());
   /**
    * Create new Citizen in the database.
    */
@@ -54,10 +58,11 @@ public class CitizenDao {
   public Citizen getByEmail(String email) {
 	try {
 	    return (Citizen) entityManager.createQuery(
-	        "from Citizen where email = :email")
+	        "from Citizen where email = :email", Citizen.class)
 	        .setParameter("email", email)
 	        .getSingleResult();
 	} catch (Exception e) {
+		LOGGER.error("Failed ", e);
 		return null;
 	}
   }

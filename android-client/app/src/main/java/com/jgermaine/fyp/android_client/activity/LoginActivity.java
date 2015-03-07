@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
+import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -43,8 +44,11 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.LoginRequest;
+import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.session.Cache;
+import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
 import org.apache.http.HttpRequest;
@@ -59,27 +63,18 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private AsyncTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView, mConfirmPasswordView;
     private View mProgressView;
     private View mEmailLoginFormView;
-    private SignInButton mPlusSignInButton;
-    private View mSignOutButtons;
     private View mLoginFormView;
     private boolean mLoginFlag;
     private TextView mClickableText, mDisplayText, mSignInText;
@@ -94,25 +89,8 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         setContentView(R.layout.activity_login);
         cache = Cache.getCurrentCache(this);
         mLoginFlag = true;
-        ((CouncilAlertApplication) getApplication()).eraseCitizen();
-        mURL = String.format("http://%s/employee", SetupActivity.IP_ADDR);
-        // Find the Google+ sign in button.
-        mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
-        mPlusSignInButton.setSize(SignInButton.SIZE_WIDE);
-        if (supportsGooglePlayServices()) {
-            // Set a listener to connect the user when the G+ button is clicked.
-            mPlusSignInButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    signIn();
-                }
-            });
-        } else {
-            // Don't offer G+ sign in if the app's version is too low to support Google Play
-            // Services.
-            mPlusSignInButton.setVisibility(View.GONE);
-            return;
-        }
+        ((CouncilAlertApplication) getApplication()).eraseUser();
+        mURL = ConnectionUtil.CONN_URL;
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -142,7 +120,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mEmailLoginFormView = findViewById(R.id.email_login_form);
-        mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
     }
 
     private void populateAutoComplete() {
@@ -157,9 +134,13 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mPasswordView.setText("");
         mConfirmPasswordView.setText("");
         mEmailView.setText("");
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
     }
 
     public void shortcut(View v) {
+        ((CouncilAlertApplication)getApplication()).setUser(new Citizen("legend-messi@hotmail.com", "pass"));
         Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
         startActivity(intent);
         finish();
@@ -220,8 +201,14 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password, mLoginFlag);
-            mAuthTask.execute((Void) null);
+
+            if (mLoginFlag) {
+                mAuthTask = new UserLoginTask(email, password);
+                ((UserLoginTask) mAuthTask).execute();
+            } else {
+                mAuthTask = new UserRegisterTask(email, password);
+                ((UserRegisterTask) mAuthTask).execute();
+            }
         }
     }
 
@@ -269,62 +256,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
-    }
-
-    @Override
-    protected void onPlusClientSignIn() {
-        //Set up sign out and disconnect buttons.
-        Button signOutButton = (Button) findViewById(R.id.plus_sign_out_button);
-        signOutButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signOut();
-            }
-        });
-        Button disconnectButton = (Button) findViewById(R.id.plus_disconnect_button);
-        disconnectButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                revokeAccess();
-            }
-        });
-    }
-
-    @Override
-    protected void onPlusClientBlockingUI(boolean show) {
-        showProgress(show);
-    }
-
-    @Override
-    protected void updateConnectButtonState() {
-        //TODO: Update this logic to also handle the user logged in by email.
-        boolean connected = getPlusClient().isConnected();
-
-        mSignOutButtons.setVisibility(connected ? View.VISIBLE : View.GONE);
-        mPlusSignInButton.setVisibility(connected ? View.GONE : View.VISIBLE);
-        mEmailLoginFormView.setVisibility(connected ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    protected void onPlusClientRevokeAccess() {
-        // TODO: Access to the user's G+ account has been revoked.  Per the developer terms, delete
-        // any stored user data here.
-    }
-
-    @Override
-    protected void onPlusClientSignOut() {
-
-    }
-
-    /**
-     * Check if the device supports Google Play Services.  It's best
-     * practice to check first rather than handling this as an error case.
-     *
-     * @return whether the device supports Google Play Services
-     */
-    private boolean supportsGooglePlayServices() {
-        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) ==
-                ConnectionResult.SUCCESS;
     }
 
     @Override
@@ -381,94 +312,136 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
         mEmailView.setAdapter(adapter);
     }
 
+    protected String getDeviceId() {
+        String id = cache.getDeviceKey();
+        if (id != null) {
+            return id;
+        } else {
+            return getIdFromGCM();
+        }
+    }
+
+    protected String getIdFromGCM() {
+        try {
+            if (sGCM == null) {
+                sGCM = GoogleCloudMessaging.getInstance(getApplicationContext());
+            }
+            String id = sGCM.register(CloudActivity.PROJECT_NUMBER);
+            cache.putDeviceKey(id);
+            return id;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public void setUser(User user) {
+        ((CouncilAlertApplication) getApplication()).setUser(user);
+    }
+
+
+
     /**
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Integer> {
+    public class UserLoginTask extends AsyncTask<Void, Void, ResponseEntity<User>> {
 
-        private final String mEmail;
-        private final String mPassword;
-        private final boolean mIsLogin;
-        private String mMessage;
+        private LoginRequest mRequest = new LoginRequest();
 
-        UserLoginTask(String email, String password, boolean login) {
-            mEmail = email;
-            mPassword = password;
-            mIsLogin = login;
-        }
-
-        protected String getDeviceId() {
-            String id = cache.getDeviceKey();
-            if (id != null) {
-                return id;
-            } else {
-                return getIdFromGCM();
-            }
-        }
-
-        protected String getIdFromGCM() {
-            try {
-                if (sGCM == null) {
-                    sGCM = GoogleCloudMessaging.getInstance(getApplicationContext());
-                }
-                String id = sGCM.register(CloudActivity.PROJECT_NUMBER);
-                cache.putDeviceKey(id);
-                return id;
-            } catch (IOException ex) {
-                return null;
-            }
+        UserLoginTask(String email, String password) {
+            mRequest.setEmail(email);
+            mRequest.setPassword(password);
+            mRequest.setDeviceId(getDeviceId());
         }
 
         @Override
-        protected Integer doInBackground(Void... params) {
-            Integer statusCode = 500;
+        protected ResponseEntity<User> doInBackground(Void... params) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            String url = String.format("%s/login/", mURL);
+            Log.i("REQUEST", url);
+            ResponseEntity<User> response;
             try {
-                RestTemplate restTemplate = new RestTemplate();
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                String url;
-                ResponseEntity<String> response;
-                if (mIsLogin) {
-                    url = String.format("%s/login", mURL);
-                    LoginRequest data = new LoginRequest();
-                    data.setEmail(mEmail);
-                    data.setPassword(mPassword);
-                    data.setDeviceId(getDeviceId());
-                    Log.i("REQUEST", "SENDING");
-                    response = restTemplate.postForEntity(url, data, String.class);
-                    Log.i("RECEIVED", Integer.toString(response.getStatusCode().value()));
-                } else {
-                    url = mURL + "/post";
-                    Citizen c = new Citizen();
-                    c.setEmail(mEmail);
-                    c.setPassword(mPassword);
-                    response = restTemplate.postForEntity(url, c, String.class);
-                }
-                statusCode = response.getStatusCode().value();
+                return response = restTemplate.postForEntity(url, mRequest, User.class);
             } catch (HttpClientErrorException e) {
-                statusCode = e.getStatusCode().value();
+                int code =  e.getStatusCode().value();
+                Log.e("BAD REQUEST", "Something went wrong  " + code, e);
+                return new ResponseEntity<User>(e.getStatusCode());
             } catch(RestClientException e) {
-                Log.e("BAD REQUEST", "Something went wrong", e);
-            } finally {
-                return statusCode;
+                Log.e("BAD REQUEST", "Something went wrong - 500", e);
+                return  new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
             }
         }
 
         @Override
-        protected void onPostExecute(Integer statusCode) {
+        protected void onPostExecute(ResponseEntity<User> response) {
             mAuthTask = null;
             showProgress(false);
 
-            if (mMessage != null) {
-                DialogUtil.showToast(getApplicationContext(), mMessage);
+            if (response != null) {
+                User user = response.getBody();
+                Log.i("Response", response.toString());
+                if (user != null) {
+                    Log.i("User ", response.getBody().getEmail());
+                    setUser(response.getBody());
+                    Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+                Log.i("Response", response.getStatusCode().toString());
+            } else {
+                mPasswordView.setError(getString(R.string.error_incorrect_login));
+                mPasswordView.requestFocus();
+                mPasswordView.setText("");
             }
-            if (statusCode == HttpStatus.OK.value()) {
+        }
+
+        @Override
+        protected void onCancelled() {
+            mAuthTask = null;
+            showProgress(false);
+        }
+    }
+
+    public class UserRegisterTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
+
+        private Citizen mCitizen = new Citizen();
+
+        UserRegisterTask(String email, String password) {
+            mCitizen.setEmail(email);
+            mCitizen.setPassword(password);
+        }
+
+        @Override
+        protected ResponseEntity<String> doInBackground(Void... params) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            String url = mURL + "/citizen/create";
+            ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            try {
+                Log.i("REQUEST", url);
+                response = restTemplate.postForEntity(url, mCitizen, String.class);
+            } catch (HttpClientErrorException e) {
+                int statusCode = e.getStatusCode().value();
+                Log.e("BAD REQUEST", "Something went wrong " + statusCode, e);
+            } catch(RestClientException e) {
+                Log.e("BAD REQUEST", "Something went wrong - 500", e);
+            } finally {
+                return  response;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(ResponseEntity<String> response) {
+            mAuthTask = null;
+            showProgress(false);
+
+            if (response != null && response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
+                setUser(mCitizen);
                 Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
                 startActivity(intent);
-
                 finish();
             } else {
-                DialogUtil.showToast(getApplicationContext(), statusCode.toString());
                 mPasswordView.setError(getString(R.string.error_incorrect_login));
                 mPasswordView.requestFocus();
                 mPasswordView.setText("");

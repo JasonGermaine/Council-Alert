@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
  */
 public class CompleteReportTask extends PostReportTask {
 
-    private static final String POSTFIX = "complete";
+    private static final String POSTFIX = "close";
 
     public CompleteReportTask(Report report, Activity activity) {
         super(report, activity, POSTFIX);

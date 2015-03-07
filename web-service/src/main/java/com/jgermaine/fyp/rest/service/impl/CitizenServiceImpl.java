@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.dao.CitizenDao;
+import com.jgermaine.fyp.rest.model.dao.ReportDao;
 import com.jgermaine.fyp.rest.service.CitizenService;
 
 @Service
@@ -15,6 +16,8 @@ public class CitizenServiceImpl implements CitizenService {
 	@Autowired
 	private CitizenDao CitizenDao;
 	
+	@Autowired
+	private ReportDao reportDao;
 	
 	public Citizen getCitizen(){
 		Citizen Citizen = new Citizen();
@@ -39,4 +42,7 @@ public class CitizenServiceImpl implements CitizenService {
 		return CitizenDao.getByEmail(email);
 	}
 	
+	public void updateCitizen(Citizen citizen) {
+		CitizenDao.update(citizen);
+	}
 } 

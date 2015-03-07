@@ -11,6 +11,7 @@ public class Entry {
     private Date timestamp;
     private byte[] image;
     private String comment;
+    private String author;
 
     public String getComment() {
         return comment;
@@ -44,4 +45,11 @@ public class Entry {
         return timestamp;
     }
 
+    public String getAuthor() {
+        return this.author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 }

@@ -3,33 +3,18 @@ package com.jgermaine.fyp.android_client.model;
 /**
  * Created by jason on 01/02/15.
  */
-public class Employee {
+public class Employee extends User{
 
-    private String email;
-    private String password;
     private String firstName;
     private String lastName;
     private String phoneNum;
     private Report report;
+    private String reportId;
+
+    private double longitude, latitude;
 
     public Employee() {
 
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {
@@ -38,6 +23,14 @@ public class Employee {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
 
     public String getLastName() {
@@ -63,4 +56,22 @@ public class Employee {
     public void setReport(Report report) {
         this.report = report;
     }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
 }
+

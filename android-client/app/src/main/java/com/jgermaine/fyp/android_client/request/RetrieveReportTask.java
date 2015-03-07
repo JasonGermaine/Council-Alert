@@ -8,16 +8,18 @@ import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
+import org.springframework.http.ResponseEntity;
+
 /**
  * Asynchronous Thread used to POST data to web service
  */
 public class RetrieveReportTask extends GetReportTask {
 
     private OnTaskCompleted mListener;
-    private static final String POSTFIX = "retrieve";
+    private static final String POSTFIX = "get?id=";
 
     public RetrieveReportTask(Activity activity, String id) {
-        super(activity, POSTFIX + "?id=" + id);
+        super(activity, POSTFIX + id);
         try {
             mListener = (OnTaskCompleted) activity;
         } catch (ClassCastException e) {
@@ -37,9 +39,10 @@ public class RetrieveReportTask extends GetReportTask {
     }
 
     @Override
-    protected void onPostExecute(Report report) {
+    protected void onPostExecute(ResponseEntity<Report> response) {
         getDialog().dismiss();
         String message;
+        Report report = response.getBody();
         if (report == null) {
             message = "Error with REST service ";
         } else {

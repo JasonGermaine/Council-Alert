@@ -2,129 +2,141 @@ package com.jgermaine.fyp.rest.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.Report;
+import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
 
-@Controller
-@RequestMapping("/report")
+/**
+ * Handles all RESTful operations for issue reporting
+ * @author jason
+ */
+@RestController
+@RequestMapping("/api/report")
 public class ReportController {
 
-	private static final String PREFIX = "report";
 	private static final Logger LOGGER = LogManager
 			.getLogger(ReportController.class.getName());
 
 	@Autowired
 	private ReportServiceImpl reportService;
 
-	@RequestMapping("/")
-	public String getListUsersView(Model model) {
-		LOGGER.debug("Returning all reports");
-		model.addAttribute("reports", reportService.getReports());
-		return PREFIX + "/displayReport";
-	}
+	@Autowired
+	private CitizenServiceImpl citizenService;
 	
-	@ResponseBody
-	@RequestMapping("/list")
-	public List<Report> getListUsers() {
-		LOGGER.debug("Returning all reports");
-		return reportService.getReports();
+	/**
+	 * Returns a list of all submitted reports
+	 * @return all reports
+	 */
+	@RequestMapping(value="/", method=RequestMethod.GET)
+	public ResponseEntity<List<Report>> getAllReports() {
+		LOGGER.info("Returning all reports");
+		return new ResponseEntity<List<Report>>(reportService.getReports(), HttpStatus.OK);
 	}
 
-	@ResponseBody
-	@RequestMapping("/unassigned")
-	public List<Report> getReportDetail(
+	
+	/**
+	 * Returns a list of of reports of maximum size <i>x</i>.
+	 * Reports are ordered by the distance to the latitude and longitude provided
+	 * @param lat
+	 * @param lon
+	 * @return list of nearest reports
+	 */
+	@RequestMapping(value="/open", method = RequestMethod.GET)
+	public ResponseEntity<List<Report>> getNearestOpenReports(
 			@RequestParam(value = "lat", required = true) Double lat,
 			@RequestParam(value = "lon", required = true) Double lon) {
-		return reportService.getUnassignedNearReports(lat, lon);
+		LOGGER.info("Returning all open reports");
+		return new ResponseEntity<List<Report>>(reportService.getUnassignedNearReports(lat, lon), HttpStatus.OK);
 	}
 
-	@ResponseBody
-	@RequestMapping("/get")
-	public Report getReportDetail(HttpServletResponse response) {
-
-		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Methods",
-				"POST, GET, OPTIONS, DELETE");
-		response.setHeader("Access-Control-Max-Age", "3600");
-		response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-
-		return reportService.getReport(11);
-	}
-
-	@RequestMapping("/add")
-	@ResponseBody
-	public String pushNewReport() {
-		Report r = new Report();
-		r.setName("SampleReport");
-		r.setLongitude(-6.3623403);
-		r.setLatitude(53.2895758);
-		r.setStatus(false);
-		reportService.addReport(r);
-		return "TRUE";
-	}
-
-	// This is a GET request
-	@RequestMapping("/retrieve")
-	@ResponseBody
-	public Report retrieveReport(
-			@RequestParam(value = "id", required = false) String id) {
-		int reportId = 1;
-		if (id != null && !id.isEmpty()) {
-			try {
-				reportId = Integer.parseInt(id);
-			} catch (NumberFormatException nfe) {
-				LOGGER.error(nfe);
+	/**
+	 * Retrieves the appropriate Report for a given id.
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Report for id exists - returns Report and 200</li>
+	 * <li>2. Report for id does not exist - returns 404</li>
+	 * <li>3. Invalid id passed in - returns 400</li>
+	 * </ul>
+	 * @param report id
+	 * @return report
+	 */
+	@RequestMapping(value="/get", method = RequestMethod.GET)
+	public ResponseEntity<Report> retrieveReport(
+			@RequestParam(value = "id", required = true) String id) {
+		LOGGER.info("Recieved GET for report: " + id);
+		try {
+			int reportId = Integer.parseInt(id);
+			Report report = reportService.getReport(reportId);
+			
+			if (report != null) {
+				LOGGER.info("Successful GET for id " + id);
+				return new ResponseEntity<Report>(report, HttpStatus.OK);
+			} else {
+				LOGGER.warn(id + " does not exist.");
+				return new ResponseEntity<Report>(HttpStatus.NOT_FOUND);
 			}
+		} catch (NumberFormatException nfe) {
+			LOGGER.warn("Bad Request for id " + id);
+			return new ResponseEntity<Report>(HttpStatus.BAD_REQUEST);
+		}	
+	}
+
+	/**
+	 * Obtains a Citizen from the given email and creates the Report for that Citizen
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Citizen for email exists - returns 201</li>
+	 * <li>2. Citizen for email does not exist - returns 400</li>
+	 * <li>3. Invalid Report passed - returns 400</li>
+	 * </ul>
+	 * @return HttpResponse
+	 */
+	@RequestMapping(value="/create", method = RequestMethod.POST)
+	public ResponseEntity<String> createReport(@RequestParam(value = "email", required=true) String email,
+			@RequestBody @Valid Report report) {
+		LOGGER.info("Posting report for Citizen: " + email);
+		Citizen c = citizenService.getCitizen(email);
+		if (c != null) {
+			c.addReport(report);
+			report.setCitizen(c);
+			reportService.addReport(report);
+			
+			LOGGER.info(String.format("Successfully Added Report: %s for Citizen: %s",
+					report.getName(), email));
+			return new ResponseEntity<String>(HttpStatus.CREATED);
+		} else {
+			LOGGER.error("Citizen does not exist in DB: " + email);
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
-		return reportService.getReport(reportId);
 	}
 
-	@RequestMapping("/send")
-	@ResponseBody
-	public ResponseEntity<String> postReportDetails(@RequestBody Report report) {
-		LOGGER.info(String.format("Report name: %s, long: %s, lat: %s",
-				report.getName(), report.getLongitude(), report.getLatitude()));
-		reportService.addReport(report);
-		return new ResponseEntity<String>(HttpStatus.OK);
-	}
-
-	@RequestMapping("/complete")
-	@ResponseBody
-	public ResponseEntity<String> completeReport(@RequestBody Report report) {
-		LOGGER.info(String.format("Report id: %s, name: %s, long: %s, lat: %s",
-				report.getId(), report.getName(), report.getLongitude(),
-				report.getLatitude()));
+	/**
+	 * Closes a given report providing it is valid
+	 * @param report
+	 * @return HttpResponse
+	 */
+	@RequestMapping(value="/close", method = RequestMethod.POST)
+	public ResponseEntity<String> completeReport(@RequestBody @Valid Report report) {
+		LOGGER.info("Closed Report: " + report.getId());
 		report.setEmployee(null);
+		report.setCitizen(citizenService.getCitizen(report.getCitizenId()));
 		reportService.updateReport(report);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-
-	@RequestMapping("/proximity")
-	public String getCloseReports(Model model) {
-		LOGGER.debug("Returning reports based on a proximity");
-		model.addAttribute("reports",
-				reportService.getReports(53.2895758, -6.3623403));
-		return PREFIX + "/displayReport";
-	}
-
-	@RequestMapping("/map")
-	public String getMapView(Model model) {
-		model.addAttribute("reports", reportService.getReports());
-		return PREFIX + "/displayMap";
-	}
+	
 }

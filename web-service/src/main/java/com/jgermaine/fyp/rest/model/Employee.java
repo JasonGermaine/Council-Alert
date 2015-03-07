@@ -1,9 +1,13 @@
 package com.jgermaine.fyp.rest.model;
 
+import javax.persistence.AttributeOverride;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -18,20 +22,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "Employees")
-@JsonIgnoreProperties(value={"report"})
-public class Employee {
-	
-	@Id
-    @NotEmpty(message = "Please enter an email addresss.")
-	@Email(message = "Please enter a valid email")
-    @Column(name="emp_email")
-	private String email;
-	
-    @NotEmpty(message = "Please enter a password")
-    //@Pattern(regexp="[a-zA-Z0-9]", message="Password does not match criteria")
-    private String password;
-    
+@Table(name = "Employee")
+@DiscriminatorValue(value = "Emp")
+@JsonIgnoreProperties(value={"report", "deviceId"})
+@AttributeOverride(name="email", column=@Column(name="emp_email"))
+public class Employee extends User {
+
     @NotEmpty(message="Please enter a first name")
     private String firstName;
     
@@ -62,23 +58,7 @@ public class Employee {
     	}
     	return id;
     }
-    
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
+           
     public String getFirstName() {
         return firstName;
     }
@@ -145,4 +125,9 @@ public class Employee {
     			"Email: %s \tPassword: %s \nName: %s %s \nPhoneNumber: %s", 
     			getEmail(), getPassword(), getFirstName(), getLastName(), getPhoneNum());
     }
+
+	@Override
+	public String getType() {
+		return "employee";
+	}
 }

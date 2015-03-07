@@ -18,6 +18,7 @@ import com.jgermaine.fyp.android_client.activity.CommentActivity;
 import com.jgermaine.fyp.android_client.activity.RestActivity;
 import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
@@ -79,7 +80,7 @@ public class EntryFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), CommentActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(VIEW_TAG, true);
+                bundle.putBoolean(VIEW_TAG, !entry.getAuthor().equals(((CouncilAlertApplication)getActivity().getApplication()).getUser().getEmail()));
 
                 if (entry.getImage() != null)
                     bundle.putString(IMAGE_TAG, Base64.encodeToString(entry.getImage(), Base64.NO_WRAP));

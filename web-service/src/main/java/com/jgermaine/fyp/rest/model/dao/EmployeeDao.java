@@ -4,6 +4,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.controller.ReportController;
 import com.jgermaine.fyp.rest.model.Employee;
+import com.jgermaine.fyp.rest.model.Report;
 
 /**
  * This class is used to access data for the Employee entity.
@@ -74,10 +81,22 @@ public class EmployeeDao {
 	@SuppressWarnings("unchecked")
 	public List<Employee> getUnassigned() {
 		try {
-			return entityManager.createNativeQuery("Select * From Employees "
-					+ "WHERE emp_email not in(Select r.emp_email "
-					+ "from Reports r WHERE r.emp_email IS NOT NULL)", Employee.class)
-					.getResultList();
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+			CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
+			Root employee = query.from(Employee.class);
+			query.select(employee);
+
+			Subquery subquery = query.subquery(Report.class);
+			Root subRootEntity = subquery.from(Report.class);
+			subquery.select(subRootEntity);
+
+			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
+			subquery.where(correlatePredicate);
+			query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+
+			TypedQuery typedQuery = entityManager.createQuery(query);
+			return typedQuery.getResultList();
 		} catch (Exception e) {
 			LOGGER.error(e);
 			return null;

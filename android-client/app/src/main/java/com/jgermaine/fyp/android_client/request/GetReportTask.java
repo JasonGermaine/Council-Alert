@@ -9,13 +9,15 @@ import com.jgermaine.fyp.android_client.activity.SetupActivity;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by jason on 04/12/14.
  */
-public abstract class GetReportTask extends AsyncTask<Void, Void, Report> {
+public abstract class GetReportTask extends AsyncTask<Void, Void, ResponseEntity<Report>> {
     private String mURL;
     private Activity mActivity;
     private ProgressDialog dialog;
@@ -24,7 +26,7 @@ public abstract class GetReportTask extends AsyncTask<Void, Void, Report> {
     public GetReportTask(Activity activity, String postfix) {
         super();
         mActivity = activity;
-        mURL = String.format("http://%s/report/%s", SetupActivity.IP_ADDR, postfix);
+        mURL = String.format("%s/report/%s", SetupActivity.IP_ADDR, postfix);
     }
 
 
@@ -49,17 +51,17 @@ public abstract class GetReportTask extends AsyncTask<Void, Void, Report> {
     }
 
     @Override
-    protected Report doInBackground(Void... params) {
+    protected ResponseEntity<Report> doInBackground(Void... params) {
         try {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            return restTemplate.getForObject(mURL, Report.class);
+            return restTemplate.getForEntity(mURL, Report.class);
         } catch (Exception e) {
             Log.i("TAG", e.getLocalizedMessage());
+            return new ResponseEntity<Report>(HttpStatus.BAD_REQUEST);
         }
-        return null;
     }
 
     @Override
-    protected abstract void onPostExecute(Report report);
+    protected abstract void onPostExecute(ResponseEntity<Report> response);
 }

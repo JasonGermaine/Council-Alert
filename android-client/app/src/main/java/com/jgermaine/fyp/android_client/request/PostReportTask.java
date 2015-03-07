@@ -32,7 +32,7 @@ public abstract class PostReportTask extends AsyncTask<Void, Void, Integer> {
         super();
         mReport = report;
         mActivity = activity;
-        mURL = String.format("http://%s/report/%s", SetupActivity.IP_ADDR, postfix);
+        mURL = String.format("%s/report/%s", SetupActivity.IP_ADDR, postfix);
     }
 
 

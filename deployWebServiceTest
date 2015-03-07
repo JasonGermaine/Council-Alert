@@ -1,7 +1,0 @@
-#!/bin/bash
-rm -rf  $CATALINA_HOME/webapps/web-service*
-source $CATALINA_HOME/bin/catalina.sh stop
-cd $PROJECT_HOME/web-service
-mvn clean install
-cp target/web-service.war $CATALINA_HOME/webapps/
-source $CATALINA_HOME/bin/catalina.sh start

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "Tearing down web service on $REMOTE_HOST"
+ssh $REMOTE_HOST "$HOME/bin/teardownWebService"
+
+echo "Building Web Service"
+cd $PROJECT_HOME/web-service
+mvn clean install -Dmaven.test.skip
+
+echo "Copying war to $REMOTE_HOST"
+scp -r target/ $REMOTE_HOST:/home/jason/Council-Alert
+
+echo "Setting up web service on $REMOTE_HOST"
+ssh $REMOTE_HOST "java -jar $HOME/Council-Alert/target/*.jar"
