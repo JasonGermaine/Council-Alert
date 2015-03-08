@@ -24,7 +24,6 @@ Council Alert is comprised of a wide variety of technologies
 ```sh
 $ git clone [git-repo-url] Council-Alert
 $ cd Council-Alert
-$ cd web
 ```
 RESTful Web Service and Angular Web App
 ```sh
