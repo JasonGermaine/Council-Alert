@@ -31,6 +31,14 @@ $ cd web-service
 $ mvn clean package
 $ java -jar target/CouncilAlert.jar
 ```
+
+```sh
+$ cd android-client
+$ gradle clean build
+$ adb install /app/build/outputs/apk/app-debug.apk
+```
+
+
 ### Requirements
  - Java 8
  - Maven
