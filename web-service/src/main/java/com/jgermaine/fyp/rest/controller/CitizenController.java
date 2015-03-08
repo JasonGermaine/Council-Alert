@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Citizen;
+import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.Report;
+import com.jgermaine.fyp.rest.model.Role;
+import com.jgermaine.fyp.rest.model.dao.CouncilAlertUserDao;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
+import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
+import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
+
 
 /**
  * Handles all RESTful operations for citizens
@@ -31,7 +37,13 @@ public class CitizenController {
 			.getLogger(CitizenController.class.getName());
 
 	@Autowired
+	private CouncilAlertUserDetailsService councilAlertUserService;
+	
+	@Autowired
 	private CitizenServiceImpl citizenService;
+	
+	@Autowired
+	private UserServiceImpl userService;
 	
 	/**
 	 * Return list of all citizens
@@ -55,8 +67,11 @@ public class CitizenController {
 	 */
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public ResponseEntity<String> createCitizen(@RequestBody @Valid Citizen citizen) {
-		if (citizenService.getCitizen(citizen.getEmail()) == null) {			
+		if (userService.getUser(citizen.getEmail()) == null) {			
 			citizenService.addCitizen(citizen);
+			
+			councilAlertUserService.createNewUser(citizen);
+			
 			LOGGER.info("Creating Citizen: " + citizen.getEmail());
 			return new ResponseEntity<String>(HttpStatus.CREATED);
 		} else {

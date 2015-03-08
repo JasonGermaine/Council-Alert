@@ -1,4 +1,4 @@
-angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider) {
+angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider, $locationProvider) {
 
 	$routeProvider.when('/', {
 		templateUrl : 'home.html',
@@ -23,6 +23,8 @@ angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider) {
 		controller : 'citizen'
 	}).otherwise('/');
 
+	$locationProvider.html5Mode(true);
+	
 }).controller('navigation',
 
 function($rootScope, $scope, $http, $location, $route) {

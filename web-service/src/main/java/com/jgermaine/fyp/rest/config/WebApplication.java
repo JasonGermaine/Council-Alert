@@ -46,12 +46,18 @@ import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.jgermaine.fyp.rest.controller.LoginController;
+import com.jgermaine.fyp.rest.model.Employee;
+import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
 import java.util.Arrays;
 
@@ -73,6 +79,7 @@ public class WebApplication {
             LOGGER.info(beanName);
         }
 	}
+	
 	
 	/*
 	@Configuration
