@@ -134,6 +134,7 @@ public class ReportController {
 	public ResponseEntity<String> completeReport(@RequestBody @Valid Report report) {
 		LOGGER.info("Closed Report: " + report.getId());
 		report.setEmployee(null);
+		LOGGER.info(report.getCitizenId());
 		report.setCitizen(citizenService.getCitizen(report.getCitizenId()));
 		reportService.updateReport(report);
 		return new ResponseEntity<String>(HttpStatus.OK);

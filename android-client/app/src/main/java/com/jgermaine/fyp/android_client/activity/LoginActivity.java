@@ -320,8 +320,8 @@ public class LoginActivity extends Activity
     @Override
     public void onTokenReceived(String token, String email, int status, boolean isLogin) {
         if(status < 300) {
+            cache.putOAuthToken(token);
             if (isLogin) {
-                cache.putOAuthToken(token);
                 Log.i("CACHE", cache.getOAuthToken());
                 new UserRetrieveTask(email, getDeviceId(), this, token).execute();
             } else {

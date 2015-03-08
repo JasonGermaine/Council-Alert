@@ -42,6 +42,8 @@ $ adb install /app/build/outputs/apk/app-debug.apk
 ### Requirements
  - Java 8
  - Maven
+ - Gradle
+ - MySQL
 
 
 [Twitter Bootstrap]:http://twitter.github.com/bootstrap/

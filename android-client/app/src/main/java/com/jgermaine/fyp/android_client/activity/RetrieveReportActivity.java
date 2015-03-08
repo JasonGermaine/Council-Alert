@@ -161,6 +161,7 @@ public class RetrieveReportActivity extends LocationActivity implements
         setMarker(report);
         setReport(report);
         setupCommentFragment();
+        Log.i("Citizen", report.getCitizenId());
     }
 
     public void setReportLocation(double lat, double lon) {

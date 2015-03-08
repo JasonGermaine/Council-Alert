@@ -66,7 +66,7 @@ public class Report {
 
     public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
-    public String getCitizenId() { return employeeId; }
+    public String getCitizenId() { return citizenId; }
 
     public void setCitizenId(String citizenId) { this.citizenId = citizenId; }
 

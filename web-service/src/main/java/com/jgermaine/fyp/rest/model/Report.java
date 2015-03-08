@@ -155,11 +155,13 @@ public class Report {
     }
     
     public String getCitizenId() {
-    	citizenId = null;
     	if (citizen != null) {
     		citizenId = citizen.getEmail();
     	}
     	return citizenId;
     }
     
+    public void setCitizenId(String citizenId) {
+    	this.citizenId = citizenId;
+    }
 } 

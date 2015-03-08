@@ -133,7 +133,6 @@ function($rootScope, $scope, $http, $location, $route) {
 	var config = {
 			headers : { 
 				"Authorization" : $rootScope.token_header,
-				"Content-type" : 'application/x-www-form-urlencoded',
 				"Accept" : "application/json"
 			}
 		};
@@ -171,7 +170,6 @@ function($rootScope, $scope, $http, $location, $route) {
 	var config = {
 			headers : { 
 				"Authorization" : $rootScope.token_header,
-				"Content-type" : 'application/x-www-form-urlencoded',
 				"Accept" : "application/json"
 			}
 		};
@@ -182,7 +180,6 @@ function($rootScope, $scope, $http, $location, $route) {
 	var config = {
 			headers : { 
 				"Authorization" : $rootScope.token_header,
-				"Content-type" : 'application/x-www-form-urlencoded',
 				"Accept" : "application/json"
 			}
 		};
@@ -201,7 +198,6 @@ function($rootScope, $scope, $http, $location, $route) {
 	var config = {
 			headers : { 
 				"Authorization" : $rootScope.token_header,
-				"Content-type" : 'application/x-www-form-urlencoded',
 				"Accept" : "application/json"
 			}
 		};
@@ -275,7 +271,14 @@ function($rootScope, $scope, $http, $location, $route) {
 					longitude : $scope.lon
 				};
 
-				$http.post('api/admin/create', dataObj, $rootScope.header).success(function(data) {
+				var config = {
+						headers : { 
+							"Authorization" : $rootScope.token_header,
+							"Accept" : "application/json"
+						}
+					};
+				
+				$http.post('api/admin/create',dataObj, config).success(function(data) {
 					$location.path("/employee");
 				});
 			};
