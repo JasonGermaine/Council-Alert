@@ -14,7 +14,7 @@ groups with functionality catering for each user’s requirements.
 Council Alert is comprised of a wide variety of technologies
 
 * [Spring] - The Spring Framework is an open source application framework for the RESTful web service
-* * [Android] - Mobile Application Client
+* [Android] - Mobile Application Client
 * [AngularJS] - AngularJS is an open-source web application framework for a thick client 
 * [Twitter Bootstrap] - UI boilerplate for modern web apps
 * [jQuery] - JavaScript framework
