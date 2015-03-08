@@ -1,13 +1,13 @@
 # Council Alert
 
->This project is aimed at reinventing a system to allow users the capability of reporting obscurities to
+>*This project is aimed at reinventing a system to allow users the capability of reporting obscurities to
 the council using modern day technology rather than by telephone. This will encourage users to
 participate in notifying the council of such obscurities more frequently. This project will also aim to
 provide the council access to a web portal in which they can view a list of prioritized reports with
 corresponding statistics along with providing automatic dispersal of tasks to council workers. The
 idea for this project is to design and implement a multiple platform application with multiple tiers of
 access to control function permissions. This project will provide functionality for three main user
-groups with functionality catering for each user’s requirements.
+groups with functionality catering for each user’s requirements.*
 
 ### Technologies
 
