@@ -14,7 +14,7 @@ groups with functionality catering for each user’s requirements.
 Council Alert is comprised of a wide variety of technologies
 
 * [Spring] - The Spring Framework is an open source application framework for the RESTful web service
-* * [Android] - Mobile Application Client
+* [Android] - Mobile Application Client
 * [AngularJS] - AngularJS is an open-source web application framework for a thick client 
 * [Twitter Bootstrap] - UI boilerplate for modern web apps
 * [jQuery] - JavaScript framework
@@ -24,14 +24,21 @@ Council Alert is comprised of a wide variety of technologies
 ```sh
 $ git clone [git-repo-url] Council-Alert
 $ cd Council-Alert
-$ cd web
 ```
-RESTful Web Service and Angular Web App
+RESTful Web Service and Angular Web Client
 ```sh
 $ cd web-service
 $ mvn clean package
 $ java -jar target/CouncilAlert.jar
 ```
+Android Client
+```sh
+$ cd android-client
+$ gradle clean build
+$ adb install /app/build/outputs/apk/app-debug.apk
+```
+
+
 ### Requirements
  - Java 8
  - Maven
