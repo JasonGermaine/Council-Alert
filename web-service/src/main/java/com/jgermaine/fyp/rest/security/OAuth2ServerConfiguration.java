@@ -44,10 +44,11 @@ public class OAuth2ServerConfiguration {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-					.antMatchers("/api/report/**").access("#oauth2.hasScope('write')")					
+					.antMatchers("/api/report/**").access("#oauth2.hasScope('write')")
+					.antMatchers("/api/user/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/employee/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/admin/**").access("#oauth2.hasScope('trust')")
-					.antMatchers("/api/citizen/**").access("#oauth2.hasScope('write')");
+					.antMatchers("/api/citizen/report").access("#oauth2.hasScope('write')");
 			// @formatter:on
 		}
 
@@ -80,17 +81,19 @@ public class OAuth2ServerConfiguration {
 			clients
 				.inMemory()
 					.withClient("angular-client")
-						.authorizedGrantTypes("password", "refresh_token")
+						.authorizedGrantTypes("implicit","client_credentials","password", "refresh_token")
 						.authorities("ADMIN")
 						.scopes("read", "write", "trust")
 						.resourceIds(RESOURCE_ID)
 						.secret("council-alert-angular-secret")
+						//.redirectUris("http://localhost:8080/")
+						.autoApprove(true)
 					.and()
 					.withClient("android-client")
 						 .resourceIds(RESOURCE_ID)
 						 .authorizedGrantTypes("password", "refresh_token")
 						 .authorities("ADMIN")
-						 .scopes("read", "write", "trust")
+						 .scopes("read", "write")
 						 .secret("council-alert-android-secret")
 					.and()
 					.withClient("android-client")

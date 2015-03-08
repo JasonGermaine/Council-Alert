@@ -44,17 +44,7 @@ public class CitizenController {
 	
 	@Autowired
 	private UserServiceImpl userService;
-	
-	/**
-	 * Return list of all citizens
-	 * @return citizen list
-	 */
-	@RequestMapping(value="/", method=RequestMethod.GET)
-	public ResponseEntity<List<Citizen>> getAllCitizens() {
-		LOGGER.info("Returning all citizens");
-		return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(), HttpStatus.OK);
-	}
-	
+		
 	/**
 	 * Creates a new Citizen
 	 * There are 3 possible outputs

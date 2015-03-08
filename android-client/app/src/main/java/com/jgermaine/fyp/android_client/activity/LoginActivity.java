@@ -15,9 +15,7 @@ import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PatternMatcher;
 import android.provider.ContactsContract;
-import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -25,45 +23,31 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.SignInButton;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.model.Employee;
-import com.jgermaine.fyp.android_client.model.LoginRequest;
 import com.jgermaine.fyp.android_client.model.User;
+import com.jgermaine.fyp.android_client.request.OAuthTask;
+import com.jgermaine.fyp.android_client.request.RegisterCitizenTask;
+import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
-import com.jgermaine.fyp.android_client.util.DialogUtil;
 
-import org.apache.http.HttpRequest;
-import org.apache.http.protocol.HTTP;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity
+        implements LoaderCallbacks<Cursor>,
+        OAuthTask.OnTokenReceivedListener,
+        RegisterCitizenTask.OnCreationResponseListener,
+        UserRetrieveTask.OnRetrieveResponseListener {
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -198,16 +182,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mPasswordView.setText("");
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-
             if (mLoginFlag) {
-                mAuthTask = new UserLoginTask(email, password);
-                ((UserLoginTask) mAuthTask).execute();
+                new OAuthTask(email, password, this, true).execute();
             } else {
-                mAuthTask = new UserRegisterTask(email, password);
-                ((UserRegisterTask) mAuthTask).execute();
+                new RegisterCitizenTask(email, password, this).execute();
             }
         }
     }
@@ -219,7 +197,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 0;
     }
 
     /**
@@ -339,119 +317,55 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
 
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, ResponseEntity<User>> {
-
-        private LoginRequest mRequest = new LoginRequest();
-
-        UserLoginTask(String email, String password) {
-            mRequest.setEmail(email);
-            mRequest.setPassword(password);
-            mRequest.setDeviceId(getDeviceId());
-        }
-
-        @Override
-        protected ResponseEntity<User> doInBackground(Void... params) {
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            String url = String.format("%s/login/", mURL);
-            Log.i("REQUEST", url);
-            ResponseEntity<User> response;
-            try {
-                return response = restTemplate.postForEntity(url, mRequest, User.class);
-            } catch (HttpClientErrorException e) {
-                int code =  e.getStatusCode().value();
-                Log.e("BAD REQUEST", "Something went wrong  " + code, e);
-                return new ResponseEntity<User>(e.getStatusCode());
-            } catch(RestClientException e) {
-                Log.e("BAD REQUEST", "Something went wrong - 500", e);
-                return  new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ResponseEntity<User> response) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (response != null) {
-                User user = response.getBody();
-                Log.i("Response", response.toString());
-                if (user != null) {
-                    Log.i("User ", response.getBody().getEmail());
-                    setUser(response.getBody());
-                    Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-                Log.i("Response", response.getStatusCode().toString());
+    @Override
+    public void onTokenReceived(String token, String email, int status, boolean isLogin) {
+        if(status < 300) {
+            if (isLogin) {
+                cache.putOAuthToken(token);
+                Log.i("CACHE", cache.getOAuthToken());
+                new UserRetrieveTask(email, getDeviceId(), this, token).execute();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_login));
-                mPasswordView.requestFocus();
-                mPasswordView.setText("");
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
-
-    public class UserRegisterTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
-
-        private Citizen mCitizen = new Citizen();
-
-        UserRegisterTask(String email, String password) {
-            mCitizen.setEmail(email);
-            mCitizen.setPassword(password);
-        }
-
-        @Override
-        protected ResponseEntity<String> doInBackground(Void... params) {
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            String url = mURL + "/citizen/create";
-            ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-            try {
-                Log.i("REQUEST", url);
-                response = restTemplate.postForEntity(url, mCitizen, String.class);
-            } catch (HttpClientErrorException e) {
-                int statusCode = e.getStatusCode().value();
-                Log.e("BAD REQUEST", "Something went wrong " + statusCode, e);
-            } catch(RestClientException e) {
-                Log.e("BAD REQUEST", "Something went wrong - 500", e);
-            } finally {
-                return  response;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(ResponseEntity<String> response) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (response != null && response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.CREATED) {
-                setUser(mCitizen);
                 Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
                 startActivity(intent);
                 finish();
-            } else {
+            }
+        } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_login));
                 mPasswordView.requestFocus();
                 mPasswordView.setText("");
             }
         }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
+
+    @Override
+    public void onCreationResponseReceived(Citizen citizen, int status) {
+        if(status < 300) {
+            setUser(citizen);
+            new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
+        } else if (status == 409) {
+            mPasswordView.setError("Username is already registered");
+            mPasswordView.requestFocus();
+            mPasswordView.setText("");
+        } else {
+            mPasswordView.setError(getString(R.string.error_incorrect_login));
+            mPasswordView.requestFocus();
+            mPasswordView.setText("");
+        }
+    }
+
+    @Override
+    public void onRetrieveResponseReceived(User user, int status) {
+        if(status < 300) {
+            setUser(user);
+            Intent intent = null;
+            if (user instanceof Employee) {
+                // TODO: display Employee Screen
+                intent = new Intent(getApplicationContext(), SendReportActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), SendReportActivity.class);
+            }
+            startActivity(intent);
+            finish();
         }
     }
 }

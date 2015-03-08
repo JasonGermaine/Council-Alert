@@ -1,5 +1,4 @@
 angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider, $locationProvider) {
-
 	$routeProvider.when('/', {
 		templateUrl : 'home.html',
 		controller : 'navigation'
@@ -29,6 +28,73 @@ angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider, $l
 
 function($rootScope, $scope, $http, $location, $route) {
 
+	$rootScope.token = "";
+	$scope.credentials = {};
+	
+	$scope.login = function() {		
+		var authdata = btoa("angular-client:council-alert-angular-secret");
+		
+		var request =
+              "username=" + $scope.credentials.username
+              + "&password=" + $scope.credentials.password
+              + "&grant_type=password"
+              + "&scope=read%20write%20trust"
+              + "&client_id=angular-client"
+              + "&client_secret=council-alert-angular-secret"
+          ;
+
+		var request = {
+            "username" : $scope.credentials.username,
+            "password" : $scope.credentials.password,
+            "grant_type" : "password",
+            "scope" : "read write trust",
+            "client_id" : "angular-client",
+            "client_secret" : "council-alert-angular-secret"
+		};
+		
+		//http://localhost:8081/oauth/authorize?client_id=web&response_type=token 
+		
+		console.log(request);
+		var config = {
+			headers : { 
+				"Authorization" : 'Basic ' + authdata,
+				"Content-type" : 'application/x-www-form-urlencoded',
+				"Accept" : "application/json"
+			}
+		};
+		$http.post('oauth/token', $.param(request), config).
+		success(function(response) {
+			if (response.access_token) {
+				$rootScope.data = response;
+				$rootScope.token_header = 'Bearer ' + $rootScope.data.access_token;
+				console.log($rootScope.token_header);
+				$rootScope.authenticated = true;
+				$location.path("/");
+			}
+		}).error(function(data) {
+			$rootScope.authenticated = false;
+			$location.path("/");
+		})
+	};
+	
+	$scope.logout = function() {
+		$rootScope.authenticated = false;
+		$rootScope.token_header = '';
+	};
+	
+	  $scope.status = {
+	    isopen: false
+	  };
+
+	  $scope.toggled = function(open) {
+	    $log.log('Dropdown is now: ', open);
+	  };
+
+	  $scope.toggleDropdown = function($event) {
+	    $event.preventDefault();
+	    $event.stopPropagation();
+	    $scope.status.isopen = !$scope.status.isopen;
+	  };
 	/*
 	$scope.tab = function(route) {
 		return $route.current && route === $route.current.controller;
@@ -51,32 +117,6 @@ function($rootScope, $scope, $http, $location, $route) {
 
 	authenticate();
 
-	$scope.credentials = {};
-	$scope.login = function() {
-		$http.post('login', $.param($scope.credentials), {
-			headers : {
-				"content-type" : "application/x-www-form-urlencoded"
-			}
-		}).success(function(data) {
-			authenticate(function() {
-				if ($rootScope.authenticated) {					
-					$scope.error = false;
-					$rootScope.authenticated = true;
-					$location.path("/employee");
-				} else {					
-					$scope.error = true;
-					$rootScope.authenticated = false;
-					$location.path("/login");
-				}
-			});
-		}).error(function(data) {
-			console.log("Login failed")			
-			$scope.error = true;
-			$rootScope.authenticated = false;
-			$location.path("/login");
-		})
-	};
-
 	$scope.logout = function() {
 		$http.post('logout', {}).success(function() {
 			$rootScope.authenticated = false;
@@ -89,26 +129,36 @@ function($rootScope, $scope, $http, $location, $route) {
 	}
 	*/
 }).controller('empUnassigned', function($rootScope, $scope, $http, $location, $route) {
-		$http.get("api/employee/unassigned")
+
+	var config = {
+			headers : { 
+				"Authorization" : $rootScope.token_header,
+				"Content-type" : 'application/x-www-form-urlencoded',
+				"Accept" : "application/json"
+			}
+		};
+		
+	
+	$http.get("api/employee/unassigned", config)
 				.success(function(response) {
 					$scope.emps = response;
-		});
+	});
 
 		$scope.email = '';
 		$scope.assign = function(email, lat, lon) {
 			var url = 'api/report/open?lat='
 					+ lat + '&lon=' + lon;
-			$http.get(url).success(function(data) {
+			$http.get(url, config).success(function(data) {
 				$scope.email = email;
 				$scope.reports = data;
 			});
 		};
 
 		$scope.assignReport = function(id) {
-			var url = 'api/employee/assign?email='
+			var url = 'api/admin/assign?email='
 					+ $scope.email + '&id=' + id;
 			$http
-					.get(url)
+					.get(url, config)
 					.success(
 							function(data) {
 								//$('#myModal').modal('hide');
@@ -118,23 +168,44 @@ function($rootScope, $scope, $http, $location, $route) {
 							});
 		};
 }).controller('report', function($rootScope, $scope, $http, $location, $route) {
-	$http.get("api/report/").success(function(response) {
+	var config = {
+			headers : { 
+				"Authorization" : $rootScope.token_header,
+				"Content-type" : 'application/x-www-form-urlencoded',
+				"Accept" : "application/json"
+			}
+		};
+	$http.get("api/report/", config).success(function(response) {
 		$scope.reports = response;
 	});
 }).controller('citizen', function($rootScope, $scope, $http, $location, $route) {
-	$http.get("api/citizen/").success(function(response) {
+	var config = {
+			headers : { 
+				"Authorization" : $rootScope.token_header,
+				"Content-type" : 'application/x-www-form-urlencoded',
+				"Accept" : "application/json"
+			}
+		};
+	$http.get("api/admin/citizen", config).success(function(response) {
 		$scope.citizens = response;
 	});
 	
 	$scope.getReports = function(email) {
 		var url = 'api/citizen/report?email='+ email
-		$http.get(url).success(function(data) {
+		$http.get(url, config).success(function(data) {
 			$scope.reports = data;
 		});
 	};
 
 }).controller('emp', function($rootScope, $scope, $http, $location, $route) {
-	$http.get("api/employee/")
+	var config = {
+			headers : { 
+				"Authorization" : $rootScope.token_header,
+				"Content-type" : 'application/x-www-form-urlencoded',
+				"Accept" : "application/json"
+			}
+		};
+	$http.get("api/employee/", config)
 		.success(function(response) {
 			$scope.emps = response;
 	});
@@ -204,7 +275,7 @@ function($rootScope, $scope, $http, $location, $route) {
 					longitude : $scope.lon
 				};
 
-				$http.post('api/employee/create', dataObj).success(function(data) {
+				$http.post('api/admin/create', dataObj, $rootScope.header).success(function(data) {
 					$location.path("/employee");
 				});
 			};

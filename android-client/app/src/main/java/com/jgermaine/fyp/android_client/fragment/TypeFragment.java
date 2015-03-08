@@ -172,7 +172,7 @@ public class TypeFragment extends ListFragment {
             mListener = (OnTypeInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement CategoryInteractionListener");
+                    + " must implement TypeInteractionListener");
         }
     }
 

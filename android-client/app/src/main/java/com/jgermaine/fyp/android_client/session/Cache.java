@@ -23,6 +23,7 @@ public class Cache {
     private static final String IS_LOGIN = "IsLoggedIn";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_DEVICE = "deviceId";
+    public static final String KEY_TOKEN = "oauth-token";
 
     // Constructor
     private Cache(Context context) {
@@ -50,6 +51,11 @@ public class Cache {
         editor.commit();
     }
 
+    public void putOAuthToken(String token) {
+        editor.putString(KEY_TOKEN, token);
+        editor.commit();
+    }
+
     public String getUserEmail() {
         return pref.getString(KEY_EMAIL, null);
     }
@@ -70,6 +76,8 @@ public class Cache {
     }
 
     public String getDeviceKey() {
-        return pref.getString(KEY_EMAIL, null);
+        return pref.getString(KEY_DEVICE, null);
     }
+
+    public String getOAuthToken() { return pref.getString(KEY_TOKEN, null); }
 }

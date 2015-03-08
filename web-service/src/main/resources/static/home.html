@@ -1,2 +1,3 @@
-<h2 ng-show="authenticated">Thank's for Logging In</h2>
-<h2 ng-show="!authenticated">Please Log In</h2>
+<h1>Oauth2 Token:</h1>
+<h2 ng-show="!authenticated">Unavailable</h2>
+<h2 ng-show="authenticated">{{data.access_token}}</h2>

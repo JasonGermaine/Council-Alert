@@ -1,22 +1,20 @@
 package com.jgermaine.fyp.rest.model;
 
 
-public class LoginRequest {
+public class UserRequest {
 	private String email;
-	private String password;
 	private String deviceId;
 
-    public LoginRequest() {
+    public UserRequest() {
         
     }
     
-	public LoginRequest(String email, String password) {
+	public UserRequest(String email) {
 		this.email = email;
-		this.password = password;
 	}
 	
-	public LoginRequest(String email, String password, String deviceId) {
-		this(email, password);
+	public UserRequest(String email, String deviceId) {
+		this(email);
 		this.deviceId = deviceId;
 	}
 	
@@ -26,14 +24,6 @@ public class LoginRequest {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public String getDeviceId() {

@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.rest.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.gcm.GcmOperations;
+import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
+import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
@@ -40,7 +43,10 @@ public class AdminController {
 	
 	@Autowired
 	private UserServiceImpl userService;
-		
+
+	@Autowired
+	private CitizenServiceImpl citizenService;
+	
 	/**
 	 * Creates a new Employee
 	 * There are 3 possible outputs
@@ -96,6 +102,17 @@ public class AdminController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	/**
+	 * Return list of all citizens
+	 * @return citizen list
+	 */
+	@RequestMapping(value="/citizen", method=RequestMethod.GET)
+	public ResponseEntity<List<Citizen>> getAllCitizens() {
+		LOGGER.info("Returning all citizens");
+		return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(), HttpStatus.OK);
+	}
+
 	
 	@RequestMapping("/ping")
 	public ResponseEntity<String> getMessage() {

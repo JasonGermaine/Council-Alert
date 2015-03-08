@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Grep for CouncilAlert process and kill it
+kill -9 $(ps -ef | grep CouncilAlert | grep -v grep | awk '{print $2}')

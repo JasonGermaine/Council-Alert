@@ -55,36 +55,44 @@
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
 						<li><a href="/">Home</a></li>
-						<li><a href="/employee">Emps</a></li>
-						<li><a href="/employee/unassigned">Unassigned
-								Emps</a></li>
-						<li><a href="/employee/add">Add
-								Emp</a></li>
-						<li><a href="/report">Reports</a></li>
-						<li><a href="/citizen">Citizens</a></li>
-						<!-- 
-						<li class="dropdown"><a class="dropdown-toggle"
+
+						<li ng-show="authenticated" class="dropdown"><a class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-expanded="false">
-								Employee <span class="caret"></span>
-						</a>
+							Employee <span class="caret"></span>
+							
+							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="#/employee">ALL</a></li>
-								<li><a href="#/employee/unassigned">UNASSIGNED</a></li>
+								<li><a href="/employee">ALL</a></li>
+								<li><a href="/employee/unassigned">UNASSIGNED</a></li>
 								<li class="divider"></li>
-								<li><a href="#/employee/add">ADD</a></li>
-							</ul></li>
-						<li class="dropdown"><a class="dropdown-toggle"
+								<li><a href="/employee/add">ADD</a></li>
+							</ul>
+						</li>
+						
+						<li ng-show="authenticated" class="dropdown"><a class="dropdown-toggle"
 							data-toggle="dropdown" role="button" aria-expanded="false">
-								Report <span class="caret"></span>
-						</a>
+							Report <span class="caret"></span>
+							
+							</a>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="#/report">ALL</a></li>
-							</ul></li>
-						 -->
+								<li><a href="/report">ALL</a></li>
+							</ul>
+						</li>
+						
+						<li ng-show="authenticated" class="dropdown"><a class="dropdown-toggle"
+							data-toggle="dropdown" role="button" aria-expanded="false">
+							Citizen <span class="caret"></span>
+							
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="/citizen">ALL</a></li>
+							</ul>
+						</li>
 					</ul>
+					
 					<ul class="nav navbar-nav navbar-right">
-						<li ng-show="!authenticated"><a href="#/login">Login</a></li>
-						<li ng-show="authenticated"><a href="#/" ng-click="logout()">logout</a></li>
+						<li ng-show="!authenticated"><a href="/login">Login</a></li>
+						<li ng-show="authenticated" ng-click="logout()"><a href="/">logout</a></li>
 					</ul>
 				</div>
 			</div>

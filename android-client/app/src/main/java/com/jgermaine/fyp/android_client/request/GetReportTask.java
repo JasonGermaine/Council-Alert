@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.jgermaine.fyp.android_client.activity.SetupActivity;
 import com.jgermaine.fyp.android_client.model.Report;
+import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public abstract class GetReportTask extends AsyncTask<Void, Void, ResponseEntity
     public GetReportTask(Activity activity, String postfix) {
         super();
         mActivity = activity;
-        mURL = String.format("%s/report/%s", SetupActivity.IP_ADDR, postfix);
+        mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, postfix);
     }
 
 

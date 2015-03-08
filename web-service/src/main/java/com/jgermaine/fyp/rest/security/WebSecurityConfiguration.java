@@ -13,7 +13,6 @@ import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-@EnableWebMvcSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
