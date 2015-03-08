@@ -25,13 +25,13 @@ Council Alert is comprised of a wide variety of technologies
 $ git clone [git-repo-url] Council-Alert
 $ cd Council-Alert
 ```
-RESTful Web Service and Angular Web App
+RESTful Web Service and Angular Web Client
 ```sh
 $ cd web-service
 $ mvn clean package
 $ java -jar target/CouncilAlert.jar
 ```
-
+Android Client
 ```sh
 $ cd android-client
 $ gradle clean build
