@@ -11,6 +11,15 @@ public class Employee extends User{
     private Report report;
     private String reportId;
 
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    private String deviceId;
     private double longitude, latitude;
 
     public Employee() {

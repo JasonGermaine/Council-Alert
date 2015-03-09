@@ -140,4 +140,18 @@ public class ReportController {
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	
+
+	@RequestMapping(value="/employee", method = RequestMethod.GET)
+	public ResponseEntity<Report> retrieveReportForEmp(
+			@RequestParam(value = "email", required = true) String email) {
+
+		Report report = reportService.getReportForEmp(email);
+		
+		if (report != null) {
+			return new ResponseEntity<Report>(report, HttpStatus.OK);
+		} else {				
+			return new ResponseEntity<Report>(HttpStatus.NOT_FOUND);
+		}
+	}
+	
 }

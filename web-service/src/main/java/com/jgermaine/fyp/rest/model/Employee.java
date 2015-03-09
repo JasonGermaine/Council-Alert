@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
 @Table(name = "Employee")
 @DiscriminatorValue(value = "Emp")
-@JsonIgnoreProperties(value={"report", "deviceId"})
+@JsonIgnoreProperties(value={"report"})
 @AttributeOverride(name="email", column=@Column(name="emp_email"))
 public class Employee extends User {
 

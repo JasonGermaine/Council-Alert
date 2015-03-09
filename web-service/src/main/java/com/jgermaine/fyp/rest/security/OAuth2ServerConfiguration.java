@@ -81,7 +81,7 @@ public class OAuth2ServerConfiguration {
 			clients
 				.inMemory()
 					.withClient("angular-client")
-						.authorizedGrantTypes("implicit","client_credentials","password", "refresh_token")
+						.authorizedGrantTypes("password", "refresh_token")
 						.authorities("ADMIN")
 						.scopes("read", "write", "trust")
 						.resourceIds(RESOURCE_ID)

@@ -36,13 +36,14 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
     private OnRetrieveResponseListener mListener;
     private ProgressDialog mDialog;
     private final String mToken;
+    private boolean mShowProgress;
 
-
-    public UserRetrieveTask(String email, String deviceId, Activity activity, String token) {
+    public UserRetrieveTask(String email, String deviceId, String token, Activity activity, boolean showProgress) {
         mRequest.setEmail(email);
         mRequest.setDeviceId(deviceId);
         mActivity = activity;
         mToken = token;
+        mShowProgress = showProgress;
 
         try {
             mListener = (OnRetrieveResponseListener) activity;
@@ -55,9 +56,11 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mDialog = DialogUtil.getSpinningDialog(mActivity);
-        mDialog.setMessage("Retrieving Data...");
-        mDialog.show();
+        if (mShowProgress) {
+            mDialog = DialogUtil.getSpinningDialog(mActivity);
+            mDialog.setMessage("Retrieving Data...");
+            mDialog.show();
+        }
     }
 
     @Override
@@ -86,7 +89,9 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
 
     @Override
     protected void onPostExecute(ResponseEntity<User> response) {
-        mDialog.dismiss();
+
+        if (mShowProgress) mDialog.dismiss();
+
         User user = null;
         int status;
 

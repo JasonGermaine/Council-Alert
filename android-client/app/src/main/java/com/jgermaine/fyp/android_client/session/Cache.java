@@ -20,7 +20,6 @@ public class Cache {
     private static final String PREF_NAME = "CouncilAlertCache";
 
     // All Shared Preferences Keys
-    private static final String IS_LOGIN = "IsLoggedIn";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_DEVICE = "deviceId";
     public static final String KEY_TOKEN = "oauth-token";
@@ -40,8 +39,7 @@ public class Cache {
         return cache;
     }
 
-    public void createLoginSession(String email) {
-        editor.putBoolean(IS_LOGIN, true);
+    public void putUserEmail(String email) {
         editor.putString(KEY_EMAIL, email);
         editor.commit();
     }
@@ -56,23 +54,13 @@ public class Cache {
         editor.commit();
     }
 
-    public String getUserEmail() {
-        return pref.getString(KEY_EMAIL, null);
-    }
-
-    public void logoutUser() {
-        editor.remove(KEY_EMAIL);
-        editor.remove(IS_LOGIN);
-        editor.commit();
-    }
-
     public void clearCache() {
         editor.clear();
         editor.commit();
     }
 
-    public boolean isLoggedIn() {
-        return pref.getBoolean(IS_LOGIN, false);
+    public String getUserEmail() {
+        return pref.getString(KEY_EMAIL, null);
     }
 
     public String getDeviceKey() {

@@ -9,24 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 
 import com.jgermaine.fyp.android_client.R;
 
 import com.jgermaine.fyp.android_client.activity.CommentActivity;
-import com.jgermaine.fyp.android_client.activity.RestActivity;
 import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Entry;
-import com.jgermaine.fyp.android_client.model.Report;
-import com.jgermaine.fyp.android_client.util.DialogUtil;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class EntryFragment extends Fragment {
 

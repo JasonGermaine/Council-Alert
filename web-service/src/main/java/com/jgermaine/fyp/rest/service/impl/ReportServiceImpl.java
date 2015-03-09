@@ -54,4 +54,9 @@ public class ReportServiceImpl implements ReportService {
 	public List<Report> getUnassignedNearReports(double lat, double lon) {
 		return reportDao.getUnassignedNearestReport(lat, lon);
 	}
+
+	@Override
+	public Report getReportForEmp(String email) {
+		return reportDao.getByEmployee(email);
+	}
 } 

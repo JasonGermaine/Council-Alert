@@ -21,9 +21,12 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -55,6 +58,7 @@ public class LoginActivity extends Activity
     private AsyncTask mAuthTask = null;
 
     // UI references.
+    public final static String PROJECT_NUMBER = "712287737172";
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView, mConfirmPasswordView;
     private View mProgressView;
@@ -91,6 +95,13 @@ public class LoginActivity extends Activity
             }
         });
 
+        findViewById(R.id.activity_logo).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shortcut();
+            }
+        });
+
         mSignInText = (TextView) findViewById(R.id.text_sign_in);
         mDisplayText = (TextView) findViewById(R.id.toggle_login_text);
         mClickableText = (TextView) findViewById(R.id.toggle_login_clickable);
@@ -123,7 +134,7 @@ public class LoginActivity extends Activity
 
     }
 
-    public void shortcut(View v) {
+    public void shortcut() {
         ((CouncilAlertApplication)getApplication()).setUser(new Citizen("legend-messi@hotmail.com", "pass"));
         Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
         startActivity(intent);
@@ -304,7 +315,7 @@ public class LoginActivity extends Activity
             if (sGCM == null) {
                 sGCM = GoogleCloudMessaging.getInstance(getApplicationContext());
             }
-            String id = sGCM.register(CloudActivity.PROJECT_NUMBER);
+            String id = sGCM.register(PROJECT_NUMBER);
             cache.putDeviceKey(id);
             return id;
         } catch (IOException ex) {
@@ -313,6 +324,7 @@ public class LoginActivity extends Activity
     }
 
     public void setUser(User user) {
+        cache.putUserEmail(user.getEmail());
         ((CouncilAlertApplication) getApplication()).setUser(user);
     }
 
@@ -323,11 +335,10 @@ public class LoginActivity extends Activity
             cache.putOAuthToken(token);
             if (isLogin) {
                 Log.i("CACHE", cache.getOAuthToken());
-                new UserRetrieveTask(email, getDeviceId(), this, token).execute();
+                new UserRetrieveTask(email, getDeviceId(), token, this, true).execute();
             } else {
-                Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
-                finish();
             }
         } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_login));
@@ -357,14 +368,7 @@ public class LoginActivity extends Activity
     public void onRetrieveResponseReceived(User user, int status) {
         if(status < 300) {
             setUser(user);
-            Intent intent = null;
-            if (user instanceof Employee) {
-                // TODO: display Employee Screen
-                intent = new Intent(getApplicationContext(), SendReportActivity.class);
-            } else {
-                intent = new Intent(getApplicationContext(), SendReportActivity.class);
-            }
-            startActivity(intent);
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         }
     }

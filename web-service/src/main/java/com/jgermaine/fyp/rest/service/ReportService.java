@@ -16,6 +16,8 @@ public interface ReportService {
 	
 	public Report getReport(String name);
 	
+	public Report getReportForEmp(String email);
+	
 	public Report getReport(int id);
 	
 	public void updateReport(Report report);

@@ -10,7 +10,7 @@
     <string name="title_activity_setup">SetupActivity</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_maps">Map</string>
-    <string name="title_activity_report">Send Report</string>
+    <string name="title_activity_report">Report</string>
     <string name="title_activity_comment">Comment</string>
 
     <!-- REST Activity -->
@@ -138,6 +138,11 @@
     <string name="get_navigation">Get Navigation</string>
     <string name="title_activity_location">LocationActivity</string>
     <string name="title_activity_samepl">Samepl</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_home">Home</string>
 
 
 </resources>

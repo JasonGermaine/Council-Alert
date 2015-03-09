@@ -10,6 +10,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
+import ch.qos.logback.classic.Logger;
+
 import com.jgermaine.fyp.rest.model.Report;
 
 /**
@@ -56,6 +58,20 @@ public class ReportDao {
 		return (Report) entityManager
 				.createQuery("from Report where name = :name")
 				.setParameter("name", name).getSingleResult();
+	}
+	
+	/**
+	 * Return the report having the passed name.
+	 */
+	public Report getByEmployee(String email) {
+		try {
+			return (Report) entityManager
+					.createNativeQuery("Select * from Reports where emp_email = :email", Report.class)
+					.setParameter("email", email)
+					.getSingleResult();
+		} catch(Exception e) {
+			return null;
+		}
 	}
 
 	/**
