@@ -74,7 +74,7 @@ function($rootScope, $scope, $http, $location, $route) {
 			}
 		}).error(function(data) {
 			$rootScope.authenticated = false;
-			$rootScope.authenticated = true;
+			$rootScope.error = true;
 			$location.credentials.password='';
 		})
 	};
