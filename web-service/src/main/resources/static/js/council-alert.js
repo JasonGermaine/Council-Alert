@@ -65,6 +65,7 @@ function($rootScope, $scope, $http, $location, $route) {
 		$http.post('oauth/token', $.param(request), config).
 		success(function(response) {
 			if (response.access_token) {
+				$rootScope.authenticated = false;
 				$rootScope.data = response;
 				$rootScope.token_header = 'Bearer ' + $rootScope.data.access_token;
 				console.log($rootScope.token_header);
@@ -73,7 +74,8 @@ function($rootScope, $scope, $http, $location, $route) {
 			}
 		}).error(function(data) {
 			$rootScope.authenticated = false;
-			$location.path("/");
+			$rootScope.authenticated = true;
+			$location.credentials.password='';
 		})
 	};
 	

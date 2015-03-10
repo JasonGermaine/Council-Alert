@@ -339,6 +339,7 @@ public class LoginActivity extends Activity
             } else {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
+                finish();
             }
         } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_login));
