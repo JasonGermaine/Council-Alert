@@ -370,6 +370,7 @@ public class LoginActivity extends Activity
         if(status < 300) {
             setUser(user);
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             finish();
         }
     }

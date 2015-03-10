@@ -43,3 +43,27 @@
 		</tr>
 	</table>
 </div>
+
+<div class="modal fade" my-modal id="myModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<table class="table">
+					<tr>
+						<th>Report ID</th>
+						<th>Name</th>
+						<th>Assign</th>
+					</tr>
+					<tr ng-repeat="report in reports">
+						<td>{{report.id}}</td>
+						<td>{{report.name}}</td>
+						<td>
+							<button ng-click="assignReport(report.id)"
+								class="btn btn-primary">Assign</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>		

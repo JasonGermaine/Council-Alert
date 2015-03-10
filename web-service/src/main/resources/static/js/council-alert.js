@@ -1,4 +1,28 @@
-angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider, $locationProvider) {
+angular.module('councilalert', [ 'ngRoute' ])
+.factory('LocalStorage', function() {
+	var tokenKey = 'oauth2_token';
+	var emailKey = 'user_email';
+	
+	return {		
+		storeToken : function(token) {
+			return localStorage.setItem(tokenKey, token);
+		},
+		retrieveToken : function() {
+			return localStorage.getItem(tokenKey);
+		},
+		storeEmail : function(email) {
+			return localStorage.setItem(emailKey, email);
+		},
+		retrieveEmail : function() {
+			return localStorage.getItem(emailKey);
+		},
+		clear : function() {
+			localStorage.removeItem(tokenKey);
+			localStorage.removeItem(emailKey);
+			return;
+		}
+	};
+}).config( function($routeProvider, $locationProvider, $httpProvider) {
 	$routeProvider.when('/', {
 		templateUrl : 'home.html',
 		controller : 'navigation'
@@ -24,25 +48,37 @@ angular.module('councilalert', [ 'ngRoute' ]).config(function($routeProvider, $l
 
 	$locationProvider.html5Mode(true);
 	
-}).controller('navigation',
+}).controller('navigation', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 
-function($rootScope, $scope, $http, $location, $route) {
-
-	$rootScope.token = "";
 	$scope.credentials = {};
+
+	
+	$scope.init = function() {
+		var email = LocalStorage.retrieveEmail();
+		var token = LocalStorage.retrieveToken(); 
+		if(email != null && email != '' && token != null && token != '') {
+			var config = {
+					headers : { 
+						"Authorization" : token,
+					}
+			}
+			$http.get("api/admin/ping", config)
+			.success(function(response) {
+				$rootScope.authenticated = true;
+			}).error(function() {
+				$rootScope.authenticated = false;
+				LocalStorage.clear();
+			});
+			
+		} else {
+			$rootScope.authenticated = false;
+			LocalStorage.clear();
+		}
+	}
 	
 	$scope.login = function() {		
 		var authdata = btoa("angular-client:council-alert-angular-secret");
 		
-		var request =
-              "username=" + $scope.credentials.username
-              + "&password=" + $scope.credentials.password
-              + "&grant_type=password"
-              + "&scope=read%20write%20trust"
-              + "&client_id=angular-client"
-              + "&client_secret=council-alert-angular-secret"
-          ;
-
 		var request = {
             "username" : $scope.credentials.username,
             "password" : $scope.credentials.password,
@@ -52,9 +88,6 @@ function($rootScope, $scope, $http, $location, $route) {
             "client_secret" : "council-alert-angular-secret"
 		};
 		
-		//http://localhost:8081/oauth/authorize?client_id=web&response_type=token 
-		
-		console.log(request);
 		var config = {
 			headers : { 
 				"Authorization" : 'Basic ' + authdata,
@@ -62,88 +95,50 @@ function($rootScope, $scope, $http, $location, $route) {
 				"Accept" : "application/json"
 			}
 		};
+		
 		$http.post('oauth/token', $.param(request), config).
 		success(function(response) {
-			if (response.access_token) {
-				$rootScope.authenticated = false;
-				$rootScope.data = response;
-				$rootScope.token_header = 'Bearer ' + $rootScope.data.access_token;
-				console.log($rootScope.token_header);
+			$scope.oauth_resp = response;
+			if ($scope.oauth_resp.access_token) {
+				LocalStorage.storeToken('Bearer ' + $scope.oauth_resp.access_token);
+				LocalStorage.storeEmail($scope.credentials.username);
+				
 				$rootScope.authenticated = true;
 				$location.path("/");
 			}
 		}).error(function(data) {
 			$rootScope.authenticated = false;
 			$rootScope.error = true;
-			$location.credentials.password='';
+			LocalStorage.clear();
 		})
 	};
 	
 	$scope.logout = function() {
 		$rootScope.authenticated = false;
-		$rootScope.token_header = '';
+		LocalStorage.clear();
 	};
 	
-	  $scope.status = {
-	    isopen: false
-	  };
+}).controller('empUnassigned', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 
-	  $scope.toggled = function(open) {
-	    $log.log('Dropdown is now: ', open);
-	  };
-
-	  $scope.toggleDropdown = function($event) {
-	    $event.preventDefault();
-	    $event.stopPropagation();
-	    $scope.status.isopen = !$scope.status.isopen;
-	  };
-	/*
-	$scope.tab = function(route) {
-		return $route.current && route === $route.current.controller;
-	};
-
-	var authenticate = function(callback) {
-
-		$http.get('employee/check').success(function(data, status) {
-			$rootScope.authenticated = false;
-			if(status === 202) {
-				$rootScope.authenticated = true;
-			}
-			callback && callback();
-		}).error(function() {
-			$rootScope.authenticated = false;
-			callback && callback();
-		});
-
-	}
-
-	authenticate();
-
-	$scope.logout = function() {
-		$http.post('logout', {}).success(function() {
-			$rootScope.authenticated = false;
-			$location.path("/");
-		}).error(function(data) {
-			console.log("Logout failed")
-			$rootScope.authenticated = false;
-			$location.path("/");
-		});
-	}
-	*/
-}).controller('empUnassigned', function($rootScope, $scope, $http, $location, $route) {
-
+	var token = LocalStorage.retrieveToken();
 	var config = {
 			headers : { 
-				"Authorization" : $rootScope.token_header,
+				"Authorization" : token,
 				"Accept" : "application/json"
 			}
-		};
+	}
 		
 	
 	$http.get("api/employee/unassigned", config)
 				.success(function(response) {
 					$scope.emps = response;
-	});
+	}).error(function(resp, status) {
+		if (status === 401 || status === 403) {
+			LocalStorage.clear();
+			$rootScope.authenticated = false;
+			$location.path("/login");
+		}
+    });
 
 		$scope.email = '';
 		$scope.assign = function(email, lat, lon) {
@@ -152,7 +147,13 @@ function($rootScope, $scope, $http, $location, $route) {
 			$http.get(url, config).success(function(data) {
 				$scope.email = email;
 				$scope.reports = data;
-			});
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+		    });
 		};
 
 		$scope.assignReport = function(id) {
@@ -166,50 +167,85 @@ function($rootScope, $scope, $http, $location, $route) {
 								//angular.element(document.getElementById('myModal')).hide();
 								angular.element( document.querySelector('#myModal')).hide();
 								$location.path("/employee");
-							});
+							}).error(function(resp, status) {
+								if (status === 401 || status === 403) {
+									LocalStorage.clear();
+									$rootScope.authenticated = false;
+									$location.path("/login");
+								}
+						    });
 		};
-}).controller('report', function($rootScope, $scope, $http, $location, $route) {
+		
+			
+}).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+	var token = LocalStorage.retrieveToken();
 	var config = {
 			headers : { 
-				"Authorization" : $rootScope.token_header,
+				"Authorization" : token,
 				"Accept" : "application/json"
 			}
-		};
+	}
 	$http.get("api/report/", config).success(function(response) {
 		$scope.reports = response;
-	});
-}).controller('citizen', function($rootScope, $scope, $http, $location, $route) {
+	}).error(function(resp, status) {
+		if (status === 401 || status === 403) {
+			LocalStorage.clear();
+			$rootScope.authenticated = false;
+			$location.path("/login");
+		}
+    });
+}).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+	var token = LocalStorage.retrieveToken();
 	var config = {
 			headers : { 
-				"Authorization" : $rootScope.token_header,
+				"Authorization" : token,
 				"Accept" : "application/json"
 			}
-		};
+	}
 	$http.get("api/admin/citizen", config).success(function(response) {
 		$scope.citizens = response;
-	});
+	}).error(function(resp, status) {
+		if (status === 401 || status === 403) {
+			LocalStorage.clear();
+			$rootScope.authenticated = false;
+			$location.path("/login");
+		}
+    });
 	
 	$scope.getReports = function(email) {
 		var url = 'api/citizen/report?email='+ email
 		$http.get(url, config).success(function(data) {
 			$scope.reports = data;
-		});
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });
 	};
 
-}).controller('emp', function($rootScope, $scope, $http, $location, $route) {
+}).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+	var token = LocalStorage.retrieveToken();
 	var config = {
 			headers : { 
-				"Authorization" : $rootScope.token_header,
+				"Authorization" : token,
 				"Accept" : "application/json"
 			}
-		};
+	}
 	$http.get("api/employee/", config)
 		.success(function(response) {
 			$scope.emps = response;
-	});
+	}).error(function(resp, status) {
+		if (status === 401 || status === 403) {
+			LocalStorage.clear();
+			$rootScope.authenticated = false;
+			$location.path("/login");
+		}
+    });
 }).controller(
 		'addEmp',
-		function($rootScope, $scope, $http, $location, $route) {
+		function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 			$scope.fName = '';
 			$scope.lName = '';
 			$scope.pwd = '';
@@ -273,15 +309,22 @@ function($rootScope, $scope, $http, $location, $route) {
 					longitude : $scope.lon
 				};
 
+				var token = LocalStorage.retrieveToken();
 				var config = {
 						headers : { 
-							"Authorization" : $rootScope.token_header,
+							"Authorization" : token,
 							"Accept" : "application/json"
 						}
-					};
+				}
 				
 				$http.post('api/admin/create',dataObj, config).success(function(data) {
 					$location.path("/employee");
-				});
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						LocalStorage.clear();
+						$rootScope.authenticated = false;
+						$location.path("/login");
+					}
+			    });
 			};
 		});
