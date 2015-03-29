@@ -1,0 +1,68 @@
+
+<div class="panel panel-black" style="margin-bottom: 35px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-globe"></i> - Tickets
+		</h3>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="table-responsive">
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Reporter</th>
+						<th>Assignee</th>
+						<th>Complete</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="report in reports">
+						<td>{{report.id}}</td>
+						<td>{{report.name}}</td>
+						<td>{{report.citizenId}}</td>
+						<td>{{report.employeeId}}</td>
+						<td>{{report.status}}</td>
+						<td><button class="btn btn-custom" ng-click="open(report)"><i class="fa fa-comments-o"></button></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/ng-template" id="displayComments.html">
+<div class="modal-header">
+	<h3 class="modal-title">{{report.name}}</h3>
+</div>
+<div class="modal-body">
+	<table class="table table-hover table-striped">
+		<thead>
+			<tr>
+				<th>Author</th>
+				<th>Comment</th>
+				<th>Image</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="entry in report.entries">
+				<td>{{entry.comment}}</td>
+				<td>{{entry.author}}</td>
+				<td>
+					<img ng-show="entry.image != null"
+								class="col-lg-4 col-md-4 img-responsive"
+								src="{{ 'data:image/JPEG;base64,' + entry.image}}"
+								style="height: 100px; width: 100px;">
+				</td>						
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+</div>
+</script>

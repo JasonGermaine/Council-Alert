@@ -30,5 +30,6 @@ public class CompleteReportTask extends PostReportTask {
             message = "POST Success";
         }
         DialogUtil.showToast(getActivity(), message);
+        getActivity().finish();
     }
 }

@@ -29,19 +29,22 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		templateUrl : 'login.html',
 		controller : 'navigation'
 	}).when('/employee/add', {
-		templateUrl : '/employee/addEmployee.html',
+		templateUrl : 'addEmployee.html',
 		controller : 'addEmp'
 	}).when('/employee', {
-		templateUrl : '/employee/displayEmployee.html',
+		templateUrl : 'displayEmployee.html',
 		controller : 'emp'
 	}).when('/employee/unassigned', {
-		templateUrl : '/employee/displayUnassignedEmployee.html',
+		templateUrl : 'displayUnassignedEmployee.html',
 		controller : 'empUnassigned'
+	}).when('/employee/assign', {
+		templateUrl : 'assignReport.html',
+		controller : 'assignReport'
 	}).when('/report', {
-		templateUrl : '/report/displayReport.html',
+		templateUrl : 'displayReport.html',
 		controller : 'report'
 	}).when('/citizen', {
-		templateUrl : '/citizen/displayCitizen.html',
+		templateUrl : 'displayCitizen.html',
 		controller : 'citizen'
 	}).otherwise('/');
 
@@ -49,38 +52,29 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	
 }).controller('navigation', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 	
-	$rootScope.date = new Date();
-	
 	$scope.credentials = {};
 
 	
 	$scope.init = function() {
 		var email = LocalStorage.retrieveEmail();
-		$scope.email = email;
 		var token = LocalStorage.retrieveToken(); 
 		if(email != null && email != '' && token != null && token != '') {
 			var config = {
 					headers : { 
 						"Authorization" : token,
 					}
-			};
-			var user = {
-					email: $scope.email
-			};
-			$http.post("api/user/retrieve", user, config).success(function(response) {
-				$rootScope.user = response;
+			}
+			$http.get("api/admin/ping", config)
+			.success(function(response) {
 				$rootScope.authenticated = true;
-				$location.path("/");
-			}).error(function(response) {
+			}).error(function() {
 				$rootScope.authenticated = false;
 				LocalStorage.clear();
-				$location.path("/login");
 			});
 			
 		} else {
 			$rootScope.authenticated = false;
 			LocalStorage.clear();
-			$location.path("/login");
 		}
 	}
 	
@@ -111,27 +105,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 				LocalStorage.storeToken('Bearer ' + $scope.oauth_resp.access_token);
 				LocalStorage.storeEmail($scope.credentials.username);
 				
-				var token = LocalStorage.retrieveToken();
-				var config = {
-						headers : { 
-							"Authorization" : token,
-							"Accept" : "application/json"
-						}
-				}
-				
-				var user = {
-						email : $scope.credentials.username						
-				}
-				
-				$http.post("api/user/retrieve", user, config).success(function(response) {
-					$rootScope.user = response;
-					$rootScope.authenticated = true;
-					$location.path("/");
-				}).error(function(response) {
-					$rootScope.authenticated = false;
-					LocalStorage.clear();
-					$location.path("/login");
-				});
+				$rootScope.authenticated = true;
+				$location.path("/");
 			}
 		}).error(function(data) {
 			$rootScope.authenticated = false;
@@ -283,7 +258,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		  $modalInstance.dismiss('cancel');
 	};
 		 
-}).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
+}).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 	$rootScope.reports = {};
 	var token = LocalStorage.retrieveToken();
 	var config = {
@@ -305,8 +280,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	$scope.getReports = function(email) {
 		var url = 'api/citizen/report?email='+ email
 		$http.get(url, config).success(function(data) {
-			$scope.userReports = data;
-			$scope.open();
+			$scope.reports = data;
 		}).error(function(resp, status) {
 			if (status === 401 || status === 403) {
 				LocalStorage.clear();
@@ -315,30 +289,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 			}
 	    });
 	};
-	
-	$scope.open = function () {
-		
-		var modalInstance = $modal.open({
-			templateUrl: 'displayUserReports.html',
-		    controller: 'displayUserReports',
-		    size: 'lg',
-		    resolve: {
-		    	userReports: function () {
-		    		return $scope.userReports;
-		        }
-		      }
-		    });
-		 };
 
-
-}).controller('displayUserReports', function($rootScope, $scope, $http, $location, $route, LocalStorage,
-		$modalInstance, userReports) {
-
-	$scope.userReports = userReports;
-	$scope.cancel = function () {
-		  $modalInstance.dismiss('cancel');
-	};
-		 
 }).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
 	var token = LocalStorage.retrieveToken();
 	var config = {

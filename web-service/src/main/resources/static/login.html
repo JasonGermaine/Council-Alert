@@ -4,7 +4,7 @@
 	</div>
 </div>
 
-<section id="login">
+<section id="login" style="margin-bottom: 35px;">
     <div class="container">
     	<div class="row-fluid" style="margin-bottom: 10px; margin-top: -40px;">
             <img src="css/ic_launcher.png" class="img-responsive" style="height:60px; width:60px; margin: 0 auto;" alt="Conxole Admin"/>
@@ -40,19 +40,14 @@
 
 <script>
 function showPassword() {
-    
     var key_attr = $('#key').attr('type');
     
-    if(key_attr != 'text') {
-        
+    if(key_attr != 'text') {        
         $('.checkbox').addClass('show');
-        $('#key').attr('type', 'text');
-        
-    } else {
-        
+        $('#key').attr('type', 'text');        
+    } else {        
         $('.checkbox').removeClass('show');
         $('#key').attr('type', 'password');
-        
     }
     
 }

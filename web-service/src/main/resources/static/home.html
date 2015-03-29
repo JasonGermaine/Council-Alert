@@ -1,83 +1,147 @@
-<div ng-init="init()">
+<div ng-init="init()" ng-show="authenticated">
+	<div class="panel panel-black" style="margin-bottom: 35px;">
+		<div class="panel-heading">
+			<h3 class="panel-title"><i class="fa fa-globe"></i> - Dashboard</h3>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-map-marker fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">11</div>
+							<div>Tickets Reported Today</div>
+						</div>
+					</div>
+				</div>
+				<a href="/report">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-offset-2 col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-user-times fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">124</div>
+							<div>Unassigned Employees</div>
+						</div>
+					</div>
+				</div>
+				<a href="/employee/unassigned">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
 
-<h1>Council Alert</h1>
-<blockquote>
-	<p><i>
-		This project is aimed at reinventing a system to allow users the
-		capability of reporting obscurities to the council using modern day
-		technology rather than by telephone. This will encourage users to
-		participate in notifying the council of such obscurities more
-		frequently. This project will also aim to provide the council access
-		to a web portal in which they can view a list of prioritized reports
-		with corresponding statistics along with providing automatic dispersal
-		of tasks to council workers. The idea for this project is to design
-		and implement a multiple platform application with multiple tiers of
-		access to control function permissions. This project will provide
-		functionality for three main user groups with functionality catering
-		for each user’s requirements.
-	</i></p>
-</blockquote>
+	<div class="row">
+		<div class="col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-tasks fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">11</div>
+							<div>Incomplete Tickets</div>
+						</div>
+					</div>
+				</div>
+				<a href="/report">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-offset-2 col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-street-view fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">124</div>
+							<div>Active Employees</div>
+						</div>
+					</div>
+				</div>
+				<a href="/employee">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
 
-<h3>Technologies</h3>
-
-<h5><b>Council Alert is comprised of a wide variety of technologies</b></h5>
-
-<ul>
-	<li>
-		<a href="https://spring.io/">Spring </a> 
-		- The Spring Framework is an open source application framework for the RESTful web service
-	</li>
-	<li>
-		<a href="http://developer.android.com/index.html">Android </a>
-		- Mobile Application Client
-	</li>
-	<li>
-		<a href="http://angularjs.org">AngularJS </a> 
-		- AngularJS is an open-source web application framework for a thick client
-	</li>
-	<li>
-		<a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap </a>
-		- UI boilerplate for modern web apps
-	</li>
-	<li>
-		<a href="http://jquery.com">jQuery </a>
-		- JavaScript framework
-	</li>
-</ul>
-
-<h3>Installation</h3>
-
-<h5><b>Clone From GitHub</b></h5>
-<pre>
-<code>
-$ git clone https://github.com/JasonGermaine/Council-Alert.git
-$ cd Council-Alert
-</code>
-</pre>
-
-<h5><b>RESTful Web Service and Angular Web Client</b></h5>
-<pre>
-<code>
-$ cd web-service
-$ mvn clean package
-$ java -jar target/CouncilAlert.jar
-</code>
-</pre>
-
-<h5><b>Android Client</b></h5>
-<pre>
-<code>
-$ cd android-client
-$ gradle clean build
-$ adb install /app/build/outputs/apk/app-debug.apk
-</code>
-</pre>
-
-<h3>Requirements</h3>
-<ul>
-	<li>Java 8</li>
-	<li>Maven</li>
-	<li>Gradle</li>
-	<li>MySQL</li>
-</ul>
+	<div class="row">
+		<div class="col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-check-circle fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">11</div>
+							<div>Completed Tickets</div>
+						</div>
+					</div>
+				</div>
+				<a href="/report">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-offset-2 col-lg-5">
+			<div class="panel panel-black">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-xs-3">
+							<i class="fa fa-users fa-5x"></i>
+						</div>
+						<div class="col-xs-9 text-right">
+							<div class="huge">124</div>
+							<div>Council Alert Employees</div>
+						</div>
+					</div>
+				</div>
+				<a href="/employee">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
 </div>

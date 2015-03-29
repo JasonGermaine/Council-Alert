@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -82,7 +83,7 @@ public class SplashActivity extends Activity
     @Override
     public void onRetrieveResponseReceived(User user, int status) {
         if(status < 300) {
-            mIcon.getAnimation().cancel();
+            finishAnim();
             ((CouncilAlertApplication)getApplication()).setUser(user);
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
@@ -93,9 +94,17 @@ public class SplashActivity extends Activity
     }
 
     private void goToLogin() {
-        mIcon.getAnimation().cancel();
+        finishAnim();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private void finishAnim() {
+        try {
+            mIcon.getAnimation().cancel();
+        } catch (NullPointerException e) {
+            finish();
+        }
     }
 }
