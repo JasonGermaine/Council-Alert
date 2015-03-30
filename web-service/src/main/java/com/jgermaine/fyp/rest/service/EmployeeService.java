@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.jgermaine.fyp.rest.model.Employee;
@@ -18,4 +19,6 @@ public interface EmployeeService {
 	public Employee getEmployee(String email);
 	
 	public List<Employee> getUnassignedEmployees();
+	
+	public HashMap<String, Long> getEmployeesStatistics();
 }

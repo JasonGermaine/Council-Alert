@@ -46,9 +46,8 @@ public class SplashActivity extends Activity
     private void init() {
         String email = mCache.getUserEmail();
         String authToken = mCache.getOAuthToken();
-        String deviceId = mCache.getDeviceKey();
         if (isStringValid(email) && isStringValid(authToken)) {
-            new UserRetrieveTask(email, deviceId, authToken, this, false).execute();
+            new UserRetrieveTask(email, authToken, this, false).execute();
         } else {
             new Handler().postDelayed(new Runnable() {
                 @Override

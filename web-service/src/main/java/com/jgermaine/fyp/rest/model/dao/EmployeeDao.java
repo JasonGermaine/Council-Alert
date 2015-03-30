@@ -46,11 +46,7 @@ public class EmployeeDao {
 	 * Delete the Employee from the database.
 	 */
 	public void delete(Employee employee) {
-		if (entityManager.contains(employee))
-			entityManager.remove(employee);
-		else
-			entityManager.remove(entityManager.merge(employee));
-		return;
+		entityManager.remove(employee);
 	}
 
 	/**
@@ -75,6 +71,35 @@ public class EmployeeDao {
 		}
 	}
 
+	public Long getAllCount() {
+		return (Long) entityManager.createQuery("Select count(*) from Employee").getSingleResult();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Long getUnassignedCount() {
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+			CriteriaQuery query = criteriaBuilder.createQuery(Long.class);
+			Root employee = query.from(Employee.class);
+			query.select(criteriaBuilder.count(employee));
+
+			Subquery subquery = query.subquery(Report.class);
+			Root subRootEntity = subquery.from(Report.class);
+			subquery.select(subRootEntity);
+
+			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
+			subquery.where(correlatePredicate);
+			query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+
+			TypedQuery typedQuery = entityManager.createQuery(query);
+			return (Long) typedQuery.getSingleResult();
+		} catch (Exception e) {
+			LOGGER.error(e);
+			return (long) 0;
+		}
+	}
+	
 	/**
 	 * Return the Employee having no job assigned.
 	 */

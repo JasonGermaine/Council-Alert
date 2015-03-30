@@ -1,11 +1,16 @@
 package com.jgermaine.fyp.rest.model.dao;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
@@ -59,17 +64,18 @@ public class ReportDao {
 				.createQuery("from Report where name = :name")
 				.setParameter("name", name).getSingleResult();
 	}
-	
+
 	/**
 	 * Return the report having the passed name.
 	 */
 	public Report getByEmployee(String email) {
 		try {
 			return (Report) entityManager
-					.createNativeQuery("Select * from Reports where emp_email = :email", Report.class)
-					.setParameter("email", email)
+					.createNativeQuery(
+							"Select * from Reports where emp_email = :email",
+							Report.class).setParameter("email", email)
 					.getSingleResult();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return null;
 		}
 	}
@@ -89,8 +95,31 @@ public class ReportDao {
 		return;
 	}
 
+	public long getCountFromQuery(String queryString) {
+		Query query = entityManager.createQuery(queryString);
+		return (long) query.getSingleResult();
+	}
+
+	public long getIncompleteReportCount() {
+		return getCountFromQuery("select count(*) from Report where status = false");
+	}
+
+	public long getCompleteReportCount() {
+		return getCountFromQuery("select count(*) from Report where status = true");
+	}
+
+	public long getTodayReportCount() {
+		return getCountFromQuery("select count(*) from Report where timestamp > current_date()");
+	}
+
+	// select * from Reports where timestamp BETWEEN '2015-03-30 00:00:00' AND
+	// '2015-03-30 23:59:59';
+	// where myDateProperty > current_date()
+	// select count(*) from Reports where status = false;
+
 	/**
 	 * Returns a list of reports sorted by closest proximity
+	 * 
 	 * @param lat
 	 * @param lon
 	 * @return list of report
@@ -107,9 +136,10 @@ public class ReportDao {
 		query.setParameter("lon", lon);
 		return query.getResultList();
 	}
-	
+
 	/**
 	 * Returns a list of unassigned reports sorted by closest proximity
+	 * 
 	 * @param lat
 	 * @param lon
 	 * @return list of report
@@ -119,16 +149,14 @@ public class ReportDao {
 		Query query = entityManager
 				.createNativeQuery(
 						"SELECT *, "
-							+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
-							+ "* cos( radians( longitude ) - radians(:lon) ) "
-							+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
-							+ "AS distance "
-							+ "FROM Reports "
-							+ "WHERE emp_email IS NULL "
-							+ "AND status = false  "
-							+ "HAVING distance < 10 "
-							+ "ORDER BY distance "
-							+ "LIMIT 0 , 6;",
+								+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
+								+ "* cos( radians( longitude ) - radians(:lon) ) "
+								+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
+								+ "AS distance " + "FROM Reports "
+								+ "WHERE emp_email IS NULL "
+								+ "AND status = false  "
+								+ "HAVING distance < 10 "
+								+ "ORDER BY distance " + "LIMIT 0 , 6;",
 						Report.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);

@@ -19,6 +19,15 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 			localStorage.removeItem(tokenKey);
 			localStorage.removeItem(emailKey);
 			return;
+		},
+		getHeader : function() {
+			var config = {
+					headers : { 
+						"Authorization" : localStorage.getItem(tokenKey),
+						"Accept" : "application/json"
+					}
+			};
+			return config;
 		}
 	};
 }).config( function($routeProvider, $locationProvider, $httpProvider) {
@@ -48,11 +57,30 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	$locationProvider.html5Mode(true);
 	
 }).controller('navigation', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
-	
-	$rootScope.date = new Date();
-	
+
 	$scope.credentials = {};
 
+	
+	$scope.getStats = function() {
+		if ($scope.authenticated == true) {
+			var token = LocalStorage.retrieveToken();
+			var config = {
+					headers : { 
+						"Authorization" : token,
+						"Accept" : "application/json"
+					}
+			}
+			$http.get("api/admin/stats", config).success(function(response) {
+				$scope.stats = response;
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+		    });
+		}
+	};
 	
 	$scope.init = function() {
 		var email = LocalStorage.retrieveEmail();
@@ -75,8 +103,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 				$rootScope.authenticated = false;
 				LocalStorage.clear();
 				$location.path("/login");
-			});
-			
+			});					
 		} else {
 			$rootScope.authenticated = false;
 			LocalStorage.clear();
@@ -143,19 +170,13 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	$scope.logout = function() {
 		$rootScope.authenticated = false;
 		LocalStorage.clear();
+		$location.path("/login");
 	};
 	
+	$scope.getStats();
 }).controller('empUnassigned', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
-
-	var token = LocalStorage.retrieveToken();
-	var config = {
-			headers : { 
-				"Authorization" : token,
-				"Accept" : "application/json"
-			}
-	}
 		
-	$http.get("api/employee/unassigned", config)
+	$http.get("api/employee/unassigned", LocalStorage.getHeader())
 				.success(function(response) {
 					$scope.emps = response;
 	}).error(function(resp, status) {
@@ -173,7 +194,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		var url = 'api/report/open?lat='
 			+ lat + '&lon=' + lon;
 	
-		$http.get(url, config).success(function(data) {
+		$http.get(url, LocalStorage.getHeader()).success(function(data) {
 			$scope.email = email;
 			$scope.reports = data;
 			$scope.open();
@@ -213,20 +234,12 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
 	};
-	  
-	var token = LocalStorage.retrieveToken();
-	var config = {
-			headers : { 
-				"Authorization" : token,
-				"Accept" : "application/json"
-			}
-	}
 	
 	$scope.assignReport = function(id) {
 		var url = 'api/admin/assign?email='
 				+ $scope.email + '&id=' + id;
 		$http
-				.get(url, config)
+				.get(url, LocalStorage.getHeader())
 				.success(
 						function(data) {
 							$scope.cancel();
@@ -242,14 +255,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	
 }).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
-	var token = LocalStorage.retrieveToken();
-	var config = {
-			headers : { 
-				"Authorization" : token,
-				"Accept" : "application/json"
-			}
-	}
-	$http.get("api/report/", config).success(function(response) {
+
+	$http.get("api/report/", LocalStorage.getHeader()).success(function(response) {
 		$scope.reports = response;
 	}).error(function(resp, status) {
 		if (status === 401 || status === 403) {
@@ -285,14 +292,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		 
 }).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
-	var token = LocalStorage.retrieveToken();
-	var config = {
-			headers : { 
-				"Authorization" : token,
-				"Accept" : "application/json"
-			}
-	}
-	$http.get("api/admin/citizen", config).success(function(response) {
+
+	$http.get("api/admin/citizen", LocalStorage.getHeader()).success(function(response) {
 		$scope.citizens = response;
 	}).error(function(resp, status) {
 		if (status === 401 || status === 403) {
@@ -304,7 +305,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 	
 	$scope.getReports = function(email) {
 		var url = 'api/citizen/report?email='+ email
-		$http.get(url, config).success(function(data) {
+		$http.get(url, LocalStorage.getHeader()).success(function(data) {
 			$scope.userReports = data;
 			$scope.open();
 		}).error(function(resp, status) {
@@ -321,7 +322,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		var modalInstance = $modal.open({
 			templateUrl: 'displayUserReports.html',
 		    controller: 'displayUserReports',
-		    size: 'lg',
+		    size: 'md',
 		    resolve: {
 		    	userReports: function () {
 		    		return $scope.userReports;
@@ -339,15 +340,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		  $modalInstance.dismiss('cancel');
 	};
 		 
-}).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
-	var token = LocalStorage.retrieveToken();
-	var config = {
-			headers : { 
-				"Authorization" : token,
-				"Accept" : "application/json"
-			}
-	}
-	$http.get("api/employee/", config)
+}).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
+	$http.get("api/employee/", LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
 	}).error(function(resp, status) {
@@ -357,6 +351,43 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 			$location.path("/login");
 		}
     });
+	
+	$scope.openRemove = function (employee) {
+		$scope.employee = employee;
+		
+		var modalInstance = $modal.open({
+			templateUrl: 'removeEmployee.html',
+		    controller: 'removeEmp',
+		    size: 'md',
+		    resolve: {
+		    	employee: function () {
+		    		return $scope.employee;
+		        }
+		      }
+		    });
+		 };
+		 
+}).controller('removeEmp', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
+	
+	$scope.employee = employee;
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};
+	
+	$scope.ok = function () {
+	
+		$http.delete("api/admin/employee?email=" + $scope.employee.email, LocalStorage.getHeader())
+			.success(function(response) {
+				$scope.cancel();
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+				$scope.error = true;
+			});
+	};
 }).controller(
 		'addEmp',
 		function($rootScope, $scope, $http, $location, $route, LocalStorage) {
@@ -422,17 +453,9 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 					latitude : $scope.lat,
 					longitude : $scope.lon
 				};
-
-				var token = LocalStorage.retrieveToken();
-				var config = {
-						headers : { 
-							"Authorization" : token,
-							"Accept" : "application/json"
-						}
-				}
 				
-				$http.post('api/admin/create',dataObj, config).success(function(data) {
-					$location.path("/employee");
+				$http.post('api/admin/create',dataObj, LocalStorage.getHeader()).success(function(data) {
+					$location.path("/");
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						LocalStorage.clear();

@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	public Employee getEmployee(String email) {
 		return EmployeeDao.getByEmail(email);
+	}
+
+	@Override
+	public HashMap<String, Long> getEmployeesStatistics() {
+		HashMap<String, Long> statMap = new HashMap<String, Long>();
+		
+		long all = EmployeeDao.getAllCount();
+		long unassigned = EmployeeDao.getUnassignedCount();
+		
+		statMap.put("emp_all", all);
+		statMap.put("emp_unassigned", unassigned);
+		statMap.put("emp_assigned", all - unassigned);
+		
+		return statMap;
 	}
 	
 } 

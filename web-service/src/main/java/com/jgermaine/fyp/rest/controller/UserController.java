@@ -41,7 +41,8 @@ public class UserController {
 		String email = data.getEmail();
 		User user = userService.getUser(email);		
 		String deviceId = data.getDeviceId();
-		if (deviceId != null && user instanceof Employee) {				
+		if (deviceId != null && user instanceof Employee) {	
+			LOGGER.info(deviceId);
 			updateEmployee((Employee) user, deviceId);
 		}	
 		return new ResponseEntity<User>(user, HttpStatus.OK) ;

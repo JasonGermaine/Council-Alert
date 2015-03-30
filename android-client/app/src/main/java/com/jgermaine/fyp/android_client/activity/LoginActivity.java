@@ -301,28 +301,6 @@ public class LoginActivity extends Activity
         mEmailView.setAdapter(adapter);
     }
 
-    protected String getDeviceId() {
-        String id = cache.getDeviceKey();
-        if (id != null) {
-            return id;
-        } else {
-            return getIdFromGCM();
-        }
-    }
-
-    protected String getIdFromGCM() {
-        try {
-            if (sGCM == null) {
-                sGCM = GoogleCloudMessaging.getInstance(getApplicationContext());
-            }
-            String id = sGCM.register(PROJECT_NUMBER);
-            cache.putDeviceKey(id);
-            return id;
-        } catch (IOException ex) {
-            return null;
-        }
-    }
-
     public void setUser(User user) {
         cache.putUserEmail(user.getEmail());
         ((CouncilAlertApplication) getApplication()).setUser(user);
@@ -335,7 +313,7 @@ public class LoginActivity extends Activity
             cache.putOAuthToken(token);
             if (isLogin) {
                 Log.i("CACHE", cache.getOAuthToken());
-                new UserRetrieveTask(email, getDeviceId(), token, this, true).execute();
+                new UserRetrieveTask(email, token, this, true).execute();
             } else {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);

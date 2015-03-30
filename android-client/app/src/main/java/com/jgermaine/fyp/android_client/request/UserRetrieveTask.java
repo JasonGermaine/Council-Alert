@@ -5,8 +5,11 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.jgermaine.fyp.android_client.activity.LoginActivity;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.model.UserRequest;
+import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
@@ -22,6 +25,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -37,14 +41,16 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
     private ProgressDialog mDialog;
     private final String mToken;
     private boolean mShowProgress;
+    private static GoogleCloudMessaging sGCM;
+    private Cache cache;
 
-    public UserRetrieveTask(String email, String deviceId, String token, Activity activity, boolean showProgress) {
+
+    public UserRetrieveTask(String email, String token, Activity activity, boolean showProgress) {
         mRequest.setEmail(email);
-        mRequest.setDeviceId(deviceId);
         mActivity = activity;
         mToken = token;
         mShowProgress = showProgress;
-
+        cache = Cache.getCurrentCache(activity);
         try {
             mListener = (OnRetrieveResponseListener) activity;
         } catch (ClassCastException e) {
@@ -65,7 +71,7 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
 
     @Override
     protected ResponseEntity<User> doInBackground(Void... params) {
-
+        mRequest.setDeviceId(getDeviceId());
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setAuthorization(new HttpAuthentication() {
@@ -108,5 +114,28 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
 
     public interface OnRetrieveResponseListener {
         public void onRetrieveResponseReceived(User user, int status);
+    }
+
+    protected String getDeviceId() {
+        String id = cache.getDeviceKey();
+        if (id == null) {
+            id = getIdFromGCM();
+        }
+        Log.i("TAG", id);
+        return id;
+    }
+
+    protected String getIdFromGCM() {
+        try {
+            if (sGCM == null) {
+                sGCM = GoogleCloudMessaging.getInstance(mActivity.getApplicationContext());
+            }
+            String id = sGCM.register(LoginActivity.PROJECT_NUMBER);
+            cache.putDeviceKey(id);
+            return id;
+        } catch (IOException ex) {
+            Log.e("TAG", ex.getMessage(), ex);
+            return null;
+        }
     }
 }

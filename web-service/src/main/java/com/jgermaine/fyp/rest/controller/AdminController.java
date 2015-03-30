@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.rest.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -103,6 +105,24 @@ public class AdminController {
 		}
 	}
 	
+	
+	@RequestMapping(value="/employee", method=RequestMethod.DELETE)
+	public ResponseEntity<String> removeEmployee(@RequestParam(value = "email", required = true) String email) {
+		LOGGER.info("Deleting email - " + email);
+		Employee emp = employeeService.getEmployee(email);
+		if (emp != null) {
+			employeeService.removeEmployee(emp);
+			if (emp.getReport() != null) {
+				Report r = emp.getReport();
+				r.setEmployee(null);
+				reportService.updateReport(r);
+			}
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	/**
 	 * Return list of all citizens
 	 * @return citizen list
@@ -112,7 +132,18 @@ public class AdminController {
 		LOGGER.info("Returning all citizens");
 		return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(), HttpStatus.OK);
 	}
-
+	
+	@RequestMapping(value="/stats", method=RequestMethod.GET)
+	public ResponseEntity<HashMap<String, Long>> getStats() {
+		HashMap<String, Long> reports = reportService.getReportStatistics();
+		HashMap<String, Long> emps = employeeService.getEmployeesStatistics();
+		
+		HashMap<String, Long> stats = new HashMap<String, Long>();
+		stats.putAll(reports);
+		stats.putAll(emps);
+		
+		return new ResponseEntity<HashMap<String, Long>>(stats, HttpStatus.OK);
+	}
 	
 	@RequestMapping("/ping")
 	public ResponseEntity<String> getMessage() {

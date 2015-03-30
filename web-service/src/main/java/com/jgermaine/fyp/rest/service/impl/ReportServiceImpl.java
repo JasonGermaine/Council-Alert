@@ -1,11 +1,13 @@
 package com.jgermaine.fyp.rest.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Report;
+import com.jgermaine.fyp.rest.model.dao.EmployeeDao;
 import com.jgermaine.fyp.rest.model.dao.ReportDao;
 import com.jgermaine.fyp.rest.service.ReportService;
 
@@ -14,8 +16,7 @@ public class ReportServiceImpl implements ReportService {
 
 	@Autowired
 	private ReportDao reportDao;
-	
-	
+
 	public Report getReport(){
 		Report report = new Report();
 		report.setId(1);
@@ -58,5 +59,16 @@ public class ReportServiceImpl implements ReportService {
 	@Override
 	public Report getReportForEmp(String email) {
 		return reportDao.getByEmployee(email);
+	}
+
+	@Override
+	public HashMap<String, Long> getReportStatistics() {
+		HashMap<String, Long> statMap = new HashMap<String, Long>();
+		
+		statMap.put("report_today", reportDao.getTodayReportCount());
+		statMap.put("report_complete", reportDao.getCompleteReportCount());
+		statMap.put("report_incomplete", reportDao.getIncompleteReportCount());	
+		
+		return statMap;
 	}
 } 

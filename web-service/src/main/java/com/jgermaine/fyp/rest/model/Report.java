@@ -41,7 +41,7 @@ public class Report {
 	private Date timestamp;
 	private boolean status;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.PERSIST)
 	private List<Entry> entries;
 	
 	@Transient

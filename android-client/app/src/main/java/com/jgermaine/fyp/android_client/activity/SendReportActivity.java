@@ -139,14 +139,14 @@ public class SendReportActivity extends LocationActivity implements
             @Override
             public void onFinish() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(getReport().getName(), "Tap for more detail");
+                    setMarker(getReport().getName(), ((CouncilAlertApplication) getApplication()).getUser().getEmail());
                 }
             }
 
             @Override
             public void onCancel() {
                 if (getZoomLevel() == LocationUtil.COMPLETE_ZOOM_LEVEL) {
-                    setMarker(getReport().getName(), "Tap for more detail");
+                    setMarker(getReport().getName(), ((CouncilAlertApplication) getApplication()).getUser().getEmail());
                 }
             }
         });

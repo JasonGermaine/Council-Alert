@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.jgermaine.fyp.rest.model.Report;
@@ -25,4 +26,6 @@ public interface ReportService {
 	public List<Report> getReports(double lat, double lon);
 	
 	public List<Report> getUnassignedNearReports(double lat, double lon);
+	
+	public HashMap<String, Long> getReportStatistics();
 }
