@@ -130,7 +130,8 @@ public class OAuth2ServerConfiguration {
 					.antMatchers("/api/report/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/user/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/employee/**").access("#oauth2.hasScope('write')")
-					.antMatchers("/api/citizen/report").access("#oauth2.hasScope('write')");
+					.antMatchers("/api/citizen/report").access("#oauth2.hasScope('write')")
+					.antMatchers("/api/admin/**").access("#oauth2.hasScope('trust') and hasRole('ADMIN')");
 			// @formatter:on
 		}
 

@@ -86,16 +86,11 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		var email = LocalStorage.retrieveEmail();
 		$scope.email = email;
 		var token = LocalStorage.retrieveToken(); 
-		if(email != null && email != '' && token != null && token != '') {
-			var config = {
-					headers : { 
-						"Authorization" : token,
-					}
-			};
+		if(email != null && email != '' && token != null && token != '') {			
 			var user = {
 					email: $scope.email
 			};
-			$http.post("api/user/retrieve", user, config).success(function(response) {
+			$http.post("api/admin/retrieve?email=" + $scope.email, user, LocalStorage.getHeader()).success(function(response) {
 				$rootScope.user = response;
 				$rootScope.authenticated = true;
 				$location.path("/");
@@ -138,26 +133,18 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 				LocalStorage.storeToken('Bearer ' + $scope.oauth_resp.access_token);
 				LocalStorage.storeEmail($scope.credentials.username);
 				
-				var token = LocalStorage.retrieveToken();
-				var config = {
-						headers : { 
-							"Authorization" : token,
-							"Accept" : "application/json"
-						}
-				}
-				
 				var user = {
 						email : $scope.credentials.username						
 				}
 				
-				$http.post("api/user/retrieve", user, config).success(function(response) {
+				$http.post("api/admin/retrieve?email=" + $scope.credentials.username, user, LocalStorage.getHeader()).success(function(response) {
 					$rootScope.user = response;
 					$rootScope.authenticated = true;
 					$location.path("/");
 				}).error(function(response) {
 					$rootScope.authenticated = false;
-					LocalStorage.clear();
-					$location.path("/login");
+					$rootScope.error = true;
+					LocalStorage.clear();					
 				});
 			}
 		}).error(function(data) {

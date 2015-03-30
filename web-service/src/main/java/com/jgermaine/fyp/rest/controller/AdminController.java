@@ -22,6 +22,8 @@ import com.jgermaine.fyp.rest.gcm.GcmOperations;
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
+import com.jgermaine.fyp.rest.model.User;
+import com.jgermaine.fyp.rest.model.UserRequest;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
@@ -148,5 +150,21 @@ public class AdminController {
 	@RequestMapping("/ping")
 	public ResponseEntity<String> getMessage() {
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	/**
+	 * Retrieves a user after login
+	 * @param data
+	 * @return
+	 */
+	@RequestMapping(value="/retrieve", method=RequestMethod.POST)
+	public ResponseEntity<User> attemptLogin(@RequestParam(value = "email", required = true) String email) {		
+		User user = userService.getUser(email);		
+		if (user instanceof Employee) {
+			return new ResponseEntity<User>(user, HttpStatus.OK) ;
+		} else {
+			return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED) ;
+		}
+		
 	}
 }
