@@ -12,11 +12,13 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "USER_TYPE")
+@JsonIgnoreProperties(value={"password"})
 public abstract class User {
 
 	@Id
@@ -25,8 +27,7 @@ public abstract class User {
     @Column(name="email")
 	private String email;
 	
-	@NotEmpty
-	@Column(name="password")
+	@Transient
 	private String password;
 	
 	public String getEmail() {

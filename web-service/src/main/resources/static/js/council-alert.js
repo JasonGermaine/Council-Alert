@@ -94,6 +94,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 				$rootScope.user = response;
 				$rootScope.authenticated = true;
 				$location.path("/");
+				
+				$scope.getStats();
 			}).error(function(response) {
 				$rootScope.authenticated = false;
 				LocalStorage.clear();

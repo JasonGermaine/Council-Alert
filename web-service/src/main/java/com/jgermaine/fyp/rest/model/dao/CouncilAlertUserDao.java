@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
+import com.jgermaine.fyp.rest.model.User;
 
 @Repository
 @Transactional
@@ -33,5 +34,9 @@ public class CouncilAlertUserDao {
 
 	public void createUser(CouncilAlertUser user) {
 		entityManager.persist(user);
+	}
+
+	public void remove(CouncilAlertUser user) {
+		entityManager.remove(user);
 	}
 }

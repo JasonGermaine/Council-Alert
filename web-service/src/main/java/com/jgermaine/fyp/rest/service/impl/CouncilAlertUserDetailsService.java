@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
@@ -34,13 +35,17 @@ public class CouncilAlertUserDetailsService implements UserDetailsService {
 	public void createNewUser(User newUser) {
 		CouncilAlertUser user = new CouncilAlertUser();
 		user.setLogin(newUser.getEmail());
-		user.setPassword(newUser.getPassword());
+		user.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
 		user.addRole(new Role("USER", user));
 		
 		if (newUser instanceof Employee)
 			user.addRole(new Role("ADMIN", user));
 		
 		councilAlertUserDao.createUser(user);
+	}
+	
+	public void removeUser(User user) {		
+		councilAlertUserDao.remove(councilAlertUserDao.getByEmail(user.getEmail()));
 	}
 	
 	private final static class UserRepositoryUserDetails extends CouncilAlertUser implements UserDetails {

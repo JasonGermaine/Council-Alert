@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jgermaine.fyp.rest.gcm.GcmOperations;
+import com.jgermaine.fyp.rest.gcm.TaskManager;
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
@@ -29,6 +29,7 @@ import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
+
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
@@ -96,7 +97,7 @@ public class AdminController {
 			reportService.updateReport(report);
 			
 			// New Thread spawned for GCM so it does no block response
-			GcmOperations.sendReportIdAsNotification(reportId, employee.getDeviceId());
+			TaskManager.sendReportIdAsNotification(reportId, employee);
 			
 			LOGGER.info(String.format("Assigned Employee: %s to Report: %s",
 					employee.getEmail(), report.getId()));
@@ -119,6 +120,7 @@ public class AdminController {
 				r.setEmployee(null);
 				reportService.updateReport(r);
 			}
+			councilAlertUserService.removeUser(emp);;
 			return new ResponseEntity<String>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
