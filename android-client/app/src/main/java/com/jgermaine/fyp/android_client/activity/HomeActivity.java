@@ -46,12 +46,23 @@ public class HomeActivity extends Activity
                 }
             });
         } else {
-            View view = findViewById(R.id.citz_new_report);
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new View.OnClickListener() {
+            View newReport = findViewById(R.id.citz_new_report);
+            newReport.setVisibility(View.VISIBLE);
+
+            newReport.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     startActivity(new Intent(getApplicationContext(), SendReportActivity.class));
+                }
+            });
+
+            View viewReports = findViewById(R.id.citz_view_report);
+            viewReports.setVisibility(View.VISIBLE);
+
+            viewReports.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getApplicationContext(), CitizenReportsActivity.class));
                 }
             });
         }

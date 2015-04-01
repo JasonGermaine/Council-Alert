@@ -1,4 +1,4 @@
-angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
+angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' ])
 .factory('LocalStorage', function() {
 	var tokenKey = 'oauth2_token';
 	var emailKey = 'user_email';
@@ -355,6 +355,21 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 		      }
 		    });
 		 };
+	
+	 $scope.openDisplay = function (employee) {
+			$scope.employee = employee;
+			
+			var modalInstance = $modal.open({
+				templateUrl: 'showEmployeeDetail.html',
+			    controller: 'displayEmpDetails',
+			    size: 'lg',
+			    resolve: {
+			    	employee: function () {
+			    		return $scope.employee;
+			        }
+			      }
+			    });
+			 };
 		 
 }).controller('removeEmp', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
 	
@@ -376,6 +391,19 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap' ])
 				}
 				$scope.error = true;
 			});
+	};
+}).controller('displayEmpDetails', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
+	
+	$scope.emp = employee;
+	$scope.edit = false;
+	$scope.map = { center: { latitude: $scope.emp.latitude, longitude: $scope.emp.longitude }, zoom: 12 };
+    
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};
+	
+	$scope.ok = function () {
+
 	};
 }).controller(
 		'addEmp',

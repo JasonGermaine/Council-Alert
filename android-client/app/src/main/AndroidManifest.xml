@@ -84,8 +84,8 @@
         </activity>
         <activity
             android:name=".activity.CommentActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_comment" >
+            android:label="@string/title_activity_comment"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".activity.SplashActivity"
@@ -99,8 +99,13 @@
         </activity>
         <activity
             android:name=".activity.HomeActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_home">
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.CitizenReportsActivity"
+            android:label="@string/title_activity_citizen_reports"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
