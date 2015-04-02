@@ -16,6 +16,7 @@
 
 package com.jgermaine.fyp.rest.model;
 
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,6 +51,8 @@ public class CouncilAlertUser {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="user",cascade=CascadeType.ALL)
 	private Set<Role> roles = new HashSet<Role>();
 
+	private String salt;
+	
 	public CouncilAlertUser() {
 	}
 
@@ -59,6 +62,7 @@ public class CouncilAlertUser {
 		this.email = user.getEmail();
 		this.password = user.getPassword();
 		this.roles = user.getRoles();
+		this.salt = user.getSalt();
 	}
 
 	public Integer getId() {
@@ -97,4 +101,11 @@ public class CouncilAlertUser {
 		roles.add(role);
 	}
 
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+	
+	public String getSalt() {
+		return salt;
+	}
 }

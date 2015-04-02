@@ -28,8 +28,11 @@
 								<span ng-if="!emp.reportId">none</span>
 							</td>
 							<td>
-								<button ng-click="openDisplay(emp)" class="btn btn-custom"><i class="fa fa-user"></i></button>
-								<button ng-click="openRemove(emp)" class="btn btn-custom"><i class="fa fa-user-times"></i></button>	
+								<button ng-click="openDisplay(emp)" class="btn btn-custom"><i class="fa fa-info"></i></button>
+								<button ng-click="openRemove(emp)" class="btn btn-custom"><i class="fa fa-user-times"></i></button>
+								<span ng-if="emp.reportId">
+									<button ng-click="unassign(emp.reportId)" class="btn btn-custom"><i class="fa fa-user"></i></button>
+								</span>	
 							</td>
 						</tr>
 					</tbody>

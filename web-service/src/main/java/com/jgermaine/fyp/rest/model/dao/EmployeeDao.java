@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -134,5 +135,30 @@ public class EmployeeDao {
 	public void update(Employee employee) {
 		entityManager.merge(employee);
 	}
-
+	
+	/**
+	 * Returns a list of unassigned reports sorted by closest proximity
+	 * 
+	 * @param lat
+	 * @param lon
+	 * @return list of report
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Employee> getUnassignedNearestEmployee(double lat, double lon) {
+		Query query = entityManager
+				.createNativeQuery(
+						"SELECT *, "
+								+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
+								+ "* cos( radians( longitude ) - radians(:lon) ) "
+								+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
+								+ "AS distance " + "FROM Employee "
+								+ "WHERE email not in(Select r.emp_email "
+								+ "from Reports r WHERE r.emp_email IS NOT NULL) "
+								+ "HAVING distance < 10 "
+								+ "ORDER BY distance " + "LIMIT 0 , 6;",
+						Employee.class);
+		query.setParameter("lat", lat);
+		query.setParameter("lon", lon);
+		return query.getResultList();
+	}
 }

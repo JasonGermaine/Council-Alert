@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Employee;
+import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.model.dao.EmployeeDao;
 import com.jgermaine.fyp.rest.service.EmployeeService;
 
@@ -42,6 +43,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	public List<Employee> getUnassignedEmployees() {
 		return EmployeeDao.getUnassigned();
+	}
+	
+	public List<Employee> getUnassignedNearEmployees(double lat, double lon) {
+		return EmployeeDao.getUnassignedNearestEmployee(lat, lon);
 	}
 	
 	public Employee getEmployee(String email) {

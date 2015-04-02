@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.dao.ReflectionSaltSource;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 
@@ -19,12 +19,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private CouncilAlertUserDetailsService userDetailsService;
-	
+
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		 auth
-		 	.userDetailsService(userDetailsService)
-		 	.passwordEncoder(passwordEncoder());
+	protected void configure(AuthenticationManagerBuilder auth)
+			throws Exception {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userDetailsService);
+		provider.setPasswordEncoder(passwordEncoder());
+		provider.setSaltSource(saltSource());
+		auth.authenticationProvider(provider);
 	}
 
 	@Override
@@ -32,11 +35,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-	
+
 	@Bean
-	public PasswordEncoder passwordEncoder(){
-		PasswordEncoder encoder = new BCryptPasswordEncoder();
+	public ShaPasswordEncoder passwordEncoder() {
+		ShaPasswordEncoder encoder = new ShaPasswordEncoder(256);
 		return encoder;
 	}
-}
 
+	public ReflectionSaltSource saltSource() {
+		ReflectionSaltSource source = new ReflectionSaltSource();
+		source.setUserPropertyToUse("getSalt");
+		return source;
+	}
+}

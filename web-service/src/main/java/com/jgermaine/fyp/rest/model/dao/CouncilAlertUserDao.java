@@ -39,4 +39,8 @@ public class CouncilAlertUserDao {
 	public void remove(CouncilAlertUser user) {
 		entityManager.remove(user);
 	}
+	
+	public void update(CouncilAlertUser user) {
+		entityManager.merge(user);
+	}
 }

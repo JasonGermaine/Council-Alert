@@ -52,6 +52,9 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 	}).when('/citizen', {
 		templateUrl : '/citizen/displayCitizen.html',
 		controller : 'citizen'
+	}).when('/profile', {
+		templateUrl : 'password.html',
+		controller : 'password'
 	}).otherwise('/');
 
 	$locationProvider.html5Mode(true);
@@ -242,6 +245,27 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 	};
 
 	
+}).controller('password', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+	$scope.request = {};
+
+	$scope.request.email = $rootScope.user.email;	
+	
+	$scope.change = function () {
+		
+		$http.post("api/admin/password", $scope.request, LocalStorage.getHeader())
+			.success(function(response) {
+				$location.path("/");
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {					
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+				$scope.response = resp;
+				$scope.passwordError = true;
+			});
+	};
+		 
 }).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
 
@@ -254,6 +278,40 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 			$location.path("/login");
 		}
     });
+	
+	$scope.assign = function(id, lat, lon) {
+		var url = 'api/employee/open?lat='
+			+ lat + '&lon=' + lon;
+	
+		$http.get(url, LocalStorage.getHeader()).success(function(data) {
+			$scope.reportId = id;
+			$scope.employees = data;
+			$scope.openEmp();
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+		});
+	};
+		
+	$scope.openEmp = function () {
+				
+		var modalInstance = $modal.open({
+			templateUrl: 'availableEmp.html',
+		    controller: 'availableEmp',
+		    size: 'lg',
+		    resolve: {
+		    	employees: function () {
+		    		return $scope.employees;
+		        }, 
+		        reportId: function() {
+		        	return $scope.reportId;
+		        }
+		      }
+		    });
+		 };
 	
 	$scope.open = function (report) {
 		
@@ -269,6 +327,38 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 		        }
 		      }
 	    });
+	};
+		 
+}).controller('availableEmp', function($rootScope, $scope, $http, $location, $route, LocalStorage,
+		$modalInstance, employees, reportId) {
+
+	$scope.employees = employees;
+	$scope.reportId = reportId;
+	
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};
+	
+	$scope.assignEmp = function(email) {
+		var url = 'api/admin/assign?email='
+				+ email + '&id=' + reportId;
+		
+		$http
+				.get(url, LocalStorage.getHeader())
+				.success(
+						function(data) {
+							$scope.cancel();
+						}).error(function(resp, status) {
+							if (status === 401 || status === 403) {
+								LocalStorage.clear();
+								$rootScope.authenticated = false;
+								$location.path("/login");
+							}
+					    });
+	};
+	
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
 	};
 		 
 }).controller('displayComment', function($rootScope, $scope, $http, $location, $route, LocalStorage,
@@ -340,6 +430,20 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 			$location.path("/login");
 		}
     });
+	
+	$scope.unassign = function (reportId) { 
+	
+		$http.get("api/admin/unassign?id=" + reportId, LocalStorage.getHeader())
+			.error(function(resp, status) {
+			
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+			});
+	};
+	
 	
 	$scope.openRemove = function (employee) {
 		$scope.employee = employee;
@@ -471,7 +575,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 					longitude : $scope.lon
 				};
 				
-				$http.post('api/admin/create',dataObj, LocalStorage.getHeader()).success(function(data) {
+				$http.post('api/admin/create', dataObj, LocalStorage.getHeader()).success(function(data) {
 					$location.path("/");
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {

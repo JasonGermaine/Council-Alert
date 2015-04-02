@@ -9,9 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Employee;
+import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
@@ -59,5 +61,20 @@ public class EmployeeController {
 	public ResponseEntity<List<Employee>> getUnassignEmployees() {
 		LOGGER.info("Returning all unnassigned employees");
 		return new ResponseEntity<List<Employee>> (employeeService.getUnassignedEmployees(), HttpStatus.OK);
+	}
+	
+	/**
+	 * Returns a list of of reports of maximum size <i>x</i>.
+	 * Reports are ordered by the distance to the latitude and longitude provided
+	 * @param lat
+	 * @param lon
+	 * @return list of nearest reports
+	 */
+	@RequestMapping(value="/open", method = RequestMethod.GET)
+	public ResponseEntity<List<Employee>> getNearestUnassignedEmployees (
+			@RequestParam(value = "lat", required = true) Double lat,
+			@RequestParam(value = "lon", required = true) Double lon) {
+		LOGGER.info("Returning employees");
+		return new ResponseEntity<List<Employee>>(employeeService.getUnassignedNearEmployees(lat, lon), HttpStatus.OK);
 	}
 }
