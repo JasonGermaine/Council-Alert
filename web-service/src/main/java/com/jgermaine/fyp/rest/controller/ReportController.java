@@ -48,6 +48,23 @@ public class ReportController {
 		return new ResponseEntity<List<Report>>(reportService.getReports(), HttpStatus.OK);
 	}
 
+	@RequestMapping(value="/today", method=RequestMethod.GET)
+	public ResponseEntity<List<Report>> getTodayReports() {
+		LOGGER.info("Returning all reports");
+		return new ResponseEntity<List<Report>>(reportService.getTodayReports(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/complete", method=RequestMethod.GET)
+	public ResponseEntity<List<Report>> getCompleteReports() {
+		LOGGER.info("Returning all reports");
+		return new ResponseEntity<List<Report>>(reportService.getCompleteReports(), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/incomplete", method=RequestMethod.GET)
+	public ResponseEntity<List<Report>> getIncompleteReports() {
+		LOGGER.info("Returning all reports");
+		return new ResponseEntity<List<Report>>(reportService.getIncompleteReports(), HttpStatus.OK);
+	}
 	
 	/**
 	 * Returns a list of of reports of maximum size <i>x</i>.

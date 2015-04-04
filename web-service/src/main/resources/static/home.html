@@ -1,5 +1,5 @@
-<div ng-init="init()" ng-show="authenticated">
-	<div class="panel panel-black" style="margin-bottom: 35px;">
+<div ng-show="authenticated" class="col-lg-12">
+	<div class="panel panel-black pageHeader" style="margin-bottom: 35px;">
 		<div class="panel-heading">
 			<h3 class="panel-title">
 				<i class="fa fa-globe"></i> - Dashboard
@@ -7,100 +7,81 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-5">
+		<div class="col-lg-6">
 			<div class="panel panel-black">
 				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-map-marker fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">{{ stats.report_today }}</div>
-							<div>Tickets Reported Today</div>
-						</div>
-					</div>
+					<h3 class="panel-title">
+						<i class="fa fa-map-marker"></i> - Reports
+					</h3>
 				</div>
-				<a href="/report">
-					<div class="panel-footer">
-						<span class="pull-left">View Details</span> <span
-							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
-				</a>
+				<div class="panel-body">
+					<canvas id="reportDoughnut" class="chart chart-doughnut"
+						legend="'true'" data="reportData" labels="reportLabels" colours="colours"></canvas>
+				</div>
 			</div>
 		</div>
-		<div class="col-lg-offset-2 col-lg-5">
+		<div class="col-lg-6">
 			<div class="panel panel-black">
 				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-child fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">{{ stats.emp_unassigned }}</div>
-							<div>Unassigned Employees</div>
-						</div>
-					</div>
+					<h3 class="panel-title">
+						<i class="fa fa-users"></i> - Employees
+					</h3>
 				</div>
-				<a href="/employee/unassigned">
-					<div class="panel-footer">
-						<span class="pull-left">View Details</span> <span
-							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
-				</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="col-lg-5">
-			<div class="panel panel-black">
-				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-tasks fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">{{ stats.report_incomplete }}</div>
-							<div>Incomplete Tickets</div>
-						</div>
-					</div>
+				<div class="panel-body">
+					<canvas id="empDoughnut" class="chart chart-doughnut"
+						legend="'true'" data="empData" labels="empLabels" colours="colours"></canvas>
 				</div>
-				<a href="/report">
-					<div class="panel-footer">
-						<span class="pull-left">View Details</span> <span
-							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
-				</a>
-			</div>
-		</div>
-		<div class="col-lg-offset-2 col-lg-5">
-			<div class="panel panel-black">
-				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-street-view fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">{{ stats.emp_assigned }}</div>
-							<div>Active Employees</div>
-						</div>
-					</div>
-				</div>
-				<a href="/employee">
-					<div class="panel-footer">
-						<span class="pull-left">View Details</span> <span
-							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-						<div class="clearfix"></div>
-					</div>
-				</a>
 			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-5">
+		<div class="col-lg-4">
+			<div class="panel panel-black">
+				<a href="/report">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-map-marker fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{ stats.report_today }}</div>
+								<div>Tickets Reported Today</div>
+							</div>
+						</div>
+					</div>
+				</a> <a href="/report">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="panel panel-black">
+				<a href="/report">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-tasks fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{ stats.report_incomplete }}</div>
+								<div>Incomplete Tickets</div>
+							</div>
+						</div>
+					</div>
+				</a> <a href="/report">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-4">
 			<div class="panel panel-black">
 				<a href="/report">
 					<div class="panel-heading">
@@ -114,8 +95,7 @@
 							</div>
 						</div>
 					</div>
-				</a>
-				 <a href="/report">
+				</a> <a href="/report">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span> <span
 							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -124,20 +104,71 @@
 				</a>
 			</div>
 		</div>
-		<div class="col-lg-offset-2 col-lg-5">
+	</div>
+
+	<div class="row">
+		<div class="col-lg-4">
 			<div class="panel panel-black">
-				<div class="panel-heading">
-					<div class="row">
-						<div class="col-xs-3">
-							<i class="fa fa-users fa-5x"></i>
-						</div>
-						<div class="col-xs-9 text-right">
-							<div class="huge">{{ stats.emp_all }}</div>
-							<div>Council Alert Employees</div>
+				<a href="/employee">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-child fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{ stats.emp_unassigned }}</div>
+								<div>Unassigned Employees</div>
+							</div>
 						</div>
 					</div>
-				</div>
+				</a> <a href="/employee/unassigned">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+
+		<div class="col-lg-4">
+			<div class="panel panel-black">
 				<a href="/employee">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-street-view fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{ stats.emp_assigned }}</div>
+								<div>Active Employees</div>
+							</div>
+						</div>
+					</div>
+				</a> <a href="/employee">
+					<div class="panel-footer">
+						<span class="pull-left">View Details</span> <span
+							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+						<div class="clearfix"></div>
+					</div>
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="panel panel-black">
+				<a href="/employee">
+					<div class="panel-heading">
+						<div class="row">
+							<div class="col-xs-3">
+								<i class="fa fa-users fa-5x"></i>
+							</div>
+							<div class="col-xs-9 text-right">
+								<div class="huge">{{ stats.emp_all }}</div>
+								<div>Council Alert Employees</div>
+							</div>
+						</div>
+					</div>
+				</a> <a href="/employee">
 					<div class="panel-footer">
 						<span class="pull-left">View Details</span> <span
 							class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>

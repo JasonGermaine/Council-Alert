@@ -15,6 +15,12 @@ public interface ReportService {
 	
 	public List<Report> getReports();
 	
+	public List<Report> getTodayReports();
+	
+	public List<Report> getCompleteReports();
+	
+	public List<Report> getIncompleteReports();
+	
 	public Report getReport(String name);
 	
 	public Report getReportForEmp(String email);

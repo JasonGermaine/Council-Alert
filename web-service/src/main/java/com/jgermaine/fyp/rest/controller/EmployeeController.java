@@ -63,6 +63,11 @@ public class EmployeeController {
 		return new ResponseEntity<List<Employee>> (employeeService.getUnassignedEmployees(), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/assigned", method = RequestMethod.GET)
+	public ResponseEntity<List<Employee>> getAssignEmployees() {
+		return new ResponseEntity<List<Employee>> (employeeService.getAssignedEmployees(), HttpStatus.OK);
+	}
+	
 	/**
 	 * Returns a list of of reports of maximum size <i>x</i>.
 	 * Reports are ordered by the distance to the latitude and longitude provided

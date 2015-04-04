@@ -45,6 +45,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return EmployeeDao.getUnassigned();
 	}
 	
+	public List<Employee> getAssignedEmployees() {
+		return EmployeeDao.getAssigned();
+	}
+	
 	public List<Employee> getUnassignedNearEmployees(double lat, double lon) {
 		return EmployeeDao.getUnassignedNearestEmployee(lat, lon);
 	}

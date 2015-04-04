@@ -1,4 +1,4 @@
-angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' ])
+angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps', 'tableSort', 'chart.js' ])
 .factory('LocalStorage', function() {
 	var tokenKey = 'oauth2_token';
 	var emailKey = 'user_email';
@@ -43,9 +43,6 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 	}).when('/employee', {
 		templateUrl : '/employee/displayEmployee.html',
 		controller : 'emp'
-	}).when('/employee/unassigned', {
-		templateUrl : '/employee/displayUnassignedEmployee.html',
-		controller : 'empUnassigned'
 	}).when('/report', {
 		templateUrl : '/report/displayReport.html',
 		controller : 'report'
@@ -75,6 +72,28 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 			}
 			$http.get("api/admin/stats", config).success(function(response) {
 				$scope.stats = response;
+				$scope.reportLabels = ['Incomplete', 'Complete'];
+				$scope.reportData = [ $scope.stats.report_incomplete, $scope.stats.report_complete];
+				$scope.empLabels = ['Inactive', 'Active'];
+				$scope.empData = [ $scope.stats.emp_unassigned, $scope.stats.emp_assigned];
+				 $scope.colours = [
+				                   { // black
+				                     fillColor: 'rgba(34,2,0,0.2)',
+				                     strokeColor: 'rgba(34,2,0,1)',
+				                     pointColor: 'rgba(34,2,0,1)',
+				                     pointStrokeColor: '#fff',
+				                     pointHighlightFill: '#fff',
+				                     pointHighlightStroke: 'rgba(34,2,0,0.8)'
+				                   },
+				                   { // dark grey
+				                     fillColor: 'rgba(77,83,96,0.2)',
+				                     strokeColor: 'rgba(77,83,96,1)',
+				                     pointColor: 'rgba(77,83,96,1)',
+				                     pointStrokeColor: '#fff',
+				                     pointHighlightFill: '#fff',
+				                     pointHighlightStroke: 'rgba(77,83,96,1)'
+				                   }
+				                 ];
 			}).error(function(resp, status) {
 				if (status === 401 || status === 403) {
 					LocalStorage.clear();
@@ -166,56 +185,6 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 	};
 	
 	$scope.getStats();
-}).controller('empUnassigned', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
-		
-	$http.get("api/employee/unassigned", LocalStorage.getHeader())
-				.success(function(response) {
-					$scope.emps = response;
-	}).error(function(resp, status) {
-		if (status === 401 || status === 403) {
-			LocalStorage.clear();
-			$rootScope.authenticated = false;
-			$location.path("/login");
-		}
-    });
-
-	$scope.email = '';
-	$scope.reports = {};
-	
-	$scope.assign = function(email, lat, lon) {
-		var url = 'api/report/open?lat='
-			+ lat + '&lon=' + lon;
-	
-		$http.get(url, LocalStorage.getHeader()).success(function(data) {
-			$scope.email = email;
-			$scope.reports = data;
-			$scope.open();
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-		});
-	};
-		
-	$scope.open = function () {
-				
-		var modalInstance = $modal.open({
-			templateUrl: 'unassignedReport.html',
-		    controller: 'assignReport',
-		    size: 'lg',
-		    resolve: {
-		    	reports: function () {
-		    		return $scope.reports;
-		        }, 
-		        email: function() {
-		        	return $scope.email;
-		        }
-		      }
-		    });
-		 };
-			
 }).controller('assignReport', function($rootScope, $scope, $http, $location, $route, LocalStorage, 
 		$modalInstance, reports, email) {
 
@@ -269,15 +238,53 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 }).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
 
-	$http.get("api/report/", LocalStorage.getHeader()).success(function(response) {
-		$scope.reports = response;
-	}).error(function(resp, status) {
-		if (status === 401 || status === 403) {
-			LocalStorage.clear();
-			$rootScope.authenticated = false;
-			$location.path("/login");
-		}
-    });
+	$scope.getAll = function() {
+		$http.get("api/report/", LocalStorage.getHeader()).success(function(response) {
+			$scope.reports = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });		
+	};
+	
+	$scope.getToday = function() {		
+		$http.get("api/report/today", LocalStorage.getHeader()).success(function(response) {
+			$scope.reports = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });
+	};
+	
+	$scope.getComplete = function() {
+		$http.get("api/report/complete", LocalStorage.getHeader()).success(function(response) {
+			$scope.reports = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });		
+	};
+	
+	$scope.getIncomplete = function() {
+		$http.get("api/report/incomplete", LocalStorage.getHeader()).success(function(response) {
+			$scope.reports = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });		
+	};	
 	
 	$scope.assign = function(id, lat, lon) {
 		var url = 'api/employee/open?lat='
@@ -420,16 +427,45 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 	};
 		 
 }).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
-	$http.get("api/employee/", LocalStorage.getHeader())
+	
+	$scope.getAll = function (reportId) {
+		$http.get("api/employee/", LocalStorage.getHeader())
+			.success(function(response) {
+				$scope.emps = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+	    });
+	};
+	
+	$scope.getUnassigned = function (reportId) {
+		$http.get("api/employee/unassigned", LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
-	}).error(function(resp, status) {
-		if (status === 401 || status === 403) {
-			LocalStorage.clear();
-			$rootScope.authenticated = false;
-			$location.path("/login");
-		}
-    });
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+		});
+	};
+	
+	$scope.getAssigned = function (reportId) {
+		$http.get("api/employee/assigned", LocalStorage.getHeader())
+		.success(function(response) {
+			$scope.emps = response;
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+		});
+	};
 	
 	$scope.unassign = function (reportId) { 
 	
@@ -475,6 +511,43 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 			    });
 			 };
 		 
+				$scope.email = '';
+				$scope.reports = {};
+				
+				$scope.assign = function(email, lat, lon) {
+					var url = 'api/report/open?lat='
+						+ lat + '&lon=' + lon;
+				
+					$http.get(url, LocalStorage.getHeader()).success(function(data) {
+						$scope.email = email;
+						$scope.reports = data;
+						$scope.openAssign();
+					}).error(function(resp, status) {
+						if (status === 401 || status === 403) {
+							LocalStorage.clear();
+							$rootScope.authenticated = false;
+							$location.path("/login");
+						}
+					});
+				};
+					
+				$scope.openAssign = function () {
+							
+					var modalInstance = $modal.open({
+						templateUrl: 'unassignedReport.html',
+					    controller: 'assignReport',
+					    size: 'lg',
+					    resolve: {
+					    	reports: function () {
+					    		return $scope.reports;
+					        }, 
+					        email: function() {
+					        	return $scope.email;
+					        }
+					      }
+					    });
+					 };		 
+			 
 }).controller('removeEmp', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
 	
 	$scope.employee = employee;
@@ -493,15 +566,33 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps' 
 					$rootScope.authenticated = false;
 					$location.path("/login");
 				}
-				$scope.error = true;
+				$scope.removeError = true;
 			});
 	};
-}).controller('displayEmpDetails', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
+}).controller('displayEmpDetails', function($rootScope, $scope, $http, $location, $route, $timeout, $modalInstance, employee, LocalStorage) {
 	
 	$scope.emp = employee;
 	$scope.edit = false;
-	$scope.map = { center: { latitude: $scope.emp.latitude, longitude: $scope.emp.longitude }, zoom: 12 };
-    
+
+	 $scope.mapSetup = function() {
+		 $scope.map = {
+		            center: {
+		            	latitude: $scope.emp.latitude, 
+		            	longitude: $scope.emp.longitude            	
+		            },
+		            zoom: 12,
+		            marker: {
+		                id:0,
+		                coords: {
+		                	latitude: $scope.emp.latitude, 
+		                	longitude: $scope.emp.longitude
+		                }
+		            }
+		        };
+	 }
+
+	$timeout( function(){ $scope.mapSetup(); }, 250);
+	
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
 	};

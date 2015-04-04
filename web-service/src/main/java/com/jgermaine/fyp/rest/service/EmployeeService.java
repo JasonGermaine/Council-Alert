@@ -21,6 +21,8 @@ public interface EmployeeService {
 	
 	public List<Employee> getUnassignedEmployees();
 	
+	public List<Employee> getAssignedEmployees();
+	
 	public List<Employee> getUnassignedNearEmployees(double lat, double lon);
 	
 	public HashMap<String, Long> getEmployeesStatistics();

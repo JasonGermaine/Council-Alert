@@ -36,6 +36,10 @@ public class ReportServiceImpl implements ReportService {
 		return reportDao.getAll();
 	}
 	
+	public List<Report> getTodayReports() {
+		return reportDao.getTodaysReports();
+	}
+	
 	public Report getReport(String name) {
 		return reportDao.getByName(name);
 	}
@@ -70,5 +74,13 @@ public class ReportServiceImpl implements ReportService {
 		statMap.put("report_incomplete", reportDao.getIncompleteReportCount());	
 		
 		return statMap;
+	}
+	
+	public List<Report> getCompleteReports() {
+		return reportDao.getComplete();
+	}
+	
+	public List<Report> getIncompleteReports() {
+		return reportDao.getIncomplete();
 	}
 } 

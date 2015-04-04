@@ -1,45 +1,77 @@
-	<div class="panel panel-black" style="margin-bottom: 35px;">
-		<div class="panel-heading">
-			<h3 class="panel-title"><i class="fa fa-globe"></i> - Employees</h3>
-		</div>
+
+<div class="panel panel-black pageHeader" style="margin-bottom: 20px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-globe"></i> - Employees
+		</h3>
 	</div>
-    
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="table-responsive">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>First Name</th>
-							<th>Last Name</th>
-							<th>Email</th>
-							<th>Phone</th>
-							<th>Report</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr ng-repeat="emp in emps">
-							<td>{{emp.firstName}}</td>
-							<td>{{emp.lastName}}</td>
-							<td>{{emp.email}}</td>
-							<td>{{emp.phoneNum}}</td>
-							<td>
-								{{emp.reportId}}
-								<span ng-if="!emp.reportId">none</span>
-							</td>
-							<td>
-								<button ng-click="openDisplay(emp)" class="btn btn-custom"><i class="fa fa-info"></i></button>
-								<button ng-click="openRemove(emp)" class="btn btn-custom"><i class="fa fa-user-times"></i></button>
-								<span ng-if="emp.reportId">
-									<button ng-click="unassign(emp.reportId)" class="btn btn-custom"><i class="fa fa-user"></i></button>
-								</span>	
-							</td>
-						</tr>
-					</tbody>
-				</table>
+</div>
+
+<div style="margin-bottom: 15px;">
+	<a href="/employee/add">
+		<button class="btn btn-custom">
+			<i class="fa fa-user-plus"></i> New Employee
+		</button>
+	</a>
+</div>
+
+<div class="row" style="margin-bottom: 50px;">
+	<div class="btn-group col-lg-12" role="group" aria-label="">
+		<button type="button" class="btn btn-default col-lg-4" ng-click="getAssigned()">ACTIVE</button>
+		<button type="button" class="btn btn-default col-lg-4" ng-click="getAll()">ALL</button>
+		<button type="button" class="btn btn-default col-lg-4" ng-click="getUnassigned()">INACTIVE</button>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="table-responsive">
+			<div class="col-lg-3" style="margin-bottom: 20px; margin-left: -15px;">
+				<input class="form-control" placeholder="Search..."
+					ng-model="searchText" />
 			</div>
+			<table class="table" ts-wrapper>
+				<thead>
+					<tr>
+						<th ts-criteria="firstName|lowercase">First Name</th>
+						<th ts-criteria="lastName|lowercase" ts-default>Last Name</th>
+						<th ts-criteria="email|lowercase">Email</th>
+						<th>Phone</th>
+						<th ts-criteria="reportId|parseInt">Report</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="emp in emps | filter:searchText" ts-repeat>
+						<td>{{emp.firstName}}</td>
+						<td>{{emp.lastName}}</td>
+						<td>{{emp.email}}</td>
+						<td>{{emp.phoneNum}}</td>
+						<td>{{emp.reportId}} <span ng-if="!emp.reportId">
+								<button
+									ng-click="assign(emp.email, emp.latitude, emp.longitude)"
+									class="btn btn-custom">
+									<i class="fa fa-wrench"></i>
+								</button>
+						</span>
+						</td>
+						<td>
+							<button ng-click="openDisplay(emp)" class="btn btn-custom">
+								<i class="fa fa-info-circle"></i>
+							</button>
+							<button ng-click="openRemove(emp)" class="btn btn-custom">
+								<i class="fa fa-user-times"></i>
+							</button> <span ng-if="emp.reportId">
+								<button ng-click="unassign(emp.reportId)" class="btn btn-custom">
+									<i class="fa fa-user"></i>
+								</button>
+						</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 	</div>
+</div>
 
 <script type="text/ng-template" id="removeEmployee.html">
 <div class="modal-header">
@@ -59,10 +91,10 @@
 		</div>
 	</div>
 	<div class="row">
-	<div class="alert alert-danger col-lg-10 col-lg-offset-1 ng-show="error">
+	<div class="alert alert-danger col-lg-10 col-lg-offset-1 ng-show="removeError">
 		There was a problem removing {{ employee.firstName }} {{ employee.lastName }}. Please try again later.
 	</div>
-</div>
+	</div>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-custom" ng-click="ok()">Remove</button>
@@ -71,91 +103,83 @@
 </script>
 <script type="text/ng-template" id="showEmployeeDetail.html">
 <div class="modal-header">
-	<h3 class="modal-title">{{ emp.email }}</h3>
+	<h3 class="modal-title">{{ emp.firstName }} {{ emp.lastName }}</h3>
 </div>
 <div class="modal-body">
 	<form class="form-horizontal col-lg-12" role="form">
-	<div class="form-group">
-		<label
-			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-			for="fname">First Name:</label>
-		<div class="col-lg-6 col-md-6 col-sm-10">
-			<input ng-disabled="true" class="form-control" id="fname" placeholder="First Name"
-				ng-model="emp.firstName" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label path="lastName"
-			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-			for="lname">Last Name:</label>
-		<div class="col-lg-6 col-md-6 col-sm-10">
-			<input ng-disabled="true" class="form-control" id="lname" placeholder="Last Name"
-				ng-model="emp.lastName" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label
-			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-			for="email">Email:</label>
-		<div class="col-lg-6 col-md-6 col-sm-10">
-			<input ng-disabled="true" type="email" class="form-control" id="email"
-				placeholder="Email" ng-model="emp.email" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label
-			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-			for="phoneNum">Phone Number:</label>
-		<div class="col-lg-6 col-md-6 col-sm-10">
-			<input ng-disabled="true" class="form-control" id="phoneNum" placeholder="Phone Number"
-				ng-model="emp.phoneNum" />
-		</div>
-	</div>
-	<div class="form-group">
-		<label
-			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
-		<div class="col-lg-6 col-md-6 col-sm-10">
-			<div class="controls form-inline">
-				<input ng-disabled="!edit" type="text" class="form-control" placeholder="Address"
-					id="address" style="width: 90%" />		
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="email">Email:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input ng-disabled="true" type="email" class="form-control" id="email"
+					placeholder="Email" ng-model="emp.email" />
 			</div>
-			<div class="row">
-				<div class="controls form-inline" style="margin-top: 10px">
-					<div class="col-lg-5">
-						<div class="row">
-						<label for="lat" class="control-label">Latitude</label>
-						</div> 
-						<div class="row">
-						<input ng-disabled="!edit" type="text" class="form-control" id="lat" ng-model="emp.latitude" />
-						</div> 
-					</div>
-					<div class="col-lg-5 col-lg-offset-1">
-						<div class="row">
-						<label for="lon" class="control-label" style="margin-left: 20px;">Longitude</label>
-						</div>
-						<div class="row">
-						<input ng-disabled="!edit" type="text" class="form-control" id="lon" ng-model="emp.longitude" />
+		</div>
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="phoneNum">Phone Number:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input ng-disabled="true" class="form-control" id="phoneNum" placeholder="Phone Number"
+					ng-model="emp.phoneNum" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<div>	
+			    	<style type = "text/css" scoped>
+    					.angular-google-map-container { height: 250px; } 
+    				</style>			
+					<div style="margin-top: 10px">
+						<div id="map_canvas" >
+    						<ui-gmap-google-map center="map.center" zoom="map.zoom">
+        						<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
+    						</ui-gmap-google-map>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div>	
-			    <style type = "text/css" scoped>
-    				.angular-google-map-container { height: 400px; } 
-    			</style>			
-				<div style="margin-top: 10px">
-					<ui-gmap-google-map center="map.center" zoom="map.zoom">
-					</ui-gmap-google-map>
-				</div>
-			</div>
 		</div>
-	</div>
-</form>
-
-</div>
+	</form>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-custom" ng-click="ok()">Remove</button>
 	 <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
 </div>
-</script>	
+</script>
+<script type="text/ng-template" id="unassignedReport.html">
+<div class="modal-header">
+	<h3 class="modal-title">Open Reports</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="table-responsive">
+				<table class="table table-hover table-striped">
+					<thead>
+						<tr>
+							<th>Report ID</th>
+							<th>Name</th>
+							<th>Assign</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="report in reports">
+							<td>{{report.id}}</td>
+							<td>{{report.name}}</td>
+							<td>
+								<button ng-click="assignReport(report.id)" class="btn btn-custom"><i class="fa fa-street-view"></i> Assign</button>
+							</td>						
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+</div>
+</script>

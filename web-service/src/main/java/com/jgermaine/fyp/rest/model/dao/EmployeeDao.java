@@ -129,6 +129,32 @@ public class EmployeeDao {
 		}
 	}
 
+
+	@SuppressWarnings("unchecked")
+	public List<Employee> getAssigned() {
+		try {
+			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+			CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
+			Root employee = query.from(Employee.class);
+			query.select(employee);
+
+			Subquery subquery = query.subquery(Report.class);
+			Root subRootEntity = subquery.from(Report.class);
+			subquery.select(subRootEntity);
+
+			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
+			subquery.where(correlatePredicate);
+			query.where((criteriaBuilder.exists(subquery)));
+
+			TypedQuery typedQuery = entityManager.createQuery(query);
+			return typedQuery.getResultList();
+		} catch (Exception e) {
+			LOGGER.error(e);
+			return null;
+		}
+	}
+	
 	/**
 	 * Update the passed Employee in the database.
 	 */

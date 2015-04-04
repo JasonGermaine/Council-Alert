@@ -56,6 +56,21 @@ public class ReportDao {
 		return entityManager.createQuery("from Report").getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Report> getWhereStatus(boolean status) {
+		return entityManager
+				.createQuery("from Report where status = :status")
+				.setParameter("status", status).getResultList();
+	}
+	
+	public List<Report> getComplete() {
+		return getWhereStatus(true);
+	}
+	
+	public List<Report> getIncomplete() {
+		return getWhereStatus(false);
+	}
+	
 	/**
 	 * Return the report having the passed name.
 	 */
@@ -63,6 +78,18 @@ public class ReportDao {
 		return (Report) entityManager
 				.createQuery("from Report where name = :name")
 				.setParameter("name", name).getSingleResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Report> getTodaysReports() {
+		try {
+			return  (List<Report>) entityManager
+					.createNativeQuery(
+							"Select * from Reports where timestamp > current_date()",
+							Report.class).getResultList();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	/**
@@ -79,7 +106,7 @@ public class ReportDao {
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Return the report having the passed id.
 	 */
