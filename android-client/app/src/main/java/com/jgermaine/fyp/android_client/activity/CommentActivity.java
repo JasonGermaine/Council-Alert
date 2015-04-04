@@ -230,10 +230,8 @@ public class CommentActivity extends Activity {
             mBitmap = bitmap;
             mImage.setImageBitmap(mBitmap);
             bytes = getBytesFromBitmap(bitmap);
-        } catch (IOException e) {
-            Log.e("TAG", "-- Error in setting image", e);
-        } catch (OutOfMemoryError oom) {
-            Log.e("TAG", "-- OOM Error in setting image", oom);
+        } catch (NullPointerException | IOException | OutOfMemoryError e) {
+            return null;
         }
         return bytes;
     }
