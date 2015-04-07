@@ -1,0 +1,84 @@
+<div class="modal-header">
+	<h3 class="modal-title">Change Location</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-lg-12">
+
+			<div class="row" style="margin-bottom: 15px;">
+				<div class="form-group">
+					<label class="control-label col-lg-2" for="address">Address:</label>
+					<div class="col-lg-9">
+						<input type="text" class="form-control" placeholder="Address"
+							id="address" />
+					</div>
+					<button id="toggleMap" class="btn btn-custom col-lg-1"
+						type="button" data-toggle="collapse" data-target="#collapseMap"
+						aria-expanded="false" aria-controls="collapseMap" onclick="resizeMap()">
+						<span class="glyphicon glyphicon-map-marker" data-toggle="tooltip"
+							title="Select location on map"></span>
+					</button>
+				</div>
+			</div>
+
+			<div class="row" style="margin-bottom: 15px;">
+				<div class="form-group">
+					<label for="lat" class="control-label col-lg-2">Latitude</label>
+					<div class="col-lg-9">
+						<input type="text" class="form-control" id="lat"
+							ng-model="location.latitude" />
+					</div>
+				</div>
+			</div>
+			<div class="row" style="margin-bottom: 15px;">
+				<div class="form-group">
+					<label for="lon" class="control-label col-lg-2">Longitude</label>
+					<div class="col-lg-9">
+						<input type="text" class="form-control" id="lon"
+							ng-model="location.longitude" />
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="collapse col-lg-offset-2 col-lg-9" id="collapseMap">
+					<div style="margin-top: 10px">
+						<div id="mapLocation"
+							style="width: 100% px; height: 250px; clear: both;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-custom" ng-click="change()">
+		<i class="fa fa-check"></i> Confirm
+	</button>
+	<button class="btn btn-danger" ng-click="cancel()">
+		<i class="fa fa-times"></i> Cancel
+	</button>
+</div>
+
+<script>
+	$('#mapLocation').locationpicker({
+		location : {
+			latitude : 53.2884615,
+			longitude : -6.3525261
+		},
+		zoom : 11,
+		radius : 2000,
+		inputBinding : {
+			latitudeInput : $('#lat'),
+			longitudeInput : $('#lon'),
+			radiusInput : null,
+			locationNameInput : $('#address')
+		},
+		enableAutocomplete : true
+	});
+	document.getElementById("toggleMap").onclick = function() {
+		setTimeout(function() {
+			$('#mapLocation').locationpicker('autosize');
+		}, 300);
+	};
+</script>

@@ -30,6 +30,22 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			return config;
 		}
 	};
+}).service('dashboardService', function() {
+	  var key = "";
+
+	  var setKey = function(newKey) {
+	      key = newKey;
+	  }
+
+	  var getKey = function(){
+	      return key;
+	  }
+
+	  return {
+	    setKey: setKey,
+	    getKey: getKey
+	  };
+
 }).config( function($routeProvider, $locationProvider, $httpProvider) {
 	$routeProvider.when('/', {
 		templateUrl : 'home.html',
@@ -50,16 +66,25 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		templateUrl : '/citizen/displayCitizen.html',
 		controller : 'citizen'
 	}).when('/profile', {
-		templateUrl : 'password.html',
-		controller : 'password'
+		templateUrl : '/employee/profile.html',
+		controller : 'profile'
 	}).otherwise('/');
 
 	$locationProvider.html5Mode(true);
 	
-}).controller('navigation', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+}).controller('navigation', function($rootScope, $scope, $http, $location, $route, LocalStorage, dashboardService) {
 
 	$scope.credentials = {};
 
+	$scope.toReport = function(key) {
+		dashboardService.setKey(key);
+		$location.path("/report");
+	};
+	
+	$scope.toEmployee = function(key) {
+		dashboardService.setKey(key);
+		$location.path("/employee");
+	};
 	
 	$scope.getStats = function() {
 		if ($scope.authenticated == true) {
@@ -76,7 +101,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 				$scope.reportData = [ $scope.stats.report_incomplete, $scope.stats.report_complete];
 				$scope.empLabels = ['Inactive', 'Active'];
 				$scope.empData = [ $scope.stats.emp_unassigned, $scope.stats.emp_assigned];
-				 $scope.colours = [
+				$scope.colours = [
 				                   { // black
 				                     fillColor: 'rgba(34,2,0,0.2)',
 				                     strokeColor: 'rgba(34,2,0,1)',
@@ -214,15 +239,144 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 
 	
-}).controller('password', function($rootScope, $scope, $http, $location, $route, LocalStorage) {
+}).controller('profile', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$scope.request = {};
-
-	$scope.request.email = $rootScope.user.email;	
 	
-	$scope.change = function () {
+	$scope.currentUser = null;
+	$scope.currentUser = angular.copy($rootScope.user);
+	
+	$scope.phoneEditable = false;
+
+	$scope.phoneEdit = function () {	
+		$scope.phoneEditable = true;
+	};
+	
+	$scope.clearPhoneUnedit = function () {			
+		$scope.phoneEditable = false;
+		$scope.currentUser.phoneNum = angular.copy($rootScope.user.phoneNum);
+	};
+
+	$scope.update = function () {					
+		$scope.updateRequest = {};
+		$scope.updateRequest.deviceId = $scope.currentUser.deviceId;
+		$scope.updateRequest.phoneNum = $scope.currentUser.phoneNum;
+		$scope.updateRequest.latitude = $scope.currentUser.latitude;
+		$scope.updateRequest.longitude = $scope.currentUser.longitude;
 		
+		$http.put("api/admin/employee/"+$rootScope.user.email, $scope.updateRequest, LocalStorage.getHeader())
+		.success(function(resp) {
+			
+			$rootScope.user.phoneNum = angular.copy($scope.currentUser.phoneNum);
+			$rootScope.user.latitude = angular.copy($scope.currentUser.latitude);
+			$rootScope.user.longitude = angular.copy($scope.currentUser.longitude);
+			
+			if ($scope.currentUser.deviceId === 'DELETED') {
+				$rootScope.user.deviceId = null;
+			}
+			
+			$location.path("/");
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {					
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+		});
+	};
+	
+	$scope.clearDevice = function () {					
+		$scope.currentUser.deviceId = 'DELETED';
+	};
+
+	$scope.resetDevice = function () {					
+		$scope.currentUser.deviceId = angular.copy($rootScope.user.deviceId);
+	};
+	
+	$scope.phoneUnedit = function () {	
+		$scope.phoneEditable = false;
+	};
+	
+	$scope.setUnedit = function () {	
+		$scope.editable = false;
+		$scope.currentUser = $rootScope.user;
+	};
+	
+	$scope.reset = function () {	
+		$scope.resetLocation();
+		$scope.resetDevice();
+		$scope.clearPhoneUnedit();
+	};
+	
+	$scope.resetLocation = function () {	
+		$scope.currentUser.latitude = angular.copy($rootScope.user.latitude);
+		$scope.currentUser.longitude = angular.copy($rootScope.user.longitude);
+		$scope.moveMarker($rootScope.user.latitude, $rootScope.user.longitude);
+	};
+
+	 $scope.moveMarker = function (lat, lon) {
+		 $scope.map = {
+	            center: {
+	            	latitude: lat, 
+	            	longitude: lon            	
+	            },
+	            zoom: 12,
+	            marker: {
+	                id:0,
+	                coords: {
+		            	latitude: lat, 
+		            	longitude: lon
+		            	}
+	            }
+	        };
+	};
+	
+	$scope.moveMarker($scope.currentUser.latitude, $scope.currentUser.longitude);
+	
+	$scope.changePassword = function () {
+		var modalInstance = $modal.open({
+			templateUrl: 'changePassword.html',
+		    controller: 'changePassword',
+		    size: 'md'
+	    });
+	}; 
+	
+	
+	$scope.changeLocation = function () {
+		var modalInstance = $modal.open({
+			templateUrl: 'modals/changeLocation.html',
+		    controller: 'changeLocation',
+		    size: 'md'
+	    });
+		
+		modalInstance.result.then(function (location) {
+		      $scope.currentUser.latitude = location.latitude;
+		      $scope.currentUser.longitude = location.longitude;		      
+		      $scope.moveMarker(location.latitude, location.longitude);
+		      $scope.newLocation = true;
+		    }, function () {
+		      
+		 });
+	}; 
+	
+}).controller('changeLocation', function($rootScope, $scope, $http, $location, $route, LocalStorage,
+		$modalInstance) {
+	$scope.location = {};
+	$scope.change = function () {
+	    $modalInstance.close($scope.location);
+	};
+	  
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};		 
+}).controller('changePassword', function($rootScope, $scope, $http, $location, $route, LocalStorage,
+		$modalInstance) {
+
+	$scope.request = {};
+	$scope.request.email = $rootScope.user.email;	
+	$scope.change = function () {
 		$http.post("api/admin/password", $scope.request, LocalStorage.getHeader())
-			.success(function(response) {
+			.success(function(resp) {
+				$scope.cancel();
 				$location.path("/");
 			}).error(function(resp, status) {
 				if (status === 401 || status === 403) {					
@@ -230,14 +384,16 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 					$rootScope.authenticated = false;
 					$location.path("/login");
 				}
-				$scope.response = resp;
 				$scope.passwordError = true;
 			});
 	};
-		 
-}).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
-	$rootScope.reports = {};
-
+	
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};		 
+}).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal, dashboardService) {
+	$rootScope.reports = {};	
+	
 	$scope.getAll = function() {
 		$http.get("api/report/", LocalStorage.getHeader()).success(function(response) {
 			$scope.reports = response;
@@ -249,6 +405,28 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			}
 	    });		
 	};
+	
+	 $scope.showEmp = function (email) {
+		 $http.get("api/employee/emp?email=" + email, LocalStorage.getHeader()).success(function(response) {
+			 $scope.employee = response;
+				var modalInstance = $modal.open({
+					templateUrl: 'modals/showEmployeeDetail.html',
+				    controller: 'displayEmpDetails',
+				    size: 'lg',
+				    resolve: {
+				    	employee: function () {
+				    		return $scope.employee;
+				        }
+				      }
+				    });
+		 }).error(function(response) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+			});
+	 };
 	
 	$scope.getToday = function() {		
 		$http.get("api/report/today", LocalStorage.getHeader()).success(function(response) {
@@ -325,8 +503,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		$scope.report = report;
 		
 		var modalInstance = $modal.open({
-			templateUrl: 'displayComments.html',
-		    controller: 'displayComment',
+			templateUrl: '/modals/showReportDetail.html',
+		    controller: 'showReportDetail',
 		    size: 'lg',
 		    resolve: {
 		    	report: function () {
@@ -336,6 +514,18 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	    });
 	};
 		 
+	
+
+	var key = dashboardService.getKey();
+	if (key === "report_today") {
+		$scope.getToday();
+	} else if (key === "report_incomplete") {
+		$scope.getIncomplete();
+	} else if (key === "report_complete") {
+		$scope.getComplete();
+	}
+	dashboardService.setKey("");
+
 }).controller('availableEmp', function($rootScope, $scope, $http, $location, $route, LocalStorage,
 		$modalInstance, employees, reportId) {
 
@@ -368,13 +558,32 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		  $modalInstance.dismiss('cancel');
 	};
 		 
-}).controller('displayComment', function($rootScope, $scope, $http, $location, $route, LocalStorage,
+}).controller('showReportDetail', function($rootScope, $scope, $http, $location, $route, $timeout, LocalStorage,
 		$modalInstance, report) {
-
+	
 	$scope.report = report;
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
 	};
+	
+	$scope.mapSetup = function() {
+		 $scope.map = {
+		            center: {
+		            	latitude: $scope.report.latitude, 
+		            	longitude: $scope.report.longitude            	
+		            },
+		            zoom: 12,
+		            marker: {
+		                id:0,
+		                coords: {
+		                	latitude: $scope.report.latitude, 
+		                	longitude: $scope.report.longitude
+		                }
+		            }
+		        };
+	 }
+
+	$timeout( function(){ $scope.mapSetup(); }, 250);
 		 
 }).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
@@ -418,7 +627,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		 };
 
 
-}).controller('displayUserReports', function($rootScope, $scope, $http, $location, $route, LocalStorage,
+}).controller('displayUserReports', function($rootScope, $scope, $http, $location, $route, $modal, LocalStorage,
 		$modalInstance, userReports) {
 
 	$scope.userReports = userReports;
@@ -426,9 +635,24 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		  $modalInstance.dismiss('cancel');
 	};
 		 
-}).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
+	$scope.openReport = function (report) {
+		
+		$scope.report = report;
+		
+		var modalInstance = $modal.open({
+			templateUrl: '/modals/showReportDetail.html',
+		    controller: 'showReportDetail',
+		    size: 'lg',
+		    resolve: {
+		    	report: function () {
+		    		return $scope.report;
+		        }
+		      }
+	    });
+	};
+}).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal, dashboardService) {
 	
-	$scope.getAll = function (reportId) {
+	$scope.getAll = function () {
 		$http.get("api/employee/", LocalStorage.getHeader())
 			.success(function(response) {
 				$scope.emps = response;
@@ -441,7 +665,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	    });
 	};
 	
-	$scope.getUnassigned = function (reportId) {
+	$scope.getUnassigned = function () {
 		$http.get("api/employee/unassigned", LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
@@ -454,7 +678,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		});
 	};
 	
-	$scope.getAssigned = function (reportId) {
+	$scope.getAssigned = function () {
 		$http.get("api/employee/assigned", LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
@@ -467,8 +691,32 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		});
 	};
 	
-	$scope.unassign = function (reportId) { 
 	
+	$scope.showReport = function (reportId) {
+		
+		$http.get("api/report/get?id=" + reportId, LocalStorage.getHeader())
+		.success(function(response) {
+			$scope.report = response;
+			var modalInstance = $modal.open({
+				templateUrl: '/modals/showReportDetail.html',
+			    controller: 'showReportDetail',
+			    size: 'lg',
+			    resolve: {
+			    	report: function () {
+			    		return $scope.report;
+			        }
+			      }
+		    });
+		}).error(function(resp, status) {
+			if (status === 401 || status === 403) {
+				LocalStorage.clear();
+				$rootScope.authenticated = false;
+				$location.path("/login");
+			}
+		});
+	};
+	
+	$scope.unassign = function (reportId) { 
 		$http.get("api/admin/unassign?id=" + reportId, LocalStorage.getHeader())
 			.error(function(resp, status) {
 			
@@ -500,7 +748,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			$scope.employee = employee;
 			
 			var modalInstance = $modal.open({
-				templateUrl: 'showEmployeeDetail.html',
+				templateUrl: 'modals/showEmployeeDetail.html',
 			    controller: 'displayEmpDetails',
 			    size: 'lg',
 			    resolve: {
@@ -547,9 +795,21 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 					      }
 					    });
 					 };		 
-			 
+
+					 
+			var key = dashboardService.getKey();
+			if (key === "emp_all") {
+				$scope.getAll();
+			} else if (key === "emp_inactive") {
+				$scope.getUnassigned();
+			} else if (key === "emp_active") {
+				$scope.getAssigned();
+			}
+			dashboardService.setKey("");
+
 }).controller('removeEmp', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
 	
+	$scope.removeError = false;
 	$scope.employee = employee;
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');

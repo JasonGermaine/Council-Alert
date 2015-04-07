@@ -46,7 +46,18 @@
 						<td>{{emp.lastName}}</td>
 						<td>{{emp.email}}</td>
 						<td>{{emp.phoneNum}}</td>
-						<td>{{emp.reportId}} <span ng-if="!emp.reportId">
+						<td>
+						
+						<span ng-if="emp.reportId">
+								<button
+									ng-click="showReport(emp.reportId)"
+									class="btn btn-custom">
+									<i class="fa fa-map-marker" style="margin-right: 5px;"></i> {{emp.reportId}}
+								</button>
+						</span>
+						 
+						
+						<span ng-if="!emp.reportId">
 								<button
 									ng-click="assign(emp.email, emp.latitude, emp.longitude)"
 									class="btn btn-custom">
@@ -90,62 +101,9 @@
 			Are you sure you want to remove {{ employee.firstName }} {{ employee.lastName }}?
 		</div>
 	</div>
-	<div class="row">
-	<div class="alert alert-danger col-lg-10 col-lg-offset-1 ng-show="removeError">
-		There was a problem removing {{ employee.firstName }} {{ employee.lastName }}. Please try again later.
-	</div>
-	</div>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-custom" ng-click="ok()">Remove</button>
-	 <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
-</div>
-</script>
-<script type="text/ng-template" id="showEmployeeDetail.html">
-<div class="modal-header">
-	<h3 class="modal-title">{{ emp.firstName }} {{ emp.lastName }}</h3>
-</div>
-<div class="modal-body">
-	<form class="form-horizontal col-lg-12" role="form">
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-				for="email">Email:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<input ng-disabled="true" type="email" class="form-control" id="email"
-					placeholder="Email" ng-model="emp.email" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-				for="phoneNum">Phone Number:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<input ng-disabled="true" class="form-control" id="phoneNum" placeholder="Phone Number"
-					ng-model="emp.phoneNum" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<div>	
-			    	<style type = "text/css" scoped>
-    					.angular-google-map-container { height: 250px; } 
-    				</style>			
-					<div style="margin-top: 10px">
-						<div id="map_canvas" >
-    						<ui-gmap-google-map center="map.center" zoom="map.zoom">
-        						<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
-    						</ui-gmap-google-map>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form>
-</div>
-<div class="modal-footer">
 	 <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
 </div>
 </script>

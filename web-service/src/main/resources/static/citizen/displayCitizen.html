@@ -60,6 +60,11 @@
 						<td>{{report.id}}</td>
 						<td>{{report.name}}</td>
 						<td>{{report.timestamp | date:'dd-MM-yyyy'}}</td>
+						<td>
+							<button class="btn btn-custom" ng-click="openReport(report)">
+								Show Information
+							</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>

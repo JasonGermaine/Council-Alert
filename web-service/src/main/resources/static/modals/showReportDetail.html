@@ -1,0 +1,54 @@
+<div class="modal-header">
+	<h3 class="modal-title">{{report.name}}</h3>
+</div>
+<div class="modal-body">
+
+	<div class="row">
+		<div class="col-lg-5">
+			<h5><b>Reported By:</b></h5> {{ report.citizenId }}
+
+			<h5 style="margin-top: 30px;"><b>Report Date:</b></h5> {{report.timestamp | date:'medium'}}
+		</div>
+
+		<div class="col-lg-5 col-lg-offset-1">
+				<div>	
+			    	<style type = "text/css" scoped>
+    					.angular-google-map-container { height: 200px; } 
+    				</style>			
+					<div style="margin-top: 10px">
+						<div id="map_canvas" >
+    						<ui-gmap-google-map center="map.center" zoom="map.zoom">
+        						<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
+    						</ui-gmap-google-map>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<table style="margin-top: 30px;" class="table">
+		<thead>
+			<tr>
+				<th>Author</th>
+				<th>Comment</th>
+				<th>Image</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="entry in report.entries">
+				<td>{{entry.author}}</td>
+				<td>{{entry.comment}}</td>				
+				<td>
+					<img ng-show="entry.image != null"
+								class="col-lg-4 col-md-4 img-responsive"
+								src="{{ 'data:image/JPEG;base64,' + entry.image}}"
+								style="height: 250px; width: 250px;">
+				</td>						
+				<td>{{entry.timestamp | date:'medium'}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+</div>

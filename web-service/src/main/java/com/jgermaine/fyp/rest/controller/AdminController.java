@@ -24,6 +24,7 @@ import com.jgermaine.fyp.rest.gcm.TaskManager;
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.Employee;
+import com.jgermaine.fyp.rest.model.EmployeeUpdateRequest;
 import com.jgermaine.fyp.rest.model.PasswordChangeRequest;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.model.User;
@@ -129,11 +130,36 @@ public class AdminController {
 				reportService.updateReport(r);
 			}
 			councilAlertUserService.removeUser(emp);
-			;
+			; 
 			return new ResponseEntity<String>(HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateEmployee(@PathVariable("email") String email, 
+			@RequestBody @Valid EmployeeUpdateRequest request) {
+		
+			System.out.println("Received Request for: " + email);
+			Employee emp = employeeService.getEmployee(email);
+			if (emp != null) {
+				if (request.getLatitude() != 0.0 && request.getLongitude() != 0.0) {
+					emp.setLatitude(request.getLatitude());
+					emp.setLongitude(request.getLongitude());
+				}
+				if (isNotNullOrEmpty(request.getPhoneNum())) {
+					emp.setPhoneNum(request.getPhoneNum());
+				}
+				if (isNotNullOrEmpty(request.getDeviceId())
+						&& request.getDeviceId().equals("DELETED")) {
+					emp.setDeviceId(null);
+				}
+				employeeService.updateEmployee(emp);
+				return new ResponseEntity<String>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			}				
 	}
 
 	/**
@@ -213,5 +239,9 @@ public class AdminController {
 			return new ResponseEntity<String>("User does not exist!",
 					HttpStatus.BAD_REQUEST);
 		}
+	}
+	
+	private boolean isNotNullOrEmpty(String val) {
+		return val != null && !val.isEmpty();
 	}
 }

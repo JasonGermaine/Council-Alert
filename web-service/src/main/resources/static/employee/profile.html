@@ -1,0 +1,155 @@
+<div class="panel panel-black pageHeader" style="margin-bottom: 20px;">
+	<div class="panel-heading">
+		<h3 class="panel-title">
+			<i class="fa fa-globe"></i> - Profile
+		</h3>
+	</div>
+</div>
+
+<div class="row" style="margin-left: 10px; margin-bottom: 35px;">
+	<button class="btn btn-custom col-lg-2" style="margin-left: -10px"
+		ng-click="changePassword()" ng-show="!editable">
+		<i class="fa fa-edit"></i> Change Password
+	</button>
+</div>
+
+<div class="row">
+	<form class="form-horizontal col-lg-12" role="form">
+		<div class="form-group" ng-show="!editable">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="fname">First Name:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input class="form-control" id="fname" placeholder="First Name"
+					ng-model="currentUser.firstName" disabled />
+			</div>
+		</div>
+		<div class="form-group" ng-show="!editable">
+			<label path="lastName"
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="lname">Last Name:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input class="form-control" id="lname" placeholder="Last Name"
+					ng-model="currentUser.lastName" disabled />
+			</div>
+		</div>
+		<div class="form-group" ng-show="!editable">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="email">Email:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input type="email" class="form-control" id="email"
+					placeholder="Email" ng-model="currentUser.email" disabled />
+			</div>
+		</div>
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="phoneNum">Phone Number:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+				<input class="form-control" id="phoneNum" placeholder="Phone Number"
+					ng-model="currentUser.phoneNum" ng-disabled="!phoneEditable" />
+			</div>
+			<button ng-show="!phoneEditable" class="btn btn-custom" ng-click="phoneEdit()">
+				<i class="fa fa-edit"></i>
+			</button>
+			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="phoneUnedit()">
+				<i class="fa fa-check"></i>
+			</button>
+			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="clearPhoneUnedit()">
+				<i class="fa fa-times"></i>
+			</button>
+			<button ng-show="currentUser.phoneNum !== user.phoneNum && !phoneEditable" class="btn btn-custom" 
+				ng-click="clearPhoneUnedit()">
+				<i class="fa fa-undo"></i>
+			</button>
+		</div>
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
+				for="phoneNum">Device:</label>
+			<div ng-show="!currentUser.deviceId" class="col-lg-6 col-md-6 col-sm-10">
+				<input class="form-control" placeholder="No Device Assigned"
+					ng-model="currentUser.deviceId" disabled />
+			</div>
+			<div ng-show="currentUser.deviceId" class="col-lg-6 col-md-6 col-sm-10">
+				<input class="form-control" placeholder="Device"
+					ng-model="currentUser.deviceId" ng-disabled="!editable" />
+			</div>
+			<button ng-show="currentUser.deviceId" class="btn btn-custom" ng-click="clearDevice()">
+				<i class="fa fa-times"></i>
+			</button>
+			<button ng-show="currentUser.deviceId !== user.deviceId && currentUser.deviceId !== 'DELETED'" class="btn btn-custom" 
+				ng-click="resetDevice()">
+				<i class="fa fa-undo"></i>
+			</button>
+		</div>
+		<div class="form-group">
+			<label
+				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
+			<div class="col-lg-6 col-md-6 col-sm-10">
+			
+				<style type="text/css" scoped>
+				.angular-google-map-container {
+					height: 250px;
+				}
+				</style>
+				<div style="margin-top: 10px">
+					<ui-gmap-google-map center="map.center" zoom="map.zoom">
+					<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
+					</ui-gmap-google-map>
+				</div>
+			</div>
+			<button class="btn btn-custom" ng-click="changeLocation()">
+				<i class="fa fa-edit"></i>
+			</button>
+			<button ng-show="currentUser.latitude !== user.latitude || currentUser.longitude !== user.longitude" class="btn btn-custom" 
+				ng-click="resetLocation()">
+				<i class="fa fa-undo"></i>
+			</button>
+		</div>
+		<div class="form-group form-actions">
+			<div class="row" ng-show="currentUser.deviceId !== user.deviceId || currentUser.latitude !== user.latitude || 
+						currentUser.longitude !== user.longitude || currentUser.phoneNum !== user.phoneNum">
+				<div
+					class="col-lg-offset-4 col-lg-1 col-md-offset-4 col-md-1 col-sm-offset-2 col-sm-3">
+					<button ng-click="update()" class="btn btn-custom">
+						<i class="fa fa-user-plus"></i> Update
+					</button>
+				</div>
+				<div class="col-lg-1 col-md-1 col-sm-2">
+					<button ng-click="reset()" class="btn btn-danger"
+						style="opacity: 0.8; margin-left: 10px;">Reset</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<script type="text/ng-template" id="changePassword.html">
+<div class="modal-header">
+	<h3 class="modal-title">Change Password</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
+			<div class="form-group row">
+				<input ng-model="request.password" type="password"
+					class="form-control" placeholder="Old Password">
+			</div>
+			<div class="form-group row">
+				<input ng-model="request.newPassword" type="password"
+					class="form-control" placeholder="New Password">
+			</div>
+			<div class="row">
+				<div class="alert alert-danger col-lg-12" ng-show="passwordError">
+					There was a problem. Please try again.
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-custom" ng-click="change()"><i class="fa fa-check"></i> Confirm</button>
+    <button class="btn btn-danger" ng-click="cancel()"><i class="fa fa-times"></i> Cancel</button>
+</div>
+</script>

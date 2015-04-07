@@ -82,4 +82,14 @@ public class EmployeeController {
 		LOGGER.info("Returning employees");
 		return new ResponseEntity<List<Employee>>(employeeService.getUnassignedNearEmployees(lat, lon), HttpStatus.OK);
 	}
+	
+	@RequestMapping(value = "/emp", method = RequestMethod.GET)
+	public ResponseEntity<Employee> getEmployee(@RequestParam(value = "email", required = true) String email) {
+		Employee emp = employeeService.getEmployee(email);
+		if (emp != null) {			
+			return new ResponseEntity<Employee>(emp, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Employee>(HttpStatus.BAD_REQUEST);
+		}
+	}
 }
