@@ -2,8 +2,12 @@ package com.jgermaine.fyp.rest.model.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,8 +32,7 @@ import com.jgermaine.fyp.rest.model.Report;
 @Transactional
 public class EmployeeDao {
 
-	private static final Logger LOGGER = LogManager.getLogger(EmployeeDao.class
-			.getName());
+	private static final Logger LOGGER = LogManager.getLogger(EmployeeDao.class.getName());
 
 	// An EntityManager will be automatically injected from entityManagerFactory
 	@PersistenceContext
@@ -38,15 +41,14 @@ public class EmployeeDao {
 	/**
 	 * Create new Employee in the database.
 	 */
-	public void create(Employee employee) {
+	public void create(Employee employee) throws EntityExistsException, PersistenceException, Exception {
 		entityManager.persist(employee);
-		return;
 	}
 
 	/**
 	 * Delete the Employee from the database.
 	 */
-	public void delete(Employee employee) {
+	public void delete(Employee employee) throws Exception {
 		entityManager.remove(employee);
 	}
 
@@ -54,26 +56,24 @@ public class EmployeeDao {
 	 * Return all the Employees stored in the database.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Employee> getAll() {
+	public List<Employee> getAll() throws Exception {
 		return entityManager.createQuery("from Employee").getResultList();
 	}
 
 	/**
 	 * Return the Employee having the passed name.
 	 */
-	public Employee getByEmail(String email) {
-		try {
-			return (Employee) entityManager
-					.createQuery("from Employee where email = :email")
-					.setParameter("email", email).getSingleResult();
-		} catch (Exception e) {
-			LOGGER.error(e);
-			return null;
-		}
+	public Employee getByEmail(String email) throws NoResultException, NonUniqueResultException, Exception {
+		return (Employee) entityManager.createQuery("from Employee where email = :email").setParameter("email", email)
+				.getSingleResult();
 	}
 
 	public Long getAllCount() {
-		return (Long) entityManager.createQuery("Select count(*) from Employee").getSingleResult();
+		try {
+			return (Long) entityManager.createQuery("Select count(*) from Employee").getSingleResult();
+		} catch (Exception e) {
+			return (long) 0;
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -96,42 +96,35 @@ public class EmployeeDao {
 			TypedQuery typedQuery = entityManager.createQuery(query);
 			return (Long) typedQuery.getSingleResult();
 		} catch (Exception e) {
-			LOGGER.error(e);
 			return (long) 0;
 		}
 	}
-	
+
 	/**
 	 * Return the Employee having no job assigned.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Employee> getUnassigned() {
-		try {
-			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+	public List<Employee> getUnassigned() throws Exception {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
-			CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
-			Root employee = query.from(Employee.class);
-			query.select(employee);
+		CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
+		Root employee = query.from(Employee.class);
+		query.select(employee);
 
-			Subquery subquery = query.subquery(Report.class);
-			Root subRootEntity = subquery.from(Report.class);
-			subquery.select(subRootEntity);
+		Subquery subquery = query.subquery(Report.class);
+		Root subRootEntity = subquery.from(Report.class);
+		subquery.select(subRootEntity);
 
-			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
-			subquery.where(correlatePredicate);
-			query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
+		Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
+		subquery.where(correlatePredicate);
+		query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
 
-			TypedQuery typedQuery = entityManager.createQuery(query);
-			return typedQuery.getResultList();
-		} catch (Exception e) {
-			LOGGER.error(e);
-			return null;
-		}
+		TypedQuery typedQuery = entityManager.createQuery(query);
+		return typedQuery.getResultList();
 	}
 
-
 	@SuppressWarnings("unchecked")
-	public List<Employee> getAssigned() {
+	public List<Employee> getAssigned() throws Exception {
 		try {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
@@ -154,14 +147,14 @@ public class EmployeeDao {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Update the passed Employee in the database.
 	 */
-	public void update(Employee employee) {
+	public void update(Employee employee) throws Exception {
 		entityManager.merge(employee);
 	}
-	
+
 	/**
 	 * Returns a list of unassigned reports sorted by closest proximity
 	 * 
@@ -170,19 +163,13 @@ public class EmployeeDao {
 	 * @return list of report
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Employee> getUnassignedNearestEmployee(double lat, double lon) {
-		Query query = entityManager
-				.createNativeQuery(
-						"SELECT *, "
-								+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
-								+ "* cos( radians( longitude ) - radians(:lon) ) "
-								+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
-								+ "AS distance " + "FROM Employee "
-								+ "WHERE email not in(Select r.emp_email "
-								+ "from Reports r WHERE r.emp_email IS NOT NULL) "
-								+ "HAVING distance < 10 "
-								+ "ORDER BY distance " + "LIMIT 0 , 6;",
-						Employee.class);
+	public List<Employee> getUnassignedNearestEmployee(double lat, double lon) throws Exception {
+		Query query = entityManager.createNativeQuery("SELECT *, "
+				+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
+				+ "* cos( radians( longitude ) - radians(:lon) ) "
+				+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )" + "AS distance " + "FROM Employee "
+				+ "WHERE email not in(Select r.emp_email " + "from Reports r WHERE r.emp_email IS NOT NULL) "
+				+ "HAVING distance < 10 " + "ORDER BY distance " + "LIMIT 0 , 6;", Employee.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);
 		return query.getResultList();

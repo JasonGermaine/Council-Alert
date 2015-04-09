@@ -2,6 +2,11 @@ package com.jgermaine.fyp.rest.service.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +31,23 @@ public class CitizenServiceImpl implements CitizenService {
 		return Citizen;
 	}
 	
-	public void addCitizen(Citizen Citizen) {
+	public void addCitizen(Citizen Citizen) throws EntityExistsException, PersistenceException, Exception {
 		CitizenDao.create(Citizen);
 	}
 	
-	public void removeCitizen(Citizen Citizen) {
+	public void removeCitizen(Citizen Citizen) throws Exception {
 		CitizenDao.delete(Citizen);;
 	}
 	
-	public List<Citizen> getCitizens() {
+	public List<Citizen> getCitizens() throws Exception {
 		return CitizenDao.getAll();
 	}
 	
-	public Citizen getCitizen(String email) {
+	public Citizen getCitizen(String email) throws NoResultException, NonUniqueResultException, Exception {
 		return CitizenDao.getByEmail(email);
 	}
 	
-	public void updateCitizen(Citizen citizen) {
+	public void updateCitizen(Citizen citizen) throws Exception {
 		CitizenDao.update(citizen);
 	}
 } 

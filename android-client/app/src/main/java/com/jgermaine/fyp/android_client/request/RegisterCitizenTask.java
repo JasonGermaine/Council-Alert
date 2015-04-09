@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
 
     private Citizen mCitizen = new Citizen();
-    private static final String mURL = ConnectionUtil.API_URL+ "/citizen/create";
+    private static final String mURL = ConnectionUtil.API_URL+ "/citizen/";
     private Activity mActivity;
     private OnCreationResponseListener mListener;
     private ProgressDialog mDialog;

@@ -1,6 +1,8 @@
 package com.jgermaine.fyp.rest.config;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityExistsException;
+import javax.persistence.PersistenceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,28 +22,29 @@ import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 @Component
 public class DatabaseInitializer {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(DatabaseInitializer.class.getName());
+	private static final Logger LOGGER = LogManager.getLogger(DatabaseInitializer.class.getName());
 
 	@Autowired
 	private CouncilAlertUserDetailsService councilAlertUserService;
-	
+
 	@Autowired
 	private EmployeeServiceImpl employeeService;
 
 	@Autowired
 	private ReportServiceImpl reportService;
-	
+
 	@Autowired
 	private UserServiceImpl userService;
-		
+
 	@PostConstruct
-	public void postConstruct() {			
+	public void postConstruct() {
 		Employee employee = getDefaultAdminEmp();
-		if (userService.getUser(employee.getEmail())  == null ) {		
+		try {
 			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 			LOGGER.info("Creating Employee: " + employee.getEmail());
+		} catch (Exception e) {
+			LOGGER.info("Employee Already Created: " + employee.getEmail());
 		}
 	}
 

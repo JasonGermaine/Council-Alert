@@ -1,5 +1,8 @@
 package com.jgermaine.fyp.rest.controller;
 
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +23,8 @@ import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 @RequestMapping("/api/user")
 public class UserController {
 
-	private static final Logger LOGGER = LogManager
-			.getLogger(UserController.class.getName());
-	
+	private static final Logger LOGGER = LogManager.getLogger(UserController.class.getName());
+
 	@Autowired
 	private EmployeeServiceImpl employeeService;
 
@@ -31,32 +33,38 @@ public class UserController {
 
 	/**
 	 * Retrieves a user after login
+	 * 
 	 * @param data
 	 * @return
 	 */
-	@RequestMapping(value="/retrieve", method=RequestMethod.POST)
-	public ResponseEntity<User> attemptLogin(
-			@RequestBody UserRequest data) {		
-		
-		String email = data.getEmail();
-		User user = userService.getUser(email);		
-		String deviceId = data.getDeviceId();
-		if (deviceId != null && user instanceof Employee) {	
-			LOGGER.info(deviceId);
-			updateEmployee((Employee) user, deviceId);
-		}	
-		return new ResponseEntity<User>(user, HttpStatus.OK) ;
-	}	
-	
+	@RequestMapping(value = "/retrieve", method = RequestMethod.POST)
+	public ResponseEntity<User> attemptLogin(@RequestBody UserRequest data) {
+		try {
+			String email = data.getEmail();
+			User user = userService.getUser(email);
+			String deviceId = data.getDeviceId();
+			if (deviceId != null && user instanceof Employee) {
+				LOGGER.info(deviceId);
+				updateEmployee((Employee) user, deviceId);
+			}
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		} catch (NoResultException | NonUniqueResultException e) {
+			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	/**
 	 * Updates Employees Device Key
+	 * 
 	 * @param employee
 	 * @param deviceId
+	 * @throws Exception 
 	 */
-	private void updateEmployee(Employee employee, String deviceId) {		
+	private void updateEmployee(Employee employee, String deviceId) throws Exception {
 		if ((employee.getDeviceId() == null || !employee.getDeviceId().equals(deviceId))) {
-			LOGGER.info("Updating employee: " + employee.getEmail() 
-					+ " device key to: " + deviceId);
+			LOGGER.info("Updating employee: " + employee.getEmail() + " device key to: " + deviceId);
 			employee.setDeviceId(deviceId);
 			employeeService.updateEmployee(employee);
 		}

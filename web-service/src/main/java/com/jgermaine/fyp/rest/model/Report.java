@@ -18,7 +18,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -33,12 +36,18 @@ public class Report {
 	@Column(name = "report_id", unique = true, nullable = false)
 	private int id;
 	
-	@NotNull
+	@NotEmpty
 	@Size(max = 80)
+	@Pattern(regexp="[A-Za-z0-9?.$%, ]*")
 	private String name;
 	
-	private double longitude, latitude;
+	private double longitude;
+	
+	private double latitude;
+	
+	@NotNull
 	private Date timestamp;
+	
 	private boolean status;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.PERSIST)

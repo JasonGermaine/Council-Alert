@@ -2,7 +2,6 @@ package com.jgermaine.fyp.rest.model;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,10 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.apache.commons.codec.binary.Base64;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -35,16 +34,17 @@ public class Entry {
 	@Lob
 	@Column(columnDefinition = "mediumblob")
 	private byte[] image;
+	
+	@Length(max = 255)
 	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "report_id", nullable=false)
 	private Report report;
-	
-	@Transient
-	private String imageString;
-	
+
+    @NotEmpty
 	@Email
+	@Length(max = 255)
 	private String author;
 	
 	public String getComment() {
@@ -79,12 +79,6 @@ public class Entry {
 		return timestamp;
 	}
 	
-    public String getImageString() {
-    	String url = new String(Base64.encodeBase64(image));
-    	imageString = "data:image/png;base64," + url;
-    	return imageString;
-    }
-    
     public Report getReport() {
     	return report;
     }

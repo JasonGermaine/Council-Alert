@@ -1,11 +1,20 @@
 package com.jgermaine.fyp.rest.model;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class EmployeeUpdateRequest {
 
+    @NotEmpty
+    @Length(max = 15)
+    @Pattern(regexp="[0-9+]*")
     private String phoneNum;
     
     private double longitude, latitude;
     
+    @Length(max = 4000)
     private String deviceId;
 
 	public String getPhoneNum() {

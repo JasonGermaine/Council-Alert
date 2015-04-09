@@ -38,7 +38,7 @@ import java.util.List;
 public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<Report[]>> {
 
     private Activity mActivity;
-    private String mURL = ConnectionUtil.API_URL + "/citizen/report?email=";
+    private String mURL = ConnectionUtil.API_URL + "/citizen/report/";
     private OnRetrieveCitizenReportsListener mListener;
     private ProgressDialog mDialog;
     private Cache mCache;

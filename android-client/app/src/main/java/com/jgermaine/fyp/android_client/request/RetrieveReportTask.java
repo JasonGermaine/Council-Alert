@@ -16,20 +16,9 @@ import org.springframework.http.ResponseEntity;
 public class RetrieveReportTask extends GetReportTask {
 
     private OnTaskCompleted mListener;
-    private static final String POSTFIX = "get?id=";
 
     public RetrieveReportTask(Activity activity, String id) {
-        super(activity, POSTFIX + id);
-        try {
-            mListener = (OnTaskCompleted) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnEntryInteractionListener");
-        }
-    }
-
-    public RetrieveReportTask(Activity activity) {
-        super(activity, POSTFIX);
+        super(activity, id);
         try {
             mListener = (OnTaskCompleted) activity;
         } catch (ClassCastException e) {

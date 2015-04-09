@@ -7,11 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
@@ -24,10 +25,13 @@ public abstract class User {
 	@Id
     @NotEmpty
 	@Email
+	@Length(max = 255)
     @Column(name="email")
 	private String email;
 	
 	@Transient
+	@Pattern(regexp="[A-Za-z0-9?.$%]*")
+	@Length(max = 255)
 	private String password;
 	
 	public String getEmail() {

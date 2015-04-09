@@ -3,6 +3,11 @@ package com.jgermaine.fyp.rest.service.impl;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,44 +29,44 @@ public class ReportServiceImpl implements ReportService {
 		return report;
 	}
 	
-	public void addReport(Report report) {
+	public void addReport(Report report) throws EntityExistsException, PersistenceException, Exception {
 		reportDao.create(report);
 	}
 	
-	public void removeReport(Report report) {
+	public void removeReport(Report report) throws Exception {
 		reportDao.delete(report);;
 	}
 	
-	public List<Report> getReports() {
+	public List<Report> getReports() throws Exception {
 		return reportDao.getAll();
 	}
 	
-	public List<Report> getTodayReports() {
+	public List<Report> getTodayReports() throws Exception {
 		return reportDao.getTodaysReports();
 	}
 	
-	public Report getReport(String name) {
+	public Report getReport(String name) throws NoResultException, NonUniqueResultException, Exception {
 		return reportDao.getByName(name);
 	}
 	
-	public Report getReport(int id) {
+	public Report getReport(int id) throws NoResultException {
 		return reportDao.getById(id);
 	}
 	
-	public void updateReport(Report report) {
+	public void updateReport(Report report) throws Exception {
 		reportDao.update(report);
 	}
 	
-	public List<Report> getReports(double lat, double lon) {
+	public List<Report> getReports(double lat, double lon) throws Exception {
 		return reportDao.getNearestReport(lat, lon);
 	}
 	
-	public List<Report> getUnassignedNearReports(double lat, double lon) {
+	public List<Report> getUnassignedNearReports(double lat, double lon) throws Exception {
 		return reportDao.getUnassignedNearestReport(lat, lon);
 	}
 
 	@Override
-	public Report getReportForEmp(String email) {
+	public Report getReportForEmp(String email) throws NoResultException, NonUniqueResultException, Exception {
 		return reportDao.getByEmployee(email);
 	}
 
@@ -76,11 +81,11 @@ public class ReportServiceImpl implements ReportService {
 		return statMap;
 	}
 	
-	public List<Report> getCompleteReports() {
+	public List<Report> getCompleteReports() throws Exception {
 		return reportDao.getComplete();
 	}
 	
-	public List<Report> getIncompleteReports() {
+	public List<Report> getIncompleteReports() throws Exception {
 		return reportDao.getIncomplete();
 	}
 } 

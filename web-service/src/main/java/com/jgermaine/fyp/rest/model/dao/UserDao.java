@@ -2,6 +2,8 @@ package com.jgermaine.fyp.rest.model.dao;
 
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -17,7 +19,7 @@ public class UserDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public User getUser(String email) {
+	public User getUser(String email) throws NoResultException, NonUniqueResultException, Exception {
 		try {
 			return (User) entityManager
 					.createQuery("from User "

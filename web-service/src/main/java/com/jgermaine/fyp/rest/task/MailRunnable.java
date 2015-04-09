@@ -1,4 +1,4 @@
-package com.jgermaine.fyp.rest.gcm;
+package com.jgermaine.fyp.rest.task;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;

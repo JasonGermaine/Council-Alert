@@ -70,16 +70,11 @@ public class RetrieveReportActivity extends LocationActivity implements
         String reportId = null;
         try {
             reportId = getIntent().getExtras().getString("reportId");
+            new RetrieveReportTask(this, reportId).execute();
         } catch (NullPointerException e) {
             Log.d("Report ID Retriever" ,"No intent data detected");
+            finish();
         }
-
-        if (reportId == null || reportId.isEmpty()) {
-            new RetrieveReportTask(this).execute();
-        } else {
-            new RetrieveReportTask(this, reportId).execute();
-        }
-
     }
 
     @Override

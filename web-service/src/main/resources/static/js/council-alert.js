@@ -88,14 +88,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	
 	$scope.getStats = function() {
 		if ($scope.authenticated == true) {
-			var token = LocalStorage.retrieveToken();
-			var config = {
-					headers : { 
-						"Authorization" : token,
-						"Accept" : "application/json"
-					}
-			}
-			$http.get("api/admin/stats", config).success(function(response) {
+			$http.get("api/admin/stats", LocalStorage.getHeader()).success(function(response) {
 				$scope.stats = response;
 				$scope.reportLabels = ['Incomplete', 'Complete'];
 				$scope.reportData = [ $scope.stats.report_incomplete, $scope.stats.report_complete];
@@ -137,7 +130,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			var user = {
 					email: $scope.email
 			};
-			$http.post("api/admin/retrieve?email=" + $scope.email, user, LocalStorage.getHeader()).success(function(response) {
+			$http.get("api/admin/employee/" + $scope.email, LocalStorage.getHeader()).success(function(response) {
 				$rootScope.user = response;
 				$rootScope.authenticated = true;
 				$location.path("/");
@@ -180,13 +173,9 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			$scope.oauth_resp = response;
 			if ($scope.oauth_resp.access_token) {
 				LocalStorage.storeToken('Bearer ' + $scope.oauth_resp.access_token);
-				LocalStorage.storeEmail($scope.credentials.username);
+				LocalStorage.storeEmail($scope.credentials.username);			
 				
-				var user = {
-						email : $scope.credentials.username						
-				}
-				
-				$http.post("api/admin/retrieve?email=" + $scope.credentials.username, user, LocalStorage.getHeader()).success(function(response) {
+				$http.get("api/admin/employee/" + $scope.credentials.username, LocalStorage.getHeader()).success(function(response) {
 					$rootScope.user = response;
 					$rootScope.authenticated = true;
 					$location.path("/");
@@ -222,7 +211,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 	
 	$scope.assignReport = function(id) {
-		var url = 'api/admin/assign?email='
+		var url = 'api/admin/employee/assign?email='
 				+ $scope.email + '&id=' + id;
 		$http
 				.get(url, LocalStorage.getHeader())
@@ -332,30 +321,30 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	
 	$scope.moveMarker($scope.currentUser.latitude, $scope.currentUser.longitude);
 	
-	$scope.changePassword = function () {
-		var modalInstance = $modal.open({
-			templateUrl: 'changePassword.html',
-		    controller: 'changePassword',
-		    size: 'md'
-	    });
-	}; 
-	
-	
-	$scope.changeLocation = function () {
-		var modalInstance = $modal.open({
-			templateUrl: 'modals/changeLocation.html',
-		    controller: 'changeLocation',
-		    size: 'md'
-	    });
+		$scope.changePassword = function () {
+			var modalInstance = $modal.open({
+				templateUrl: 'changePassword.html',
+			    controller: 'changePassword',
+			    size: 'md'
+		    });
+		}; 
 		
-		modalInstance.result.then(function (location) {
-		      $scope.currentUser.latitude = location.latitude;
-		      $scope.currentUser.longitude = location.longitude;		      
-		      $scope.moveMarker(location.latitude, location.longitude);
-		      $scope.newLocation = true;
-		    }, function () {
-		      
-		 });
+		
+		$scope.changeLocation = function () {
+			var modalInstance = $modal.open({
+				templateUrl: 'modals/changeLocation.html',
+			    controller: 'changeLocation',
+			    size: 'md'
+		    });
+			
+			modalInstance.result.then(function (location) {
+			      $scope.currentUser.latitude = location.latitude;
+			      $scope.currentUser.longitude = location.longitude;		      
+			      $scope.moveMarker(location.latitude, location.longitude);
+			      $scope.newLocation = true;
+			    }, function () {
+			      
+			 });
 	}; 
 	
 }).controller('changeLocation', function($rootScope, $scope, $http, $location, $route, LocalStorage,
@@ -371,10 +360,9 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 }).controller('changePassword', function($rootScope, $scope, $http, $location, $route, LocalStorage,
 		$modalInstance) {
 
-	$scope.request = {};
-	$scope.request.email = $rootScope.user.email;	
+	$scope.request = {};	
 	$scope.change = function () {
-		$http.post("api/admin/password", $scope.request, LocalStorage.getHeader())
+		$http.put("api/admin/employee/password/" + $rootScope.user.email, $scope.request, LocalStorage.getHeader())
 			.success(function(resp) {
 				$scope.cancel();
 				$location.path("/");
@@ -394,20 +382,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 }).controller('report', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal, dashboardService) {
 	$rootScope.reports = {};	
 	
-	$scope.getAll = function() {
-		$http.get("api/report/", LocalStorage.getHeader()).success(function(response) {
-			$scope.reports = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-	    });		
-	};
-	
 	 $scope.showEmp = function (email) {
-		 $http.get("api/employee/emp?email=" + email, LocalStorage.getHeader()).success(function(response) {
+		 $http.get("api/employee/" + email, LocalStorage.getHeader()).success(function(response) {
 			 $scope.employee = response;
 				var modalInstance = $modal.open({
 					templateUrl: 'modals/showEmployeeDetail.html',
@@ -428,40 +404,32 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			});
 	 };
 	
+	 $scope.getReports = function(url) {
+		 $http.get(url, LocalStorage.getHeader()).success(function(response) {
+				$scope.reports = response;
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+		    });
+	 };
+	 
+	$scope.getAll = function() {
+		$scope.getReports("api/report/");		
+	};
+		
 	$scope.getToday = function() {		
-		$http.get("api/report/today", LocalStorage.getHeader()).success(function(response) {
-			$scope.reports = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-	    });
+		$scope.getReports("api/report/today");
 	};
 	
 	$scope.getComplete = function() {
-		$http.get("api/report/complete", LocalStorage.getHeader()).success(function(response) {
-			$scope.reports = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-	    });		
+		$scope.getReports("api/report/complete");	
 	};
 	
 	$scope.getIncomplete = function() {
-		$http.get("api/report/incomplete", LocalStorage.getHeader()).success(function(response) {
-			$scope.reports = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-	    });		
+		$scope.getReports("api/report/incomplete");
 	};	
 	
 	$scope.assign = function(id, lat, lon) {
@@ -599,7 +567,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
     });
 	
 	$scope.getReports = function(email) {
-		var url = 'api/citizen/report?email='+ email
+		var url = 'api/citizen/report/'+ email
 		$http.get(url, LocalStorage.getHeader()).success(function(data) {
 			$scope.userReports = data;
 			$scope.open();
@@ -653,33 +621,19 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 }).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal, dashboardService) {
 	
 	$scope.getAll = function () {
-		$http.get("api/employee/", LocalStorage.getHeader())
-			.success(function(response) {
-				$scope.emps = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-	    });
+		$scope.getEmployees("api/employee/");
 	};
 	
 	$scope.getUnassigned = function () {
-		$http.get("api/employee/unassigned", LocalStorage.getHeader())
-		.success(function(response) {
-			$scope.emps = response;
-		}).error(function(resp, status) {
-			if (status === 401 || status === 403) {
-				LocalStorage.clear();
-				$rootScope.authenticated = false;
-				$location.path("/login");
-			}
-		});
+		$scope.getEmployees("api/employee/unassigned");
 	};
 	
 	$scope.getAssigned = function () {
-		$http.get("api/employee/assigned", LocalStorage.getHeader())
+		$scope.getEmployees("api/employee/assigned");
+	};
+	
+	$scope.getEmployees = function(url) {
+		$http.get(url, LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
 		}).error(function(resp, status) {
@@ -690,7 +644,6 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			}
 		});
 	};
-	
 	
 	$scope.showReport = function (reportId) {
 		
@@ -717,7 +670,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 	
 	$scope.unassign = function (reportId) { 
-		$http.get("api/admin/unassign?id=" + reportId, LocalStorage.getHeader())
+		$http.get("api/admin/report/unassign/" + reportId, LocalStorage.getHeader())
 			.error(function(resp, status) {
 			
 				if (status === 401 || status === 403) {
@@ -817,7 +770,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	
 	$scope.ok = function () {
 	
-		$http.delete("api/admin/employee?email=" + $scope.employee.email, LocalStorage.getHeader())
+		$http.delete("api/admin/employee/" + $scope.employee.email, LocalStorage.getHeader())
 			.success(function(response) {
 				$scope.cancel();
 			}).error(function(resp, status) {
@@ -926,7 +879,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 					longitude : $scope.lon
 				};
 				
-				$http.post('api/admin/create', dataObj, LocalStorage.getHeader()).success(function(data) {
+				$http.post('api/admin/employee', dataObj, LocalStorage.getHeader()).success(function(data) {
 					$location.path("/");
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {

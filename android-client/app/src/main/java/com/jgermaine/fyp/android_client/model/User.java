@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.android_client.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @JsonSubTypes.Type(value = Employee.class, name = "employee"),
                 @JsonSubTypes.Type(value = Citizen.class, name = "citizen") })
+@JsonIgnoreProperties(value={"password"})
 public class User {
 
     private String email;

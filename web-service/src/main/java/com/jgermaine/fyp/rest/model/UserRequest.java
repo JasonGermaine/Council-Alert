@@ -1,8 +1,18 @@
 package com.jgermaine.fyp.rest.model;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
 
 public class UserRequest {
+	
+    @NotEmpty
+	@Email
+	@Length(max = 255)
 	private String email;
+    
+    @Length(max = 4000)
 	private String deviceId;
 
     public UserRequest() {

@@ -5,18 +5,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,17 +22,26 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @AttributeOverride(name="email", column=@Column(name="emp_email"))
 public class Employee extends User {
 
-    @NotEmpty(message="Please enter a first name")
+    @NotEmpty
+    @Length(max = 80)
+    @Pattern(regexp="[A-Za-z]*")
     private String firstName;
     
-    @NotEmpty(message="Please enter a last name")
+    @NotEmpty
+    @Length(max = 80)
+    @Pattern(regexp="[A-Za-z]*")
     private String lastName;
     
-    //@NotEmpty(message="Please enter a phone number")
+    @NotEmpty
+    @Length(max = 15)
+    @Pattern(regexp="[0-9+]*")
     private String phoneNum;
     
-    private double longitude, latitude;
+    private double longitude;
     
+    private double latitude;
+    
+    @Length(max = 4000)
     private String deviceId;
     
     @OneToOne (mappedBy="employee", optional=true, cascade=CascadeType.ALL)
@@ -46,10 +49,6 @@ public class Employee extends User {
     
     @Transient
     private String reportId;
-    
-    public Employee() {
-
-    }
 
     public String getReportId() {
     	String id = null;
@@ -114,10 +113,6 @@ public class Employee extends User {
     public void setReport(Report report) {
     	this.report = report;
     }
-    
-    //public String getReportId() {
-    //    return Integer.toString(report.getId());
-    //}
     
     @Override
     public String toString() {
