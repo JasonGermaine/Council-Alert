@@ -51,7 +51,7 @@ public class DatabaseInitializer {
 	private Employee getDefaultAdminEmp() {
 		Employee employee = new Employee();
 		employee.setEmail("admin@council-alert.com");
-		employee.setPassword("admin");
+		employee.setPassword(Secret.SECRET_PASSWORD);
 		employee.setFirstName("Jason");
 		employee.setLastName("Germaine");
 		employee.setPhoneNum("123-Council-Alert");
