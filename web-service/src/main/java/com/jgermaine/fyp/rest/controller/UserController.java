@@ -19,6 +19,12 @@ import com.jgermaine.fyp.rest.model.User;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 
+/**
+ * 
+ * @author JasonGermaine
+ *
+ * Handles common RESTful operations for a user
+ */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -32,19 +38,27 @@ public class UserController {
 	private UserServiceImpl userService;
 
 	/**
-	 * Retrieves a user after login
+	 * This request is used to retrieve an user object. This event is most
+	 * likely to occur after a successful login request.
 	 * 
-	 * @param data
-	 * @return
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. User exists for email - returns User + 200</li>
+	 * <li>2. No User exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * 
+	 * @param email
+	 * @return Employee
 	 */
-	@RequestMapping(value = "/retrieve", method = RequestMethod.POST)
+	
+	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity<User> attemptLogin(@RequestBody UserRequest data) {
 		try {
 			String email = data.getEmail();
 			User user = userService.getUser(email);
 			String deviceId = data.getDeviceId();
 			if (deviceId != null && user instanceof Employee) {
-				LOGGER.info(deviceId);
 				updateEmployee((Employee) user, deviceId);
 			}
 			return new ResponseEntity<User>(user, HttpStatus.OK);

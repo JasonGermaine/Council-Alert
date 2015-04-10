@@ -8,6 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 
+ * @author JasonGermaine
+ *
+ * Handles error handling for RESTful error responses
+ *
+ */
 @RestController
 public class CustomErrorController implements ErrorController {
 

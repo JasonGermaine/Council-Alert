@@ -36,7 +36,7 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
 
     private UserRequest mRequest = new UserRequest();
     private Activity mActivity;
-    private static final String mURL = ConnectionUtil.API_URL + "/user/retrieve";
+    private static final String mURL = ConnectionUtil.API_URL + "/user/";
     private OnRetrieveResponseListener mListener;
     private ProgressDialog mDialog;
     private final String mToken;

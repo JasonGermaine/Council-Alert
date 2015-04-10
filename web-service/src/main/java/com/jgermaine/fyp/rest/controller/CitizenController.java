@@ -2,7 +2,6 @@ package com.jgermaine.fyp.rest.controller;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
@@ -17,23 +16,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Citizen;
-import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.Report;
-import com.jgermaine.fyp.rest.model.Role;
-import com.jgermaine.fyp.rest.model.User;
-import com.jgermaine.fyp.rest.model.dao.CouncilAlertUserDao;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 
 /**
- * Handles all RESTful operations for citizens
  * 
- * @author jason
+ * @author JasonGermaine
+ * 
+ * Handles requests for Citizens
+ *
  */
 @RestController
 @RequestMapping("/api/citizen")
@@ -51,11 +47,13 @@ public class CitizenController {
 	private UserServiceImpl userService;
 
 	/**
-	 * Creates a new Citizen There are 3 possible outputs
+	 * Creates a new Citizen.
+	 * There are 4 possible outputs
 	 * <ul>
 	 * <li>1. Citizen is valid and unique - returns 201</li>
 	 * <li>2. Citizen already exists in DB - returns 409</li>
 	 * <li>3. Invalid Citizen passed - returns 400</li>
+	 * <li>4. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return HttpResponse
@@ -65,20 +63,26 @@ public class CitizenController {
 		try {
 			citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
-			LOGGER.info("Creating Citizen: " + citizen.getEmail());
 			return new ResponseEntity<String>(HttpStatus.CREATED);
 		} catch (PersistenceException e) {
 			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	/**
-	 * Return list of reports for a given citizen
+	 * Retrieves reports for a Citizen for a given email. 
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Citizen exists - returns reports +  200</li>
+	 * <li>2. No Citizen exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
 	 * 
-	 * @return report list
-	 */
+	 * @return List of Reports
+	 */	
 	@RequestMapping(value ="/report/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getCitizenReports(@PathVariable("email") String email) {
 		try {

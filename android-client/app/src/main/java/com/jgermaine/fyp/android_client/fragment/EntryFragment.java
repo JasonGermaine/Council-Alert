@@ -1,7 +1,9 @@
 package com.jgermaine.fyp.android_client.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
@@ -74,17 +76,43 @@ public class EntryFragment extends Fragment {
 
                 Intent intent = new Intent(getActivity(), CommentActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(VIEW_TAG, !entry.getAuthor().equals(((CouncilAlertApplication)getActivity().getApplication()).getUser().getEmail()));
+                bundle.putBoolean(VIEW_TAG, !entry.getAuthor().equals(((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail()));
 
-                if (entry.getImage() != null)
+                if (entry.getImage() != null) {
                     bundle.putString(IMAGE_TAG, Base64.encodeToString(entry.getImage(), Base64.NO_WRAP));
+                }
 
-                if (entry.getComment() != null)
+                if (entry.getComment() != null) {
                     bundle.putString(COMMENT_TAG, entry.getComment());
+                }
 
                 intent.putExtras(bundle);
                 startActivity(intent);
 
+            }
+        });
+
+        entries.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final long entryId = id;
+                if (mAdapter.getItem((int) id).getAuthor().equals(
+                        ((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail())) {
+
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Remove Comment")
+                            .setMessage("Are you sure you want to delete this item?")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    mAdapter.remove(mAdapter.getItem((int) entryId));
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null)
+                            .show();
+                }
+                return true;
             }
         });
 
@@ -108,7 +136,7 @@ public class EntryFragment extends Fragment {
         List<Entry> entries = new ArrayList<Entry>();
         if (mAdapter != null) {
             if (mAdapter.getCount() > 0) {
-                for(int i = 0; i < mAdapter.getCount(); i++ ) {
+                for (int i = 0; i < mAdapter.getCount(); i++) {
                     entries.add(mAdapter.getItem(i));
                 }
             }

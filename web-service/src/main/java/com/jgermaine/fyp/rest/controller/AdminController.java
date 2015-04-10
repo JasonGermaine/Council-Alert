@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
@@ -37,12 +36,19 @@ import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 import com.jgermaine.fyp.rest.task.TaskManager;
 
+/**
+ * 
+ * @author JasonGermaine
+ *
+ * This controller is restricted to being used by the employee web portal.
+ */
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
 
 	private static final Logger LOGGER = LogManager.getLogger(AdminController.class.getName());
-
+	private static final String DELTED_DEVICE_ID = "DELETED";
+	
 	@Autowired
 	private CouncilAlertUserDetailsService councilAlertUserService;
 
@@ -59,10 +65,19 @@ public class AdminController {
 	private CitizenServiceImpl citizenService;
 
 	/**
-	 * Retrieves a user after login
+	 * This request is used to retrieve an employee object. This event is most
+	 * likely to occur after a successful login request.
 	 * 
-	 * @param data
-	 * @return
+	 * There are 4 possible outputs
+	 * <ul>
+	 * <li>1. Employee exists for email - returns Employee + 200</li>
+	 * <li>2. Email is for Citizen - returns 401</li>
+	 * <li>3. No User exists for email - return 400</li>
+	 * <li>4. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * 
+	 * @param email
+	 * @return Employee
 	 */
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<User> attemptLogin(@PathVariable("email") String email) {
@@ -79,15 +94,15 @@ public class AdminController {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
 
 	/**
-	 * Creates a new Employee There are 3 possible outputs
+	 * Creates a new Employee in the database. There are 4 possible outputs
 	 * <ul>
 	 * <li>1. Employee is valid and unique - returns 201</li>
 	 * <li>2. Employee already exists in DB - returns 409</li>
 	 * <li>3. Invalid Employee passed - returns 400</li>
+	 * <li>4. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return HttpResponse
@@ -97,7 +112,6 @@ public class AdminController {
 		try {
 			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
-			LOGGER.info("Creating Employee: " + employee.getEmail());
 			return new ResponseEntity<String>(HttpStatus.CREATED);
 		} catch (PersistenceException e) {
 			return new ResponseEntity<String>(HttpStatus.CONFLICT);
@@ -107,10 +121,21 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Deletes an Employee for a given email. There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Employee exists for email. Employee is deleted - returns 200</li>
+	 * <li>2. No User exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * *
+	 * 
+	 * @param email
+	 * @return HttpResponse
+	 */
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeEmployee(@PathVariable("email") String email) {
 		try {
-			LOGGER.info("Deleting email - " + email);
 			Employee emp = employeeService.getEmployee(email);
 			employeeService.removeEmployee(emp);
 			if (emp.getReport() != null) {
@@ -128,6 +153,19 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Updates an Employee in the database for a given email. There are 4
+	 * possible outputs
+	 * <ul>
+	 * <li>1. Employee exists and data is valid. - Employee updated + returns
+	 * 200</li>
+	 * <li>2. Invalid EmployeeUpdateRequest passed - returns 400</li>
+	 * <li>3. No User exists for email - return 400</li>
+	 * <li>4. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * 
+	 * @return HttpResponse
+	 */
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updateEmployee(@PathVariable("email") String email,
 			@RequestBody @Valid EmployeeUpdateRequest request) {
@@ -140,7 +178,7 @@ public class AdminController {
 			if (isNotNullOrEmpty(request.getPhoneNum())) {
 				emp.setPhoneNum(request.getPhoneNum());
 			}
-			if (isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals("DELETED")) {
+			if (isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals(DELTED_DEVICE_ID)) {
 				emp.setDeviceId(null);
 			}
 			employeeService.updateEmployee(emp);
@@ -159,6 +197,7 @@ public class AdminController {
 	 * <ul>
 	 * <li>1. Employee and Report exist - returns 200</li>
 	 * <li>2. Employee or Report ids do not exist - returns 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return HttpResponse
@@ -175,8 +214,7 @@ public class AdminController {
 
 			// New Thread spawned for GCM so it does no block response
 			TaskManager.sendReportIdAsNotification(reportId, employee);
-
-			LOGGER.info(String.format("Assigned Employee: %s to Report: %s", employee.getEmail(), report.getId()));
+			
 			return new ResponseEntity<String>(HttpStatus.OK);
 
 		} catch (NoResultException | NonUniqueResultException e) {
@@ -187,6 +225,20 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Updates an Employee password in the database for a given email. 
+	 * There are 5 possible outputs
+	 * <ul>
+	 * <li>1. Employee exists and data is valid. - Employee updated + returns
+	 * 200</li>
+	 * <li>2. Invalid EmployeeUpdateRequest passed - returns 400</li>
+	 * <li>3. No User exists for email - return 400</li>
+	 * <li>4. Old password does not match database password - return 400</li>
+	 * <li>5. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * 
+	 * @return HttpResponse
+	 */	
 	@RequestMapping(value = "/employee/password/{email:.+}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updatePassword(@PathVariable("email") String email,
 			@RequestBody @Valid PasswordChangeRequest request) {
@@ -205,6 +257,17 @@ public class AdminController {
 		}
 	}
 
+	/**
+	 * Unassigns a report with the given id.
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Report exist - Update + returns 200</li>
+	 * <li>2. Report does not exist - returns 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * 
+	 * @return HttpResponse
+	 */
 	@RequestMapping(value = "/report/unassign/{id}", method = RequestMethod.GET)
 	public ResponseEntity<String> unassignEmployee(@PathVariable("id") int reportId) {
 		try {
@@ -215,14 +278,16 @@ public class AdminController {
 		} catch (NoResultException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+
 	/**
-	 * Return list of all citizens
+	 * Retrieves all citizens
 	 * 
-	 * @return citizen list
+	 * @return List of Citizens
 	 */
 	@RequestMapping(value = "/citizen", method = RequestMethod.GET)
 	public ResponseEntity<List<Citizen>> getAllCitizens() {
@@ -230,10 +295,16 @@ public class AdminController {
 			LOGGER.info("Returning all citizens");
 			return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(), HttpStatus.OK);
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Citizen>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	/**
+	 * Returns statistics from the database.
+	 * 
+	 * @return statistic map
+	 */
 	@RequestMapping(value = "/stats", method = RequestMethod.GET)
 	public ResponseEntity<HashMap<String, Long>> getStats() {
 		try {
@@ -251,7 +322,13 @@ public class AdminController {
 		}
 	}
 
-	private boolean isNotNullOrEmpty(String val) {
-		return val != null && !val.isEmpty();
+	/**
+	 * Determines whether a string is not null and not empty
+	 * 
+	 * @param value
+	 * @return isValid
+	 */
+	private boolean isNotNullOrEmpty(String value) {
+		return value != null && !value.isEmpty();
 	}
 }

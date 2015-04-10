@@ -19,7 +19,7 @@ import java.text.SimpleDateFormat;
 public class SendReportTask extends PostReportTask {
 
     public SendReportTask(String email, Report report, Activity activity) {
-        super(report, activity, "");
+        super(report, activity, "citizen/" + email);
     }
 
     @Override

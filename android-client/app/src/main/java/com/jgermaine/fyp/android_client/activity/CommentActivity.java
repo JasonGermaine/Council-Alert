@@ -59,17 +59,22 @@ public class CommentActivity extends Activity {
         mComment = (EditText) findViewById(R.id.comment_text);
 
         Bundle bundle = getIntent().getExtras();
-        isViewable = bundleContains(bundle, EntryFragment.VIEW_TAG);
+        if(bundleContains(bundle, EntryFragment.VIEW_TAG)) {
+            isViewable = bundle.getBoolean(EntryFragment.VIEW_TAG);
+        }
+
+        if (bundleContains(bundle, EntryFragment.IMAGE_TAG)) {
+            String imageString = bundle.getString(EntryFragment.IMAGE_TAG, null);
+            if (imageString != null)
+                mImage.setImageBitmap(decodeBitmap(imageString, mImage.getWidth(), mImage.getHeight()));
+        }
+
+        if (bundleContains(bundle, EntryFragment.COMMENT_TAG)) {
+            mComment.setText(bundle.getString(EntryFragment.COMMENT_TAG, ""));
+        }
+
         if (isViewable) {
             findViewById(R.id.image_selectors).setVisibility(View.GONE);
-            if (bundleContains(bundle, EntryFragment.IMAGE_TAG)) {
-                String imageString = bundle.getString(EntryFragment.IMAGE_TAG, null);
-                if (imageString != null)
-                    mImage.setImageBitmap(decodeBitmap(imageString, mImage.getWidth(), mImage.getHeight()));
-            }
-            if (bundleContains(bundle, EntryFragment.COMMENT_TAG)) {
-                mComment.setText(bundle.getString(EntryFragment.COMMENT_TAG, ""));
-            }
             mComment.setKeyListener(null);
         }
     }
@@ -263,9 +268,6 @@ public class CommentActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_comment) {
 

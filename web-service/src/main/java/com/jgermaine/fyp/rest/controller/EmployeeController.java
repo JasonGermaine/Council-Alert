@@ -25,7 +25,7 @@ import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 /**
  * Handles all RESTful operations for employees
  * 
- * @author jason
+ * @author JasonGermaine
  */
 @RestController
 @RequestMapping("/api/employee")
@@ -53,7 +53,6 @@ public class EmployeeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getEmployees() {
 		try {
-			LOGGER.info("Returning all employees");
 			return new ResponseEntity<List<Employee>>(employeeService.getEmployees(), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -70,7 +69,6 @@ public class EmployeeController {
 	@RequestMapping(value = "/unassigned", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getUnassignEmployees() {
 		try {
-			LOGGER.info("Returning all unnassigned employees");
 			return new ResponseEntity<List<Employee>>(employeeService.getUnassignedEmployees(), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -101,7 +99,6 @@ public class EmployeeController {
 			@RequestParam(value = "lat", required = true) Double lat,
 			@RequestParam(value = "lon", required = true) Double lon) {
 		try {
-			LOGGER.info("Returning employees");
 			return new ResponseEntity<List<Employee>>(employeeService.getUnassignedNearEmployees(lat, lon),
 					HttpStatus.OK);
 		} catch (Exception e) {
@@ -118,6 +115,7 @@ public class EmployeeController {
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Employee>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
