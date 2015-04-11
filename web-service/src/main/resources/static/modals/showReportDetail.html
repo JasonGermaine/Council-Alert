@@ -39,10 +39,14 @@
 				<td>{{entry.author}}</td>
 				<td>{{entry.comment}}</td>				
 				<td>
-					<img ng-show="entry.image != null"
+					<span ng-if="entry.image != null">
+						<a href ng-click="openImage(entry.image)">
+							<img
 								class="col-lg-4 col-md-4 img-responsive"
 								src="{{ 'data:image/JPEG;base64,' + entry.image}}"
 								style="height: 250px; width: 250px;">
+						</a>
+					</span>											
 				</td>						
 				<td>{{entry.timestamp | date:'medium'}}</td>
 			</tr>

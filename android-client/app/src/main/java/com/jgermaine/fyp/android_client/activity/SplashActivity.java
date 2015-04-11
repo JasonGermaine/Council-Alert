@@ -22,7 +22,7 @@ public class SplashActivity extends Activity
 
     private Cache mCache;
     private ImageView mIcon;
-    private static final long SPLASH_TIMEOUT = 3*1000;
+    private static final long SPLASH_TIMEOUT = 2*1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +62,7 @@ public class SplashActivity extends Activity
     private boolean isStringValid(String string) {
         return (string != null && !string.isEmpty());
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_splash, menu);

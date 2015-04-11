@@ -30,8 +30,8 @@ public abstract class User {
 	private String email;
 	
 	@Transient
-	@Pattern(regexp="[A-Za-z0-9?.$%]*")
-	@Length(max = 255)
+	@Pattern(regexp="[A-Za-z0-9!?.$%]*")
+	@Length(max = 255, min = 6)
 	private String password;
 	
 	public String getEmail() {

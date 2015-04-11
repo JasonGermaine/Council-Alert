@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Citizen;
+import com.jgermaine.fyp.rest.model.Entry;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
@@ -208,6 +209,36 @@ public class ReportController {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<Report>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/**
+	 * Retrieves the appropriate Report for a given id. There are 3 possible
+	 * outputs
+	 * <ul>
+	 * <li>1. Report for id exists - update Report and return 200</li>
+	 * <li>2. Report for id does not exist - returns 400</li>
+	 * <li>3. Invalid comment entries - returns 400</li>
+	 * <li>4. Unexpected entry - returns 500</li>
+	 * </ul>
+	 * 
+	 * @param id
+	 * @return report
+	 */
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<String> updateReport(@PathVariable("id") int id,
+			@RequestBody @Valid List<Entry> entries) {
+		try {
+			Report report = reportService.getReport(id);
+			report.resetEntries(entries);
+			reportService.updateReport(report);
+			return new ResponseEntity<String>( HttpStatus.OK);
+		} catch (NoResultException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

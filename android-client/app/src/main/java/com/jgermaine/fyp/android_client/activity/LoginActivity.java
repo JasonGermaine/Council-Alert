@@ -61,13 +61,8 @@ public class LoginActivity extends Activity
     public final static String PROJECT_NUMBER = "712287737172";
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView, mConfirmPasswordView;
-    private View mProgressView;
-    private View mEmailLoginFormView;
-    private View mLoginFormView;
-    private boolean mLoginFlag;
+    private boolean mLoginFlag = true;
     private TextView mClickableText, mDisplayText, mSignInText;
-    private String mURL;
-    private static GoogleCloudMessaging sGCM;
     private Cache cache;
 
 
@@ -75,18 +70,18 @@ public class LoginActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         cache = Cache.getCurrentCache(this);
-        mLoginFlag = true;
         ((CouncilAlertApplication) getApplication()).eraseUser();
-        mURL = ConnectionUtil.CONN_URL;
 
-        // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
-
         mPasswordView = (EditText) findViewById(R.id.password);
-
         mConfirmPasswordView = (EditText) findViewById(R.id.password_confirm);
+        mSignInText = (TextView) findViewById(R.id.text_sign_in);
+        mDisplayText = (TextView) findViewById(R.id.toggle_login_text);
+        mClickableText = (TextView) findViewById(R.id.toggle_login_clickable);
+
+        populateAutoComplete();
 
         findViewById(R.id.email_sign_in_button).setOnClickListener(new OnClickListener() {
             @Override
@@ -95,16 +90,6 @@ public class LoginActivity extends Activity
             }
         });
 
-        findViewById(R.id.activity_logo).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shortcut();
-            }
-        });
-
-        mSignInText = (TextView) findViewById(R.id.text_sign_in);
-        mDisplayText = (TextView) findViewById(R.id.toggle_login_text);
-        mClickableText = (TextView) findViewById(R.id.toggle_login_clickable);
         mClickableText.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,9 +97,6 @@ public class LoginActivity extends Activity
                 toggleUI();
             }
         });
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-        mEmailLoginFormView = findViewById(R.id.email_login_form);
     }
 
     private void populateAutoComplete() {
@@ -126,73 +108,21 @@ public class LoginActivity extends Activity
         mDisplayText.setText(mLoginFlag ? getString(R.string.ask_new_user) : getString(R.string.ask_registered));
         mConfirmPasswordView.setVisibility(mLoginFlag ? View.GONE : View.VISIBLE);
         mSignInText.setText(mLoginFlag ? getString(R.string.action_sign_in) : getString(R.string.action_register));
-        mPasswordView.setText("");
-        mConfirmPasswordView.setText("");
-        mEmailView.setText("");
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
 
+        resetTextFields();
+        resetErrors();
     }
 
-    public void shortcut() {
-        ((CouncilAlertApplication)getApplication()).setUser(new Citizen("legend-messi@hotmail.com", "pass"));
-        Intent intent = new Intent(getApplicationContext(), SendReportActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    public void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
+    private void attemptLogin() {
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        resetErrors();
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String passwordConfirm = mConfirmPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
-
-        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-        if (!mLoginFlag && !passwordConfirm.equals(password)) {
-            mPasswordView.setError(getString(R.string.error_incorrect_password_confirm));
-            focusView = mPasswordView;
-            cancel = true;
-            mConfirmPasswordView.setText("");
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            mPasswordView.setText("");
-            focusView.requestFocus();
-        } else {
+        if (isValid(email, password, passwordConfirm)) {
             if (mLoginFlag) {
                 new OAuthTask(email, password, this, true).execute();
             } else {
@@ -201,49 +131,104 @@ public class LoginActivity extends Activity
         }
     }
 
+    private boolean isValid(String email, String password, String passwordConfirm) {
+        boolean isValid = false;
+
+        if (TextUtils.isEmpty(password)) {
+            setErrorMessage(mPasswordView, getString(R.string.error_invalid_password));
+        } else if (!isPasswordValid(password)) {
+            setErrorMessage(mPasswordView, getString(R.string.error_invalid_password));
+        } else if (TextUtils.isEmpty(email)) {
+            setErrorMessage(mEmailView, getString(R.string.error_field_required));
+        } else if (!isEmailValid(email)) {
+            setErrorMessage(mEmailView, getString(R.string.error_invalid_email));
+        } else if (!mLoginFlag && TextUtils.isEmpty(passwordConfirm)) {
+            setErrorMessage(mConfirmPasswordView, getString(R.string.error_incorrect_password_confirm));
+        } else if (!mLoginFlag && !isPasswordValid(passwordConfirm)) {
+            setErrorMessage(mConfirmPasswordView, getString(R.string.error_incorrect_password_confirm));
+        } else if (!mLoginFlag && !passwordConfirm.equals(password)) {
+            setErrorMessage(mPasswordView, getString(R.string.error_incorrect_password_confirm));
+            mConfirmPasswordView.setText("");
+        } else {
+            isValid = true;
+        }
+
+        return isValid;
+    }
+
+    private void resetErrors() {
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+        mConfirmPasswordView.setError(null);
+    }
+
+    private void resetTextFields() {
+        mPasswordView.setText("");
+        mConfirmPasswordView.setText("");
+        mEmailView.setText("");
+    }
+
+    private void setErrorMessage(EditText textField, String errorMessage) {
+        textField.setError(errorMessage);
+        textField.requestFocus();
+    }
+
     private boolean isEmailValid(String email) {
-        Matcher matcher = Patterns.EMAIL_ADDRESS.matcher(email);
-        return matcher.matches() || email.contains("@");
+        return isValidLength(email, 4, 255) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 0;
+        return isValidLength(password, 6, 255) && password.matches("[A-Za-z0-9!?.$%]*");
     }
 
-    /**
-     * Shows the progress UI and hides the login form.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+    private boolean isValidLength(String value, int min, int max) {
+        return value.length() >= min && value.length() <= max;
+    }
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+    public void setUser(User user) {
+        cache.putUserEmail(user.getEmail());
+        ((CouncilAlertApplication) getApplication()).setUser(user);
+    }
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
+
+    @Override
+    public void onTokenReceived(String token, String email, int status, boolean isLogin) {
+        if (status < 300) {
+            cache.putOAuthToken(token);
+            if (isLogin) {
+                new UserRetrieveTask(email, token, this, true).execute();
+            } else {
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            setErrorMessage(mPasswordView, getString(R.string.error_incorrect_login));
+            mPasswordView.setText("");
+        }
+    }
+
+
+    @Override
+    public void onCreationResponseReceived(Citizen citizen, int status) {
+        if (status < 300) {
+            setUser(citizen);
+            new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
+        } else if (status == 409) {
+            setErrorMessage(mPasswordView, "Username is already registered");
+            mPasswordView.setText("");
+        } else {
+            setErrorMessage(mPasswordView, getString(R.string.error_incorrect_login));
+            mPasswordView.setText("");
+        }
+    }
+
+    @Override
+    public void onRetrieveResponseReceived(User user, int status) {
+        if (status < 300) {
+            setUser(user);
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            finish();
         }
     }
 
@@ -299,58 +284,6 @@ public class LoginActivity extends Activity
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
-    }
-
-    public void setUser(User user) {
-        cache.putUserEmail(user.getEmail());
-        ((CouncilAlertApplication) getApplication()).setUser(user);
-    }
-
-
-    @Override
-    public void onTokenReceived(String token, String email, int status, boolean isLogin) {
-        if(status < 300) {
-            cache.putOAuthToken(token);
-            if (isLogin) {
-                Log.i("CACHE", cache.getOAuthToken());
-                new UserRetrieveTask(email, token, this, true).execute();
-            } else {
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_login));
-                mPasswordView.requestFocus();
-                mPasswordView.setText("");
-            }
-        }
-
-
-    @Override
-    public void onCreationResponseReceived(Citizen citizen, int status) {
-        if(status < 300) {
-            setUser(citizen);
-            new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
-        } else if (status == 409) {
-            mPasswordView.setError("Username is already registered");
-            mPasswordView.requestFocus();
-            mPasswordView.setText("");
-        } else {
-            mPasswordView.setError(getString(R.string.error_incorrect_login));
-            mPasswordView.requestFocus();
-            mPasswordView.setText("");
-        }
-    }
-
-    @Override
-    public void onRetrieveResponseReceived(User user, int status) {
-        if(status < 300) {
-            setUser(user);
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-            //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            finish();
-        }
     }
 }
 

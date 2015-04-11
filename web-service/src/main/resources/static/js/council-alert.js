@@ -527,12 +527,26 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 		 
 }).controller('showReportDetail', function($rootScope, $scope, $http, $location, $route, $timeout, LocalStorage,
-		$modalInstance, report) {
+		$modalInstance, report, $modal) {
 	
 	$scope.report = report;
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
 	};
+	
+	$scope.openImage = function (image) {
+		$scope.image = image;
+		var modalInstance = $modal.open({
+			templateUrl: 'modals/showImage.html',
+		    controller: 'displayImage',
+		    size: 'md',
+		    resolve: {
+		    	image: function () {
+		    		return $scope.image;
+		        }
+		      }
+		    });
+	}
 	
 	$scope.mapSetup = function() {
 		 $scope.map = {
@@ -553,6 +567,13 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 
 	$timeout( function(){ $scope.mapSetup(); }, 250);
 		 
+}).controller('displayImage', function($rootScope, $scope, $http, $location, $route, $modalInstance, image, LocalStorage) {
+	
+	$scope.image = image;
+	
+	$scope.cancel = function () {
+		  $modalInstance.dismiss('cancel');
+	};
 }).controller('citizen', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal) {
 	$rootScope.reports = {};
 

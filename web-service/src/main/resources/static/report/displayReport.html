@@ -79,6 +79,7 @@
 						<tr>
 							<th>First Name</th>
 							<th>Second Name</th>
+							<th>Email</th>
 							<th>Assign</th>
 						</tr>
 					</thead>
@@ -86,6 +87,7 @@
 						<tr ng-repeat="emp in employees">
 							<td>{{emp.firstName}}</td>
 							<td>{{emp.lastName}}</td>
+							<td>{{emp.email}}</td>
 							<td>
 								<button ng-click="assignEmp(emp.email)" class="btn btn-custom"><i class="fa fa-street-view"></i> Assign</button>
 							</td>						

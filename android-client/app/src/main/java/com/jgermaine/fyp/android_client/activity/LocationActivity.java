@@ -83,7 +83,6 @@ public abstract class LocationActivity extends FragmentActivity
     public void onConnected(Bundle arg0) {
         if (mLocationClient != null) {
             try {
-                Log.d(TAG, "Connecting to Location Client");
                 mLocationClient.requestLocationUpdates(mLocationRequest, this);
                 mCurrentLocation = mLocationClient.getLastLocation();
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LocationUtil.getCoordinates(mCurrentLocation), mZoomLevel));
@@ -101,7 +100,6 @@ public abstract class LocationActivity extends FragmentActivity
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             if (mMap != null) {
-                Log.d(TAG, "Setting up map.");
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setZoomControlsEnabled(false);
             }
@@ -225,10 +223,6 @@ public abstract class LocationActivity extends FragmentActivity
 
     @Override
     public void onDisconnected() { }
-
-    public LocationClient getLocationClient() {
-        return mLocationClient;
-    }
 
     public Location getCurrentLocation() {
         return mCurrentLocation;

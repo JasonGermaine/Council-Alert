@@ -41,6 +41,7 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
     {
         View row = convertView;
         final Entry entry = getItem(position);
+
         if (row == null) {
             LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
             row = inflater.inflate(mLayoutResourceId, parent, false);

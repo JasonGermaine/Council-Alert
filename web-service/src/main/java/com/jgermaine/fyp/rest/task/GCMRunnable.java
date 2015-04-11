@@ -38,11 +38,7 @@ public class GCMRunnable implements Runnable {
 			Message message = b.build();
 			
 			// Add Android device key
-			String devices = (employeeDevice != null && !employeeDevice.isEmpty()) 
-					? employeeDevice : "APA91bEV76JLm4l4KETI7hgefz6lcfeqWJ_oYGUC5WG_"
-							+ "-Dvvs1t--eaBVKPTx9hMCLd3dAPeq7BafgqkFrJyNX1BVn1X-"
-							+ "7ECId4BKPP9say2-ztQXuoyXQTwxRNsGzbOndfwJ-"
-							+ "bJcyYO51XqflzAp0Bv0RMWmP5HvJe3Hav1w1daKlJTDQoIgAg";
+			String devices = employeeDevice;
 			
 			
 			Result response = sender.send(message, devices, 5);

@@ -48,19 +48,28 @@ public class CommentActivity extends Activity {
     private Bitmap mBitmap;
     private ImageView mImage;
     private EditText mComment;
-    private Menu mMenu;
     private boolean isViewable = false;
+    private long entryId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
+
         mImage = (ImageView) findViewById(R.id.comment_image);
         mComment = (EditText) findViewById(R.id.comment_text);
 
         Bundle bundle = getIntent().getExtras();
-        if(bundleContains(bundle, EntryFragment.VIEW_TAG)) {
-            isViewable = bundle.getBoolean(EntryFragment.VIEW_TAG);
+
+        if (bundleContains(bundle, EntryFragment.VIEW_TAG)) {
+            if (bundle.getBoolean(EntryFragment.VIEW_TAG)) {
+                findViewById(R.id.image_selectors).setVisibility(View.GONE);
+                mComment.setKeyListener(null);
+            } else {
+                if (bundleContains(bundle, EntryFragment.ID_TAG)) {
+                    entryId = bundle.getLong(EntryFragment.ID_TAG, -1);
+                }
+            }
         }
 
         if (bundleContains(bundle, EntryFragment.IMAGE_TAG)) {
@@ -72,15 +81,11 @@ public class CommentActivity extends Activity {
         if (bundleContains(bundle, EntryFragment.COMMENT_TAG)) {
             mComment.setText(bundle.getString(EntryFragment.COMMENT_TAG, ""));
         }
-
-        if (isViewable) {
-            findViewById(R.id.image_selectors).setVisibility(View.GONE);
-            mComment.setKeyListener(null);
-        }
     }
 
     /**
-     * Created this method as even the contains method threw NullPointerExceptions?
+     * Checks whether a bundle contains a value for a give key
+     *
      * @param bundle
      * @param key
      * @return
@@ -148,16 +153,20 @@ public class CommentActivity extends Activity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == REQUEST_IMAGE_GALLERY) {
-                mImagePath = readImageFromGallery(data);
-            } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                galleryAddPic(mImagePath);
+        try {
+            if (resultCode == RESULT_OK) {
+                super.onActivityResult(requestCode, resultCode, data);
+                if (requestCode == REQUEST_IMAGE_GALLERY) {
+                    mImagePath = readImageFromGallery(data);
+                } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                    galleryAddPic(mImagePath);
+                }
+                mImageBytes = createBitmap(mImagePath);
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                return;
             }
-            mImageBytes = createBitmap(mImagePath);
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            Log.d("INTENT", "User cancelled operation");
+        } catch (NullPointerException | IOException | OutOfMemoryError e) {
+            DialogUtil.showToast(this, "Failed to add the image. An unexpected error has occurred");
         }
     }
 
@@ -167,18 +176,12 @@ public class CommentActivity extends Activity {
      * @param data
      * @return path to image
      */
-    protected String readImageFromGallery(Intent data) {
-        String path = null;
-        try {
-            InputStream stream = getContentResolver().openInputStream(data.getData());
-            stream.close();
-            Uri uri = data.getData();
-            path = FileUtil.getPathFromURI(uri, this);
-        } catch (FileNotFoundException fe) {
-            Log.e("TAG", fe.getMessage(), fe);
-        } catch (IOException ie) {
-            Log.e("TAG", ie.getMessage(), ie);
-        }
+    protected String readImageFromGallery(Intent data) throws IOException {
+        String path;
+        InputStream stream = getContentResolver().openInputStream(data.getData());
+        stream.close();
+        Uri uri = data.getData();
+        path = FileUtil.getPathFromURI(uri, this);
         return path;
     }
 
@@ -216,28 +219,24 @@ public class CommentActivity extends Activity {
      * @param path
      * @return bytes
      */
-    protected byte[] createBitmap(String path) {
-        byte[] bytes = null;
-        try {
-            File image = new File(path);
+    protected byte[] createBitmap(String path) throws NullPointerException, IOException, OutOfMemoryError {
+        byte[] bytes;
+        File image = new File(path);
 
-            // rotate image if needed
-            Matrix mat = new Matrix();
-            mat.postRotate(getRotationAngle(image));
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 2;
+        // rotate image if needed
+        Matrix mat = new Matrix();
+        mat.postRotate(getRotationAngle(image));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 2;
 
-            // decode the file at the given path
-            Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(image), null, options);
-            Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), mat, true);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            mBitmap = bitmap;
-            mImage.setImageBitmap(mBitmap);
-            bytes = getBytesFromBitmap(bitmap);
-        } catch (NullPointerException | IOException | OutOfMemoryError e) {
-            return null;
-        }
+        // decode the file at the given path
+        Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(image), null, options);
+        Bitmap bitmap = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), mat, true);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        mBitmap = bitmap;
+        mImage.setImageBitmap(mBitmap);
+        bytes = getBytesFromBitmap(bitmap);
         return bytes;
     }
 
@@ -247,21 +246,18 @@ public class CommentActivity extends Activity {
      * @param image
      * @return
      */
-    private int getRotationAngle(File image) {
+    private int getRotationAngle(File image) throws IOException {
         int angle = 0;
-        try {
-            ExifInterface exif = new ExifInterface(image.getPath());
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
-                    ExifInterface.ORIENTATION_NORMAL);
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
-                angle = 90;
-            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-                angle = 180;
-            } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-                angle = 270;
-            }
-        } catch (IOException ie) {
-            ie.printStackTrace();
+
+        ExifInterface exif = new ExifInterface(image.getPath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL);
+        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            angle = 90;
+        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            angle = 180;
+        } else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            angle = 270;
         }
         return angle;
     }
@@ -270,24 +266,30 @@ public class CommentActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_comment) {
-
-            Entry entry = new Entry();
-            entry.setTimestamp(new Date());
-            if (mImageBytes != null)
-                entry.setImage(mImageBytes);
-
-            if (mComment.getText().toString() != null)
-                entry.setComment(mComment.getText().toString());
-
-            entry.setAuthor(((CouncilAlertApplication)getApplication()).getUser().getEmail());
-
-            EntryFragment.getFragmentInstance().addEntry(entry);
+            EntryFragment.getFragmentInstance().addEntry(getEntry(), entryId);
             finish();
             return true;
         } else if (id == R.id.action_finish_view) {
             finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private Entry getEntry() {
+        Entry entry = new Entry();
+        entry.setTimestamp(new Date());
+        entry.setAuthor(((CouncilAlertApplication) getApplication()).getUser().getEmail());
+
+        if (mImageBytes != null) {
+            entry.setImage(mImageBytes);
+        }
+
+        if (mComment.getText().toString() != null) {
+            entry.setComment(mComment.getText().toString());
+        }
+
+        return entry;
     }
 
     public Bitmap decodeBitmap(String image, int width, int height) {
@@ -298,12 +300,18 @@ public class CommentActivity extends Activity {
         return bmp;
     }
 
+    /**
+     * Generates the size of the bitmap
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return bitmap size
+     */
     public int calculateSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-
         final int height = options.outHeight;
         final int width = options.outWidth;
         int size = 1;
-
         if (height > reqHeight || width > reqWidth) {
             if (width > height) {
                 size = Math.round((float) height / (float) reqHeight);

@@ -57,6 +57,7 @@ public class TypeFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_type, container, false);
+
         mTextViewCategory = (TextView) view.findViewById(R.id.type_title);
         mTextViewCategory.setText(mCategory);
         String[] values = setupTypes(mCategory);
@@ -93,11 +94,10 @@ public class TypeFragment extends ListFragment {
         mSearchBox.setError(null);
         boolean valid = false;
         String error = "";
-        View focusView = null;
 
         if (TextUtils.isEmpty(title)) {
             error = getString(R.string.error_field_required);
-        } else if (!title.replaceAll("\\s","").matches("[a-zA-Z0-9',-.]*")) {
+        } else if (!title.matches("[A-Za-z0-9?.%,\\- ]*")) {
             error = getString(R.string.error_field_invalid_char);
         } else if (title.length() > 30) {
             error = getString(R.string.error_field_length);

@@ -1,6 +1,5 @@
 package com.jgermaine.fyp.rest.task;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -38,13 +37,7 @@ public class MailRunnable implements Runnable {
 		final String username = "tasks.council.alert";
 		final String password = "X00090307";
 
-		String host = "smtp.gmail.com";
-
-		Properties props = new Properties();
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.host", host);
-		props.put("mail.smtp.port", "587");
+		Properties props = getEmailProperties();
 
 		Session session = Session.getInstance(props,
 				new javax.mail.Authenticator() {
@@ -72,6 +65,17 @@ public class MailRunnable implements Runnable {
 		}
 	}
 
+	private Properties getEmailProperties() {
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		
+		return props;
+	}
+	
 	private String getMessage() {
 		StringBuilder sb = new StringBuilder();
 		

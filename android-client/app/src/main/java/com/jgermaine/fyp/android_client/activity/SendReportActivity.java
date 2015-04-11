@@ -29,21 +29,21 @@ import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 public class SendReportActivity extends LocationActivity implements
         CategoryFragment.OnCategoryInteractionListener,
-        TypeFragment.OnTypeInteractionListener,
-        EntryFragment.OnEntryInteractionListener {
+        TypeFragment.OnTypeInteractionListener {
 
-    private boolean stateSaved;
+    private boolean stateSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_report);
+
         setZoomLevel(LocationUtil.START_ZOOM_LEVEL);
         getGoogleMap();
         registerLocationListener();
         getCategoryFragment();
+
         mIsComments = false;
-        stateSaved = false;
         mFlipper = (ViewFlipper) findViewById(R.id.view_flipper);
     }
 
@@ -107,9 +107,6 @@ public class SendReportActivity extends LocationActivity implements
     public void onCategoryInteraction(String category) {
         getTypeFragment(category);
     }
-
-    @Override
-    public void OnEntryInteraction() { }
 
     @Override
     public void onTypeInteraction(String type) {
@@ -176,11 +173,13 @@ public class SendReportActivity extends LocationActivity implements
      */
     private void toggleUI(boolean backPressed) {
         stateSaved = !backPressed;
+
         findViewById(R.id.fragment_container).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.map_shadow).setVisibility(backPressed ? View.VISIBLE : View.GONE);
         findViewById(R.id.footer).setVisibility(backPressed ? View.GONE : View.VISIBLE);
-        mMenu.findItem(R.id.action_comments).setVisible(!backPressed);
         findViewById(R.id.options_shadow).setVisibility(backPressed ? View.GONE : View.VISIBLE);
+
+        mMenu.findItem(R.id.action_comments).setVisible(!backPressed);
         getMap().setMyLocationEnabled(backPressed);
 
         if (backPressed) {

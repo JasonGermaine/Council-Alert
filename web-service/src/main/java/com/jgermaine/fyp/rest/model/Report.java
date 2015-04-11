@@ -37,8 +37,8 @@ public class Report {
 	private int id;
 	
 	@NotEmpty
-	@Size(max = 80)
-	@Pattern(regexp="[A-Za-z0-9?.$%, ]*")
+	@Size(max = 30)
+	@Pattern(regexp="[A-Za-z0-9?.%,\\- ]*")
 	private String name;
 	
 	private double longitude;
@@ -50,7 +50,7 @@ public class Report {
 	
 	private boolean status;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.PERSIST)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="report",cascade=CascadeType.ALL, orphanRemoval=true)
 	private List<Entry> entries;
 	
 	@Transient
@@ -75,6 +75,11 @@ public class Report {
 		for(Entry entry : entries) {
 			addEntry(entry);
 		}
+	}
+	
+	public void resetEntries(List<Entry> newEntries) {
+		entries.clear();
+		setEntries(newEntries);
 	}
 	
 	public void addEntry(Entry entry) {

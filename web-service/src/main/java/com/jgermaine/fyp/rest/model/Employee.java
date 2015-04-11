@@ -34,7 +34,7 @@ public class Employee extends User {
     
     @NotEmpty
     @Length(max = 15)
-    @Pattern(regexp="[0-9+-]*")
+    @Pattern(regexp="[0-9+//-]*")
     private String phoneNum;
     
     private double longitude;

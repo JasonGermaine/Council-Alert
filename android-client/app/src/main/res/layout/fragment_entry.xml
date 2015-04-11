@@ -28,59 +28,34 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <RelativeLayout
-            android:id="@+id/tapToAdd"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/add_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            style="@android:style/TextAppearance.Medium"
-            android:text="Tap to add a comment" />
-
-        </RelativeLayout>
-        <!-- <ImageView
-            android:id="@+id/add_image"
-            android:layout_width="0dp"
-            android:layout_height="50dip"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="2"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:src="@drawable/ic_camera"
-            android:onClick="addImage"/>
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10"
+            android:layout_weight="8"
             android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/add_comment"
+            <RelativeLayout
+                android:id="@+id/tapToAdd"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:maxLines="3"
-                android:ems="6"
-                android:inputType="textCapSentences|textAutoCorrect"
-                android:hint="Add a comment.." />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/add_comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    style="@android:style/TextAppearance.Medium"
+                    android:text="Tap to add a comment" />
+
+            </RelativeLayout>
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/add_entry"
+            android:id="@+id/update_entries"
             android:layout_width="0dp"
-            android:layout_height="30dip"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="2dp"
+            android:layout_height="match_parent"
             android:layout_weight="2"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:src="@drawable/ic_add" />
-        -->
+            android:src="@drawable/ic_save_update"
+            android:visibility="gone"/>
     </LinearLayout>
 </LinearLayout>

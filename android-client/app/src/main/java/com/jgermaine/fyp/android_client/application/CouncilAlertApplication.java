@@ -17,7 +17,6 @@ public class CouncilAlertApplication extends Application {
     }
 
     public void setUser(User user) {
-
         mUser = user;
     }
 

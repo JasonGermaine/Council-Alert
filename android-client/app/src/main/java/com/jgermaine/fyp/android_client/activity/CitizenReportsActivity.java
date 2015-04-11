@@ -38,12 +38,13 @@ public class CitizenReportsActivity extends Activity
 
     @Override
     public void onReportsReceived(List<Report> reports, int status) {
-        if (status < 300 && reports != null) {
-            Log.i("Report Count", reports.size() + "");
-            for (Report report : reports) {
-                mAdapter.add(report);
+        if (status < 300) {
+            if (reports != null) {
+                mAdapter.addAll(reports);
+                mAdapter.notifyDataSetChanged();
             }
-            mAdapter.notifyDataSetChanged();
+        } else {
+            // TODO: handle error
         }
     }
 

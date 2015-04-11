@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.jgermaine.fyp.android_client.R;
@@ -19,18 +20,24 @@ import com.jgermaine.fyp.android_client.activity.CommentActivity;
 import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
+import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Entry;
+import com.jgermaine.fyp.android_client.model.Report;
+import com.jgermaine.fyp.android_client.request.UpdateReportEntriesTask;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
+
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryFragment extends Fragment {
+public class EntryFragment extends Fragment implements UpdateReportEntriesTask.OnRetrieveResponseListener {
 
-    private OnEntryInteractionListener mListener;
     private EntryAdapter mAdapter;
     private Activity mActivity;
     private static EntryFragment fragment;
 
+    public static final String ID_TAG = "id";
     public static final String VIEW_TAG = "isView";
     public static final String IMAGE_TAG = "image";
     public static final String COMMENT_TAG = "comment";
@@ -57,60 +64,38 @@ public class EntryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_entry, container, false);
         final ListView entries = (ListView) view.findViewById(android.R.id.list);
         mAdapter = new EntryAdapter(getActivity(), R.layout.row_entry);
 
         if (mActivity != null && mActivity instanceof RetrieveReportActivity) {
-            List<Entry> reportEntries = ((RetrieveReportActivity) mActivity).getReport().getEntries();
-            if (reportEntries != null) {
-                mAdapter.addAll(reportEntries);
-            }
+            final Report report = ((RetrieveReportActivity) mActivity).getReport();
+            populateEntries(report);
+            ImageView update = (ImageView) view.findViewById(R.id.update_entries);
+            update.setVisibility(View.VISIBLE);
+            update.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                new UpdateReportEntriesTask(getEntries(), mActivity, report.getId()).execute();
+                }
+            });
         }
+
         entries.setAdapter(mAdapter);
         entries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Entry entry = mAdapter.getItem((int) id);
-
-                Intent intent = new Intent(getActivity(), CommentActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(VIEW_TAG, !entry.getAuthor().equals(((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail()));
-
-                if (entry.getImage() != null) {
-                    bundle.putString(IMAGE_TAG, Base64.encodeToString(entry.getImage(), Base64.NO_WRAP));
-                }
-
-                if (entry.getComment() != null) {
-                    bundle.putString(COMMENT_TAG, entry.getComment());
-                }
-
-                intent.putExtras(bundle);
-                startActivity(intent);
-
+                showInCommentActivity(position);
             }
         });
 
         entries.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 final long entryId = id;
                 if (mAdapter.getItem((int) id).getAuthor().equals(
                         ((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail())) {
-
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Remove Comment")
-                            .setMessage("Are you sure you want to delete this item?")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    mAdapter.remove(mAdapter.getItem((int) entryId));
-                                    mAdapter.notifyDataSetChanged();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, null)
-                            .show();
+                    displayDeletionDialog(position);
                 }
                 return true;
             }
@@ -126,8 +111,70 @@ public class EntryFragment extends Fragment {
         return view;
     }
 
+    private void populateEntries(Report report) {
+        List<Entry> reportEntries = report.getEntries();
+        if (reportEntries != null) {
+            mAdapter.addAll(reportEntries);
+        }
+    }
 
-    public void addEntry(Entry entry) {
+    private void showInCommentActivity(final int position) {
+        Entry entry = mAdapter.getItem(position);
+
+        Intent intent = new Intent(getActivity(), CommentActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(VIEW_TAG, !entry.getAuthor().equals(((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail()));
+
+        bundle.putLong(ID_TAG, position);
+
+        if (entry.getImage() != null) {
+            bundle.putString(IMAGE_TAG, Base64.encodeToString(entry.getImage(), Base64.NO_WRAP));
+        }
+
+        if (entry.getComment() != null) {
+            bundle.putString(COMMENT_TAG, entry.getComment());
+        }
+
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    private void displayDeletionDialog(final int position) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Remove Comment")
+                .setMessage("Are you sure you want to delete this item?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mAdapter.remove(mAdapter.getItem(position));
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    public void onResponseReceived(Integer response) {
+        String message;
+        if (response != HttpStatus.OK.value()) {
+            // TODO: Inform user that comments update failed
+            message = response.toString();
+        } else {
+            // TODO: Inform user that comments update success
+            message = "Update Success";
+        }
+        DialogUtil.showToast(getActivity(), message);
+    }
+
+    public void addEntry(Entry entry, long id) {
+        if (id != -1) {
+            Entry ent = mAdapter.getItem((int) id);
+            if (entry.getImage() == null && ent.getImage() != null) {
+                entry.setImage(ent.getImage());
+            }
+
+            mAdapter.remove(ent);
+        }
+
         mAdapter.add(entry);
         mAdapter.notifyDataSetChanged();
     }
@@ -148,28 +195,16 @@ public class EntryFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mActivity = activity;
-        try {
-            mListener = (OnEntryInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnEntryInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mActivity = null;
-        mListener = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
-
-    public interface OnEntryInteractionListener {
-        public void OnEntryInteraction();
-    }
-
 }

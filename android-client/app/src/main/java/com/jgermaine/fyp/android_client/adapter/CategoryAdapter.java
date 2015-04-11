@@ -37,6 +37,7 @@ public class CategoryAdapter extends BaseAdapter {
         View grid;
         LayoutInflater inflater = (LayoutInflater) mContext
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (convertView == null) {
             grid = inflater.inflate(R.layout.grid_category, null);
             TextView textView = (TextView) grid.findViewById(R.id.grid_text);
