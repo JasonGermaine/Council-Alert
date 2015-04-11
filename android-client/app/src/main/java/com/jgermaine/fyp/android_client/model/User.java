@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include=JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({ @JsonSubTypes.Type(value = Employee.class, name = "employee"),
                 @JsonSubTypes.Type(value = Citizen.class, name = "citizen") })
-@JsonIgnoreProperties(value={"password"})
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
 
     private String email;

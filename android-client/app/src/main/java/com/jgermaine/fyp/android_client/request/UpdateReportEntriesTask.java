@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.android_client.request;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
@@ -33,7 +34,7 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, Integer> {
     private Cache mCache;
     private OnRetrieveResponseListener mListener;
 
-    public UpdateReportEntriesTask(List<Entry> entries, Activity activity, int reportId) {
+    public UpdateReportEntriesTask(List<Entry> entries, Activity activity, Fragment frag, int reportId) {
         super();
         mEntries = entries;
         mActivity = activity;
@@ -41,7 +42,7 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, Integer> {
         mCache = Cache.getCurrentCache(activity);
 
         try {
-            mListener = (OnRetrieveResponseListener) activity;
+            mListener = (OnRetrieveResponseListener) frag;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnRetrieveResponseListener");

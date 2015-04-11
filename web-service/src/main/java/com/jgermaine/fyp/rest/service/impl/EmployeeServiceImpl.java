@@ -68,14 +68,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		long all = EmployeeDao.getAllCount();
 		long unassigned = EmployeeDao.getUnassignedCount();
+		long assigned = 0;
 		
 		statMap.put("emp_all", all);
 		statMap.put("emp_unassigned", unassigned);
 		
 		if ((all - unassigned) > 0) {
-			statMap.put("emp_assigned", all - unassigned);
+			assigned = all - unassigned;
 		}
 		
+		statMap.put("emp_assigned", assigned);
 		return statMap;
 	}
 	

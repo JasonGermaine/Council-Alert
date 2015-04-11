@@ -54,7 +54,7 @@ public class DatabaseInitializer {
 		employee.setPassword(Secret.SECRET_PASSWORD);
 		employee.setFirstName("Jason");
 		employee.setLastName("Germaine");
-		employee.setPhoneNum("123-Council-Alert");
+		employee.setPhoneNum("12334567");
 		employee.setLatitude(53.2884615);
 		employee.setLongitude(-6.3525261);
 		return employee;
