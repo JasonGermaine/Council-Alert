@@ -40,7 +40,8 @@ import com.jgermaine.fyp.rest.task.TaskManager;
  * 
  * @author JasonGermaine
  *
- * This controller is restricted to being used by the employee web portal.
+ *         This controller is restricted to being used by the employee web
+ *         portal.
  */
 @RestController
 @RequestMapping("/api/admin")
@@ -48,7 +49,7 @@ public class AdminController {
 
 	private static final Logger LOGGER = LogManager.getLogger(AdminController.class.getName());
 	private static final String DELTED_DEVICE_ID = "DELETED";
-	
+
 	@Autowired
 	private CouncilAlertUserDetailsService councilAlertUserService;
 
@@ -207,15 +208,19 @@ public class AdminController {
 			@RequestParam(value = "id", required = true) String reportId) throws IOException {
 		try {
 			Report report = reportService.getReport(Integer.parseInt(reportId));
-			Employee employee = employeeService.getEmployee(email);
+			if (report.getEmployee() == null) {
+				Employee employee = employeeService.getEmployee(email);
 
-			report.setEmployee(employee);
-			reportService.updateReport(report);
+				report.setEmployee(employee);
+				reportService.updateReport(report);
 
-			// New Thread spawned for GCM so it does no block response
-			TaskManager.sendReportIdAsNotification(reportId, employee);
-			
-			return new ResponseEntity<String>(HttpStatus.OK);
+				// New Thread spawned for GCM so it does no block response
+				TaskManager.sendReportIdAsNotification(reportId, employee);
+
+				return new ResponseEntity<String>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>(HttpStatus.CONFLICT);
+			}
 
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
@@ -226,8 +231,8 @@ public class AdminController {
 	}
 
 	/**
-	 * Updates an Employee password in the database for a given email. 
-	 * There are 5 possible outputs
+	 * Updates an Employee password in the database for a given email. There are
+	 * 5 possible outputs
 	 * <ul>
 	 * <li>1. Employee exists and data is valid. - Employee updated + returns
 	 * 200</li>
@@ -238,7 +243,7 @@ public class AdminController {
 	 * </ul>
 	 * 
 	 * @return HttpResponse
-	 */	
+	 */
 	@RequestMapping(value = "/employee/password/{email:.+}", method = RequestMethod.PUT)
 	public ResponseEntity<String> updatePassword(@PathVariable("email") String email,
 			@RequestBody @Valid PasswordChangeRequest request) {
@@ -258,8 +263,7 @@ public class AdminController {
 	}
 
 	/**
-	 * Unassigns a report with the given id.
-	 * There are 3 possible outputs
+	 * Unassigns a report with the given id. There are 3 possible outputs
 	 * <ul>
 	 * <li>1. Report exist - Update + returns 200</li>
 	 * <li>2. Report does not exist - returns 400</li>
@@ -272,8 +276,10 @@ public class AdminController {
 	public ResponseEntity<String> unassignEmployee(@PathVariable("id") int reportId) {
 		try {
 			Report report = reportService.getReport(reportId);
-			report.setEmployee(null);
-			reportService.updateReport(report);
+			if (report.getEmployee() != null) {
+				report.setEmployee(null);
+				reportService.updateReport(report);
+			}
 			return new ResponseEntity<String>(HttpStatus.OK);
 		} catch (NoResultException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
@@ -283,7 +289,40 @@ public class AdminController {
 		}
 	}
 
-
+	/**
+	 * Changes the status of a given report providing it exists
+	 * 
+	 * @param report
+	 * @return HttpResponse
+	 */
+	@RequestMapping(value = "/report/{id}/{status}", method = RequestMethod.PUT)
+	public ResponseEntity<String> reopenReport(@PathVariable("id") int id,
+			@PathVariable("status") int statusInt) {
+		try {
+			if (statusInt != 0 && statusInt != 1) {
+				throw new IllegalArgumentException("Invalid status parameter passed");
+			}
+			
+			Report report = reportService.getReport(id);
+			boolean currentStatus = report.getStatus(); 
+			boolean status = statusInt != 0;
+			
+			if (currentStatus != status) {
+				if (status && report.getEmployee() != null) { 
+					report.setEmployee(null);
+				}
+				report.setStatus(status);
+				reportService.updateReport(report);
+			}
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} catch (NoResultException | NonUniqueResultException | IllegalArgumentException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Retrieves all citizens
 	 * 

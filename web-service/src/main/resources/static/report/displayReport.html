@@ -31,7 +31,8 @@
 						<th ts-criteria="timestamp|parseInt">Date</th>
 						<th ts-criteria="citizenId|lowercase">Reporter</th>
 						<th ts-criteria="employeeId|lowercase">Assignee</th>
-						<th ts-criteria="status">Complete</th>
+						<th ts-criteria="status">Status</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -43,21 +44,31 @@
 						<td>
 							<span ng-if="report.status == false">
 								<span ng-if="report.employeeId">
-								<button ng-click="showEmp(report.employeeId)" class="btn btn-custom">
+								<button ng-click="showEmp(report.employeeId)" class="btn btn-custom"
+									data-toggle="tooltip" title="View Employee">
 									<i class="fa fa-user" style="margin-right: 5px;"></i> {{report.employeeId}}  
 								</button>
 								</span>
 								<span ng-if="!report.employeeId">
-										<button style="margin: auto;"
+										<button style="margin: auto; display:block;"
 											ng-click="assign(report.id, report.latitude, report.longitude)"
-											class="btn btn-custom">
-											<i class="fa fa-wrench"></i> Assign
+											class="btn btn-custom"
+											data-toggle="tooltip" title="Assign Employee">
+											<i class="fa fa-wrench"></i>
 										</button>
 								</span>
 							</span>
 						</td>
-						<td>{{report.status}}</td>
-						<td><button class="btn btn-custom" ng-click="open(report)">
+						<td>
+							<span ng-if="report.status == false">
+							open
+							</span>
+							<span ng-if="report.status == true">
+							closed
+							</span>
+						</td>
+						<td><button class="btn btn-custom" ng-click="open(report)"
+							data-toggle="tooltip" title="View Details">
 								<i class="fa fa-info-circle">
 							</button></td>
 					</tr>

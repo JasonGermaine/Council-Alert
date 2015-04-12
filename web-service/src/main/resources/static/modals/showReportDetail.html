@@ -5,9 +5,31 @@
 
 	<div class="row">
 		<div class="col-lg-5">
+			<span ng-if="report.status == true">				
+				<button style="margin-left: -5px; margin-bottom: 25px;" 
+					ng-click="changeStatus(report.id, 0)" class="btn-sm btn-custom">
+					Reopen Ticket
+				</button>
+			</span>
+			<span ng-if="report.status == false">				
+				<button style="margin-left: -5px; margin-bottom: 25px;"
+					ng-click="changeStatus(report.id, 1)" class="btn-sm btn-custom">
+					Close Ticket
+				</button>
+			</span>
+
 			<h5><b>Reported By:</b></h5> {{ report.citizenId }}
 
 			<h5 style="margin-top: 30px;"><b>Report Date:</b></h5> {{report.timestamp | date:'medium'}}
+			
+			
+			<span ng-if="report.employeeId">
+				<h5 style="margin-top: 30px;"><b>Assigned To:</b></h5> {{report.employeeId}}
+				
+				<button style="margin-left: 10px;" ng-click="unassign(report.id)" class="btn-xs btn-custom">
+					Unassign
+				</button>
+			</span>
 		</div>
 
 		<div class="col-lg-5 col-lg-offset-1">
@@ -39,7 +61,7 @@
 				<td>{{entry.author}}</td>
 				<td>{{entry.comment}}</td>				
 				<td>
-					<span ng-if="entry.image != null">
+					<span ng-if="entry.image != null && entry.image.length">
 						<a href ng-click="openImage(entry.image)">
 							<img
 								class="col-lg-4 col-md-4 img-responsive"

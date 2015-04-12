@@ -192,7 +192,7 @@ public class ReportController {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
+	}	
 
 	/**
 	 * Returns a report for a given Employee

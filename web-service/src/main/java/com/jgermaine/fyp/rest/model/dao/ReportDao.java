@@ -132,8 +132,8 @@ public class ReportDao {
 
 	public long getCountFromQuery(String queryString) {
 		try {
-		Query query = entityManager.createQuery(queryString);
-		return (long) query.getSingleResult();
+			Query query = entityManager.createQuery(queryString);
+			return (long) query.getSingleResult();
 		} catch (Exception e) {
 			return 0;
 		}

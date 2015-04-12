@@ -50,17 +50,20 @@
 				<input class="form-control" id="phoneNum" placeholder="Phone Number"
 					ng-model="currentUser.phoneNum" ng-disabled="!phoneEditable" />
 			</div>
-			<button ng-show="!phoneEditable" class="btn btn-custom" ng-click="phoneEdit()">
+			<button ng-show="!phoneEditable" class="btn btn-custom" ng-click="phoneEdit()"
+				data-toggle="tooltip" title="Edit">
 				<i class="fa fa-edit"></i>
 			</button>
-			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="phoneUnedit()">
+			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="phoneUnedit()"
+				data-toggle="tooltip" title="Save">
 				<i class="fa fa-check"></i>
 			</button>
-			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="clearPhoneUnedit()">
+			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="clearPhoneUnedit()"
+				data-toggle="tooltip" title="Reset">
 				<i class="fa fa-times"></i>
 			</button>
 			<button ng-show="currentUser.phoneNum !== user.phoneNum && !phoneEditable" class="btn btn-custom" 
-				ng-click="clearPhoneUnedit()">
+				ng-click="clearPhoneUnedit()" data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>
@@ -76,11 +79,12 @@
 				<input class="form-control" placeholder="Device"
 					ng-model="currentUser.deviceId" ng-disabled="!editable" />
 			</div>
-			<button ng-show="currentUser.deviceId" class="btn btn-custom" ng-click="clearDevice()">
+			<button ng-show="currentUser.deviceId" class="btn btn-custom" ng-click="clearDevice()"
+				data-toggle="tooltip" title="Remove">
 				<i class="fa fa-times"></i>
 			</button>
 			<button ng-show="currentUser.deviceId !== user.deviceId && currentUser.deviceId !== 'DELETED'" class="btn btn-custom" 
-				ng-click="resetDevice()">
+				ng-click="resetDevice()" data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>
@@ -100,11 +104,11 @@
 					</ui-gmap-google-map>
 				</div>
 			</div>
-			<button class="btn btn-custom" ng-click="changeLocation()">
+			<button class="btn btn-custom" ng-click="changeLocation() data-toggle="tooltip" title="Edit"">
 				<i class="fa fa-edit"></i>
 			</button>
 			<button ng-show="currentUser.latitude !== user.latitude || currentUser.longitude !== user.longitude" class="btn btn-custom" 
-				ng-click="resetLocation()">
+				ng-click="resetLocation()" data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>

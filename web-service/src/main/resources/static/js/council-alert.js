@@ -505,7 +505,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 	
 	$scope.assignEmp = function(email) {
-		var url = 'api/admin/assign?email='
+		var url = 'api/admin/employee/assign?email='
 				+ email + '&id=' + reportId;
 		
 		$http
@@ -546,7 +546,35 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		        }
 		      }
 		    });
-	}
+	};
+
+	$scope.changeStatus = function (reportId, status) { 
+		$http.put("api/admin/report/" + reportId + "/" + status,
+				{}, LocalStorage.getHeader())
+			.success(function(data) {
+				$scope.cancel();
+			}).error(function(resp, status) {			
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+			});
+	};
+	
+	$scope.unassign = function (reportId) { 
+		$http.get("api/admin/report/unassign/" + reportId, LocalStorage.getHeader())
+			.success(function(data) {
+				$scope.cancel();
+			}).error(function(resp, status) {
+			
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}
+			});
+	};
 	
 	$scope.mapSetup = function() {
 		 $scope.map = {
@@ -668,7 +696,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	
 	$scope.showReport = function (reportId) {
 		
-		$http.get("api/report/get?id=" + reportId, LocalStorage.getHeader())
+		$http.get("api/report/" + reportId, LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.report = response;
 			var modalInstance = $modal.open({
@@ -689,19 +717,6 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 			}
 		});
 	};
-	
-	$scope.unassign = function (reportId) { 
-		$http.get("api/admin/report/unassign/" + reportId, LocalStorage.getHeader())
-			.error(function(resp, status) {
-			
-				if (status === 401 || status === 403) {
-					LocalStorage.clear();
-					$rootScope.authenticated = false;
-					$location.path("/login");
-				}
-			});
-	};
-	
 	
 	$scope.openRemove = function (employee) {
 		$scope.employee = employee;

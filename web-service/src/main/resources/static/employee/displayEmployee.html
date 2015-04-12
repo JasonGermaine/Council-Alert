@@ -38,6 +38,7 @@
 						<th ts-criteria="email|lowercase">Email</th>
 						<th>Phone</th>
 						<th ts-criteria="reportId|parseInt">Report</th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -50,8 +51,8 @@
 						
 						<span ng-if="emp.reportId">
 								<button
-									ng-click="showReport(emp.reportId)"
-									class="btn btn-custom">
+									ng-click="showReport(emp.reportId)" class="btn btn-custom"
+										data-toggle="tooltip" title="View Report">
 									<i class="fa fa-map-marker" style="margin-right: 5px;"></i> {{emp.reportId}}
 								</button>
 						</span>
@@ -60,22 +61,20 @@
 						<span ng-if="!emp.reportId">
 								<button
 									ng-click="assign(emp.email, emp.latitude, emp.longitude)"
-									class="btn btn-custom">
+									class="btn btn-custom" data-toggle="tooltip" title="Assign Task">
 									<i class="fa fa-wrench"></i>
 								</button>
 						</span>
 						</td>
 						<td>
-							<button ng-click="openDisplay(emp)" class="btn btn-custom">
+							<button ng-click="openDisplay(emp)" class="btn btn-custom" 
+								data-toggle="tooltip" title="View Details">
 								<i class="fa fa-info-circle"></i>
 							</button>
-							<button ng-click="openRemove(emp)" class="btn btn-custom">
+							<button ng-click="openRemove(emp)" class="btn btn-custom"
+								data-toggle="tooltip" title="Remove Employee">
 								<i class="fa fa-user-times"></i>
-							</button> <span ng-if="emp.reportId">
-								<button ng-click="unassign(emp.reportId)" class="btn btn-custom">
-									<i class="fa fa-user"></i>
-								</button>
-						</span>
+							</button>						
 						</td>
 					</tr>
 				</tbody>
