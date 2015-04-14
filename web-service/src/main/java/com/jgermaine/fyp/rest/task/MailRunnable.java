@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.jgermaine.fyp.rest.config.Secret;
 import com.jgermaine.fyp.rest.model.Employee;
 
 public class MailRunnable implements Runnable {
@@ -35,7 +36,7 @@ public class MailRunnable implements Runnable {
 
 		String from = "tasks.council.alert@gmail.com";
 		final String username = "tasks.council.alert";
-		final String password = "X00090307";
+		final String password = Secret.EMAIL_PASSWORD;
 
 		Properties props = getEmailProperties();
 

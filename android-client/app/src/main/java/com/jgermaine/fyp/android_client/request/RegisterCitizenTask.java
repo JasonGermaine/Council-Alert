@@ -59,25 +59,19 @@ public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<St
         try {
             return restTemplate.postForEntity(mURL, mCitizen, String.class);
         } catch (HttpClientErrorException e) {
-            return new ResponseEntity<String>(e.getStatusCode());
+            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
         } catch (RestClientException e) {
-            return  new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return  new ResponseEntity<String>("Bad Request", HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
     protected void onPostExecute(ResponseEntity<String> response) {
         mDialog.dismiss();
-        int status;
-        if (response != null) {
-            status = response.getStatusCode().value();
-        } else {
-            status = HttpStatus.BAD_REQUEST.value();
-        }
-        mListener.onCreationResponseReceived(mCitizen, status);
+        mListener.onCreationResponseReceived(mCitizen, response);
     }
 
     public interface OnCreationResponseListener {
-        public void onCreationResponseReceived(Citizen citizen, int status);
+        public void onCreationResponseReceived(Citizen citizen, ResponseEntity<String> response);
     }
 }

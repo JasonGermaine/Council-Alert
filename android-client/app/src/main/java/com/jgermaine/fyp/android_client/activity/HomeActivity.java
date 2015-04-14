@@ -13,11 +13,15 @@ import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.model.User;
-import com.jgermaine.fyp.android_client.request.GetEmployeeReportTask;
+import com.jgermaine.fyp.android_client.request.GetReportTask;
 import com.jgermaine.fyp.android_client.session.Cache;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
+
+import org.springframework.http.ResponseEntity;
 
 public class HomeActivity extends Activity
-        implements GetEmployeeReportTask.OnReportRetrievedListener {
+        implements GetReportTask.OnReportRetrievedListener {
 
     private User mUser;
     private Cache mCache;
@@ -44,11 +48,9 @@ public class HomeActivity extends Activity
             @Override
             public void onClick(View view) {
                 if (((Employee) mUser).getReportId() != null) {
-                    Intent resultIntent = new Intent(getApplicationContext(), RetrieveReportActivity.class);
-                    resultIntent.putExtra("reportId", ((Employee) mUser).getReportId());
-                    startActivity(resultIntent);
+                    retrieveReport(((Employee) mUser).getReportId());
                 } else {
-                    new GetEmployeeReportTask(HomeActivity.this, mUser.getEmail()).execute();
+                    new GetReportTask(HomeActivity.this).execute("employee?email=" + mUser.getEmail());
                 }
             }
         });
@@ -76,15 +78,33 @@ public class HomeActivity extends Activity
         });
     }
 
+    private void retrieveReport(String id) {
+        Intent resultIntent = new Intent(getApplicationContext(), RetrieveReportActivity.class);
+        resultIntent.putExtra("reportId",id);
+        startActivity(resultIntent);
+    }
+
     @Override
-    public void OnReportRetrieved(Report report) {
-        if (report != null) {
-            Intent resultIntent = new Intent(getApplicationContext(), RetrieveReportActivity.class);
-            resultIntent.putExtra("reportId", Integer.toString(report.getId()));
-            startActivity(resultIntent);
+    public void OnReportRetrieved(ResponseEntity<Report> response) {
+        int status = response.getStatusCode().value();
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+            Report report = response.getBody();
+            if (report != null) {
+                retrieveReport(Integer.toString(report.getId()));
+            } else {
+                showErrorToast("You have no assigned reports.");
+            }
+        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+            logout();
+        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
+            showErrorToast("You have no assigned reports.");
         } else {
-            //TODO: Inform user no report is assigned
+            showErrorToast("An unexpected error has occurred.");
         }
+    }
+
+    private void showErrorToast(String message) {
+        DialogUtil.showToast(this, message);
     }
 
     @Override
@@ -98,13 +118,17 @@ public class HomeActivity extends Activity
         int id = item.getItemId();
 
         if (id == R.id.action_logout) {
-            ((CouncilAlertApplication) getApplication()).eraseUser();
-            mCache.clearCache();
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            finish();
+            logout();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        ((CouncilAlertApplication) getApplication()).eraseUser();
+        mCache.clearCache();
+        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        finish();
     }
 }

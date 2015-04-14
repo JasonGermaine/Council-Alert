@@ -5,6 +5,7 @@ package com.jgermaine.fyp.android_client.activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,17 +20,22 @@ import android.widget.ViewFlipper;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
-import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
 import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.model.Report;
-import com.jgermaine.fyp.android_client.request.SendReportTask;
+import com.jgermaine.fyp.android_client.request.PostReportTask;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 
 public class SendReportActivity extends LocationActivity implements
         CategoryFragment.OnCategoryInteractionListener,
-        TypeFragment.OnTypeInteractionListener {
+        TypeFragment.OnTypeInteractionListener,
+        PostReportTask.OnResponseListener {
 
     private boolean stateSaved = false;
 
@@ -199,7 +205,7 @@ public class SendReportActivity extends LocationActivity implements
      */
     public void submitData(View view) {
         Citizen citizen = (Citizen)((CouncilAlertApplication)getApplication()).getUser();
-        new SendReportTask(citizen.getEmail(), getReport(), this).execute();
+        new PostReportTask(getReport(), this).execute("citizen/" + citizen.getEmail());
     }
 
     public Report createNewReport(String type) {
@@ -209,5 +215,20 @@ public class SendReportActivity extends LocationActivity implements
         report.setLongitude(getCurrentLocation().getLongitude());
         report.setStatus(false);
         return report;
+    }
+
+    @Override
+    public void onResponseReceived(ResponseEntity<String> response) {
+        int status = response.getStatusCode().value();
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+            DialogUtil.showToast(this, response.getBody());
+            finish();
+        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            DialogUtil.showToast(this, response.getBody());
+        }
     }
 }

@@ -17,6 +17,8 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.transaction.Transactional;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import ch.qos.logback.classic.Logger;
@@ -37,7 +39,8 @@ public class ReportDao {
 	/**
 	 * Create new report in the database.
 	 */
-	public void create(Report report) throws EntityExistsException, PersistenceException, Exception {
+	public void create(Report report) throws EntityExistsException, PersistenceException, DataIntegrityViolationException,
+			Exception {
 		entityManager.persist(report);
 	}
 
@@ -62,35 +65,31 @@ public class ReportDao {
 
 	@SuppressWarnings("unchecked")
 	public List<Report> getWhereStatus(boolean status) throws Exception {
-		return entityManager
-				.createQuery("from Report where status = :status")
-				.setParameter("status", status).getResultList();
+		return entityManager.createQuery("from Report where status = :status").setParameter("status", status)
+				.getResultList();
 	}
-	
+
 	public List<Report> getComplete() throws Exception {
 		return getWhereStatus(true);
 	}
-	
+
 	public List<Report> getIncomplete() throws Exception {
 		return getWhereStatus(false);
 	}
-	
+
 	/**
 	 * Return the report having the passed name.
 	 */
 	public Report getByName(String name) throws NoResultException, NonUniqueResultException, Exception {
-		return (Report) entityManager
-				.createQuery("from Report where name = :name")
-				.setParameter("name", name).getSingleResult();
+		return (Report) entityManager.createQuery("from Report where name = :name").setParameter("name", name)
+				.getSingleResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Report> getTodaysReports() throws Exception {
 		try {
-			return  (List<Report>) entityManager
-					.createNativeQuery(
-							"Select * from Reports where timestamp > current_date()",
-							Report.class).getResultList();
+			return (List<Report>) entityManager.createNativeQuery(
+					"Select * from Reports where timestamp > current_date()", Report.class).getResultList();
 		} catch (Exception e) {
 			return null;
 		}
@@ -102,15 +101,13 @@ public class ReportDao {
 	public Report getByEmployee(String email) throws NoResultException, NonUniqueResultException, Exception {
 		try {
 			return (Report) entityManager
-					.createNativeQuery(
-							"Select * from Reports where emp_email = :email",
-							Report.class).setParameter("email", email)
-					.getSingleResult();
+					.createNativeQuery("Select * from Reports where emp_email = :email", Report.class)
+					.setParameter("email", email).getSingleResult();
 		} catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Return the report having the passed id.
 	 */
@@ -126,7 +123,7 @@ public class ReportDao {
 	/**
 	 * Update the passed report in the database.
 	 */
-	public void update(Report report) throws Exception{
+	public void update(Report report) throws Exception {
 		entityManager.merge(report);
 	}
 
@@ -185,18 +182,12 @@ public class ReportDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Report> getUnassignedNearestReport(double lat, double lon) throws Exception {
-		Query query = entityManager
-				.createNativeQuery(
-						"SELECT *, "
-								+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
-								+ "* cos( radians( longitude ) - radians(:lon) ) "
-								+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )"
-								+ "AS distance " + "FROM Reports "
-								+ "WHERE emp_email IS NULL "
-								+ "AND status = false  "
-								+ "HAVING distance < 10 "
-								+ "ORDER BY distance " + "LIMIT 0 , 6;",
-						Report.class);
+		Query query = entityManager.createNativeQuery("SELECT *, "
+				+ "( 6371 * acos( cos( radians(:lat) ) * cos( radians( latitude ) )"
+				+ "* cos( radians( longitude ) - radians(:lon) ) "
+				+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )" + "AS distance " + "FROM Reports "
+				+ "WHERE emp_email IS NULL " + "AND status = false  " + "HAVING distance < 10 " + "ORDER BY distance "
+				+ "LIMIT 0 , 6;", Report.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);
 		return query.getResultList();

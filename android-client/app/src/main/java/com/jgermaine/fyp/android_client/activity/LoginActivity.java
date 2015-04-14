@@ -28,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +46,9 @@ import com.jgermaine.fyp.android_client.request.RegisterCitizenTask;
 import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
+
+import org.springframework.http.ResponseEntity;
 
 public class LoginActivity extends Activity
         implements LoaderCallbacks<Cursor>,
@@ -163,9 +167,13 @@ public class LoginActivity extends Activity
     }
 
     private void resetTextFields() {
+        mEmailView.setText("");
+        resetPasswordFields();
+    }
+
+    private void resetPasswordFields() {
         mPasswordView.setText("");
         mConfirmPasswordView.setText("");
-        mEmailView.setText("");
     }
 
     private void setErrorMessage(EditText textField, String errorMessage) {
@@ -193,7 +201,7 @@ public class LoginActivity extends Activity
 
     @Override
     public void onTokenReceived(String token, String email, int status, boolean isLogin) {
-        if (status < 300) {
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             cache.putOAuthToken(token);
             if (isLogin) {
                 new UserRetrieveTask(email, token, this, true).execute();
@@ -203,32 +211,44 @@ public class LoginActivity extends Activity
                 finish();
             }
         } else {
-            setErrorMessage(mPasswordView, getString(R.string.error_incorrect_login));
+            String message = status <= HttpCodeUtil.CLIENT_ERROR_CODE_LIMIT ? getString(R.string.error_incorrect_login) : "An unexpected error occurred";
+            setErrorMessage(mPasswordView, message);
             mPasswordView.setText("");
         }
     }
 
 
     @Override
-    public void onCreationResponseReceived(Citizen citizen, int status) {
-        if (status < 300) {
+    public void onCreationResponseReceived(Citizen citizen, ResponseEntity<String> response) {
+        int status = response.getStatusCode().value();
+
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             setUser(citizen);
             new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
-        } else if (status == 409) {
-            setErrorMessage(mPasswordView, "Username is already registered");
-            mPasswordView.setText("");
         } else {
-            setErrorMessage(mPasswordView, getString(R.string.error_incorrect_login));
-            mPasswordView.setText("");
+            String message = "";
+            if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
+                message = "Invalid data inputted.";
+            } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
+                message = "Email already exists for a user.";
+            } else {
+                message = "An unexpected error has occurred.";
+            }
+            setErrorMessage(mEmailView, message);
+            resetPasswordFields();
         }
     }
 
     @Override
     public void onRetrieveResponseReceived(User user, int status) {
-        if (status < 300) {
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             setUser(user);
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
+        } else {
+            cache.clearCache();
+            Toast.makeText(this, "An error occurred with retrieving user details", Toast.LENGTH_SHORT).show();
+            resetPasswordFields();
         }
     }
 

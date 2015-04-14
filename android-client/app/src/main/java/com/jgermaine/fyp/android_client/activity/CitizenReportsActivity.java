@@ -46,6 +46,8 @@ public class CitizenReportsActivity extends Activity
         } else {
             // TODO: handle error
         }
+
+
     }
 
     @Override

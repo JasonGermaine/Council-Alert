@@ -9,7 +9,9 @@ import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +25,13 @@ import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
+import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
 
 /**
  * 
  * @author JasonGermaine
  * 
- * Handles requests for Citizens
+ *         Handles requests for Citizens
  *
  */
 @RestController
@@ -47,8 +50,7 @@ public class CitizenController {
 	private UserServiceImpl userService;
 
 	/**
-	 * Creates a new Citizen.
-	 * There are 4 possible outputs
+	 * Creates a new Citizen. There are 4 possible outputs
 	 * <ul>
 	 * <li>1. Citizen is valid and unique - returns 201</li>
 	 * <li>2. Citizen already exists in DB - returns 409</li>
@@ -64,7 +66,7 @@ public class CitizenController {
 			citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
 			return new ResponseEntity<String>(HttpStatus.CREATED);
-		} catch (PersistenceException e) {
+		} catch (PersistenceException | DataIntegrityViolationException e) {
 			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -73,17 +75,17 @@ public class CitizenController {
 	}
 
 	/**
-	 * Retrieves reports for a Citizen for a given email. 
-	 * There are 3 possible outputs
+	 * Retrieves reports for a Citizen for a given email. There are 3 possible
+	 * outputs
 	 * <ul>
-	 * <li>1. Citizen exists - returns reports +  200</li>
+	 * <li>1. Citizen exists - returns reports + 200</li>
 	 * <li>2. No Citizen exists for email - return 400</li>
 	 * <li>3. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return List of Reports
-	 */	
-	@RequestMapping(value ="/report/{email:.+}", method = RequestMethod.GET)
+	 */
+	@RequestMapping(value = "/report/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getCitizenReports(@PathVariable("email") String email) {
 		try {
 			Citizen citz = citizenService.getCitizen(email);

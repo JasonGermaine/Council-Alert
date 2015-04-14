@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.Citizen;
@@ -32,7 +34,7 @@ public class CitizenDao {
 	/**
 	 * Create new Citizen in the database.
 	 */
-	public void create(Citizen Citizen) throws EntityExistsException, PersistenceException, Exception {
+	public void create(Citizen Citizen) throws EntityExistsException, PersistenceException, DataIntegrityViolationException, Exception {
 		entityManager.persist(Citizen);
 	}
 

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * Created by jason on 11/04/15.
  */
-public class UpdateReportEntriesTask extends AsyncTask<Void, Void, Integer> {
+public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
     private String mURL;
     private List<Entry> mEntries;
     private Activity mActivity;
@@ -72,11 +73,8 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(Void... params) {
-        Integer statusCode;
-
+    protected ResponseEntity<String> doInBackground(Void... params) {
         try {
-
             RestTemplate restTemplate = new RestTemplate(true);
             HttpHeaders headers = new HttpHeaders();
             headers.setAuthorization(new HttpAuthentication() {
@@ -89,22 +87,22 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, Integer> {
             HttpEntity<?> entity = new HttpEntity<Object>(mEntries, headers);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-            ResponseEntity<String> response = restTemplate.exchange(mURL, HttpMethod.PUT, entity, String.class);;
-            statusCode = response.getStatusCode().value();
+            return restTemplate.exchange(mURL, HttpMethod.PUT, entity, String.class);
 
         } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode().value();
+            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
+        } catch(RestClientException e) {
+            return  new ResponseEntity<String>("Bad Request", HttpStatus.BAD_REQUEST);
         }
-        return statusCode;
     }
 
     @Override
-    protected void onPostExecute(Integer response) {
+    protected void onPostExecute(ResponseEntity<String> response) {
         getDialog().dismiss();
         mListener.onResponseReceived(response);
     }
 
     public interface OnRetrieveResponseListener {
-        public void onResponseReceived(Integer status);
+        public void onResponseReceived(ResponseEntity<String> status);
     }
 }

@@ -13,17 +13,21 @@ import android.widget.ViewFlipper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jgermaine.fyp.android_client.R;
-import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
-import com.jgermaine.fyp.android_client.request.CompleteReportTask;
-import com.jgermaine.fyp.android_client.request.RetrieveReportTask;
+import com.jgermaine.fyp.android_client.request.GetReportTask;
+import com.jgermaine.fyp.android_client.request.PostReportTask;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
+
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public class RetrieveReportActivity extends LocationActivity implements
-        RetrieveReportTask.OnTaskCompleted {
+        PostReportTask.OnResponseListener,
+        GetReportTask.OnReportRetrievedListener {
 
     private Location mReportLocation;
     private List<Entry> entries = null;
@@ -52,12 +56,12 @@ public class RetrieveReportActivity extends LocationActivity implements
             }
         });
 
-        String reportId = null;
+
         try {
-            reportId = getIntent().getExtras().getString("reportId");
-            new RetrieveReportTask(this, reportId).execute();
+            String reportId = getIntent().getExtras().getString("reportId");
+            new GetReportTask(this).execute(reportId);
         } catch (NullPointerException e) {
-            Log.d("Report ID Retriever" ,"No intent data detected");
+            Log.d("Report ID Retriever", "No intent data detected");
             finish();
         }
     }
@@ -86,7 +90,7 @@ public class RetrieveReportActivity extends LocationActivity implements
 
     public void completeReport(Report report) {
         report.setStatus(true);
-        new CompleteReportTask(report, this).execute();
+        new PostReportTask(report, this).execute("close");
     }
 
     /**
@@ -99,10 +103,10 @@ public class RetrieveReportActivity extends LocationActivity implements
                 Intent.ACTION_VIEW,
                 Uri.parse(
                         "http://maps.google.com/maps?"
-                                + "saddr="+ getCurrentLocation().getLatitude()
+                                + "saddr=" + getCurrentLocation().getLatitude()
                                 + "," + getCurrentLocation().getLongitude()
                                 + "&daddr=" + lat + "," + lon));
-        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
         startActivity(intent);
     }
 
@@ -138,13 +142,32 @@ public class RetrieveReportActivity extends LocationActivity implements
     }
 
     @Override
-    public void onTaskCompleted(Report report) {
-        setReportLocation(report.getLatitude(), report.getLongitude());
-        findViewById(R.id.action_complete).setVisibility(View.VISIBLE);
-        findViewById(R.id.action_nav).setVisibility(View.VISIBLE);
-        setMarker(report);
-        setReport(report);
-        setupCommentFragment();
+    public void OnReportRetrieved(ResponseEntity<Report> response) {
+        int status = response.getStatusCode().value();
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+            Report report = response.getBody();
+            if (report != null) {
+                setReportLocation(report.getLatitude(), report.getLongitude());
+                findViewById(R.id.action_complete).setVisibility(View.VISIBLE);
+                findViewById(R.id.action_nav).setVisibility(View.VISIBLE);
+                setMarker(report);
+                setReport(report);
+                setupCommentFragment();
+            } else {
+                showErrorToast("An unexpected error has occurred.");
+            }
+        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            showErrorToast("An unexpected error has occurred.");
+        }
+    }
+
+    private void showErrorToast(String message) {
+        finish();
+        DialogUtil.showToast(this, message);
     }
 
     public void setReportLocation(double lat, double lon) {
@@ -152,4 +175,21 @@ public class RetrieveReportActivity extends LocationActivity implements
         mReportLocation.setLatitude(lat);
         mReportLocation.setLongitude(lon);
     }
+
+
+    @Override
+    public void onResponseReceived(ResponseEntity<String> response) {
+        int status = response.getStatusCode().value();
+        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+            DialogUtil.showToast(this, response.getBody());
+            finish();
+        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            DialogUtil.showToast(this, response.getBody());
+        }
+    }
+
 }

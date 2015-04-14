@@ -9,7 +9,9 @@ import javax.validation.Valid;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import com.jgermaine.fyp.rest.model.Entry;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
+import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
 
 /**
  * Handles all RESTful operations for issue reporting
@@ -74,6 +77,7 @@ public class ReportController {
 
 	/**
 	 * Returns a list of complete reports
+	 * 
 	 * @return reports
 	 */
 	@RequestMapping(value = "/complete", method = RequestMethod.GET)
@@ -88,6 +92,7 @@ public class ReportController {
 
 	/**
 	 * Returns a list of incomplete reports
+	 * 
 	 * @return reports
 	 */
 	@RequestMapping(value = "/incomplete", method = RequestMethod.GET)
@@ -154,21 +159,20 @@ public class ReportController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/citizen/{email:.+}", method = RequestMethod.POST)
-	public ResponseEntity<String> createReport(@PathVariable("email") String email,
-			@RequestBody @Valid Report report) {
+	public ResponseEntity<String> createReport(@PathVariable("email") String email, @RequestBody @Valid Report report) {
 		try {
 			Citizen c = citizenService.getCitizen(email);
 			c.addReport(report);
 			report.setCitizen(c);
 			reportService.addReport(report);
-			return new ResponseEntity<String>(HttpStatus.CREATED);
-		} catch(EntityExistsException e) {
-			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+			return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_REPORT_CREATION, HttpStatus.CREATED);
+		} catch (EntityExistsException | DataIntegrityViolationException e) {
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_REPORT_EXIST, HttpStatus.CONFLICT);
 		} catch (NoResultException | NonUniqueResultException e) {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_USER_NOT_EXIST, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -185,17 +189,18 @@ public class ReportController {
 			report.setEmployee(null);
 			report.setCitizen(citz);
 			reportService.updateReport(report);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_REPORT_UPDATE, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_USER_NOT_EXIST, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}	
+	}
 
 	/**
 	 * Returns a report for a given Employee
+	 * 
 	 * @param email
 	 * @return Report
 	 */
@@ -211,9 +216,9 @@ public class ReportController {
 			return new ResponseEntity<Report>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
-	 * Retrieves the appropriate Report for a given id. There are 3 possible
+	 * Updates the appropriate Report for a given id. There are 3 possible
 	 * outputs
 	 * <ul>
 	 * <li>1. Report for id exists - update Report and return 200</li>
@@ -226,20 +231,17 @@ public class ReportController {
 	 * @return report
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateReport(@PathVariable("id") int id,
-			@RequestBody @Valid List<Entry> entries) {
+	public ResponseEntity<String> updateReport(@PathVariable("id") int id, @RequestBody @Valid List<Entry> entries) {
 		try {
 			Report report = reportService.getReport(id);
 			report.resetEntries(entries);
 			reportService.updateReport(report);
-			return new ResponseEntity<String>( HttpStatus.OK);
+			return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_REPORT_UPDATE, HttpStatus.OK);
 		} catch (NoResultException e) {
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST, HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.error(e.getMessage(), e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 }

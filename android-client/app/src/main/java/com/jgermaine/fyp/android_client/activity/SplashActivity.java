@@ -16,6 +16,7 @@ import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
 public class SplashActivity extends Activity
         implements UserRetrieveTask.OnRetrieveResponseListener {
@@ -82,7 +83,7 @@ public class SplashActivity extends Activity
 
     @Override
     public void onRetrieveResponseReceived(User user, int status) {
-        if(status < 300) {
+        if(status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             finishAnim();
             ((CouncilAlertApplication)getApplication()).setUser(user);
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));

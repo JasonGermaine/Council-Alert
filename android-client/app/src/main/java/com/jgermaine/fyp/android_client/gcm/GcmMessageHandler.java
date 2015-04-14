@@ -8,6 +8,11 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.activity.LoginActivity;
 import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
+import com.jgermaine.fyp.android_client.activity.SplashActivity;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
+import com.jgermaine.fyp.android_client.model.Employee;
+import com.jgermaine.fyp.android_client.model.User;
+import com.jgermaine.fyp.android_client.session.Cache;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -18,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -67,12 +73,21 @@ public class GcmMessageHandler extends IntentService {
                         .setContentTitle("Job Update")
                         .setContentText(task);
 
-        Intent resultIntent = new Intent(this, RetrieveReportActivity.class);
-        resultIntent.putExtra("reportId", task);
-
-        // ensures that navigating backward from the Activity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(RetrieveReportActivity.class);
+
+        // determine if the user is logged in or not
+        Class clazz;
+        if (isLoggedIn()) {
+            clazz = RetrieveReportActivity.class;
+            // ensures that navigating backward from the Activity
+            stackBuilder.addParentStack(clazz);
+
+        } else {
+            clazz = SplashActivity.class;
+        }
+
+        Intent resultIntent = new Intent(this, clazz);
+        resultIntent.putExtra("reportId", task);
 
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
@@ -87,5 +102,17 @@ public class GcmMessageHandler extends IntentService {
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(001, mBuilder.build());
+    }
+
+    private boolean isLoggedIn() {
+        Cache cache = Cache.getCurrentCache(this);
+        String email = cache.getUserEmail();
+        String authToken = cache.getOAuthToken();
+        User user = ((CouncilAlertApplication) getApplication()).getUser();
+
+        return !TextUtils.isEmpty(email) && !TextUtils.isEmpty(authToken)
+                && user != null && user instanceof Employee;
+
+
     }
 }

@@ -205,7 +205,8 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	
 	$scope.reports = reports;
 	$scope.email = email;
-	
+	$scope.assignError = false;
+	$scope.errorMessage = '';
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
 	};
@@ -213,18 +214,26 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	$scope.assignReport = function(id) {
 		var url = 'api/admin/employee/assign?email='
 				+ $scope.email + '&id=' + id;
-		$http
-				.get(url, LocalStorage.getHeader())
-				.success(
-						function(data) {
-							$scope.cancel();
-						}).error(function(resp, status) {
-							if (status === 401 || status === 403) {
-								LocalStorage.clear();
-								$rootScope.authenticated = false;
-								$location.path("/login");
-							}
-					    });
+		
+		$http.get(url, LocalStorage.getHeader())
+			.success(function(data, status, headers, config) {
+				$scope.cancel();
+			}).error(function(resp, status) {
+				if (status === 401 || status === 403) {
+					LocalStorage.clear();
+					$rootScope.authenticated = false;
+					$location.path("/login");
+				}  else if (status === 409) {
+					$scope.assignError = true;
+					$scope.errorMessage = "The entered employee or report are already assigned.";						
+				}  else if (status === 400) {
+					$scope.assignError = true;
+					$scope.errorMessage = "The entered employee or report no longer exist.";						
+				} else {
+					$scope.assignError = true;
+					$scope.errorMessage = "An unexpected error occurred. Please try again.";
+				}
+			});
 	};
 
 	
@@ -669,6 +678,20 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 	};
 }).controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage, $modal, dashboardService) {
 	
+	$scope.empError = false;
+	$scope.errorMessage = '';
+	
+	
+	$scope.displayError = function() {
+		$scope.empError = true;
+		$scope.errorMessage = 'An unexpected error has occurred.';
+	};
+	
+	$scope.resetError = function() {
+		$scope.empError = false;
+		$scope.errorMessage = '';
+	};	
+	
 	$scope.getAll = function () {
 		$scope.getEmployees("api/employee/");
 	};
@@ -685,12 +708,14 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		$http.get(url, LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.emps = response;
+			$scope.resetError();
 		}).error(function(resp, status) {
 			if (status === 401 || status === 403) {
 				LocalStorage.clear();
 				$rootScope.authenticated = false;
 				$location.path("/login");
 			}
+			$scope.displayError();
 		});
 	};
 	
@@ -699,6 +724,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 		$http.get("api/report/" + reportId, LocalStorage.getHeader())
 		.success(function(response) {
 			$scope.report = response;
+			$scope.resetError();
 			var modalInstance = $modal.open({
 				templateUrl: '/modals/showReportDetail.html',
 			    controller: 'showReportDetail',
@@ -715,6 +741,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 				$rootScope.authenticated = false;
 				$location.path("/login");
 			}
+			$scope.displayError();
 		});
 	};
 	
@@ -758,6 +785,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 					$http.get(url, LocalStorage.getHeader()).success(function(data) {
 						$scope.email = email;
 						$scope.reports = data;
+						$scope.resetError();
 						$scope.openAssign();
 					}).error(function(resp, status) {
 						if (status === 401 || status === 403) {
@@ -765,6 +793,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 							$rootScope.authenticated = false;
 							$location.path("/login");
 						}
+						$scope.displayError();
 					});
 				};
 					
@@ -799,6 +828,7 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 }).controller('removeEmp', function($rootScope, $scope, $http, $location, $route, $modalInstance, employee, LocalStorage) {
 	
 	$scope.removeError = false;
+	$scope.errorMessage = '';
 	$scope.employee = employee;
 	$scope.cancel = function () {
 		  $modalInstance.dismiss('cancel');
@@ -814,8 +844,13 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 					LocalStorage.clear();
 					$rootScope.authenticated = false;
 					$location.path("/login");
-				}
-				$scope.removeError = true;
+				} else if (status === 400) {
+					$scope.removeError = true;
+					$scope.errorMessage = "Employee has already been removed.";						
+				} else {
+					$scope.removeError = true;
+					$scope.errorMessage = "An unexpected error occurred. Please try again.";
+				}				
 			});
 	};
 }).controller('displayEmpDetails', function($rootScope, $scope, $http, $location, $route, $timeout, $modalInstance, employee, LocalStorage) {
@@ -852,76 +887,63 @@ angular.module('councilalert', [ 'ngRoute', 'ui.bootstrap', 'uiGmapgoogle-maps',
 }).controller(
 		'addEmp',
 		function($rootScope, $scope, $http, $location, $route, LocalStorage) {
-			$scope.fName = '';
-			$scope.lName = '';
-			$scope.pwd = '';
+			$scope.emp = {};
 			$scope.pwd2 = '';
-			$scope.email = '';
-			$scope.phoneNum = '';
-			$scope.lat = '';
-			$scope.lon = '';
+
 			$scope.error = false;
 			$scope.incomplete = false;
 
-			$scope.$watch('pwd', function() {
+			$scope.nameRegex = '[A-Za-z]*';
+			$scope.numRegex = '[0-9+/-]*';
+			$scope.pwdRegex = '[A-Za-z0-9!?.$%]*';
+			
+			$scope.$watch('emp.pwd', function() {
 				$scope.test();
 			});
 			$scope.$watch('pwd2', function() {
 				$scope.test();
 			});
-			$scope.$watch('fName', function() {
+			$scope.$watch('emp.latitude', function() {
 				$scope.test();
 			});
-			$scope.$watch('lName', function() {
+			$scope.$watch('emp.longitude', function() {
 				$scope.test();
 			});
-			$scope.$watch('email', function() {
-				$scope.test();
-			});
-			$scope.$watch('phoneNum', function() {
-				$scope.test();
-			});
-			$scope.$watch('lat', function() {
-				$scope.test();
-			});
-			$scope.$watch('lon', function() {
-				$scope.test();
-			});
+			
 			$scope.test = function() {
-				if ($scope.pwd !== $scope.pwd2) {
+				if ($scope.emp.password !== $scope.pwd2) {
 					$scope.error = true;
 				} else {
 					$scope.error = false;
 				}
 
 				$scope.incomplete = false;
-				if (!$scope.fName.length || !$scope.lName.length
-						|| !$scope.pwd.length || !$scope.pwd2.length
-						|| !$scope.email.length || !$scope.phoneNum.length
-						|| !$scope.lat.length || !$scope.lon.length) {
-
+				if (!$scope.emp.latitude.length || !$scope.emp.longitude.length) {
 					$scope.incomplete = true;
 				}
 			};
-
+			
+			$scope.errorMessage = '';
+			$scope.formError = false;
+			
 			$scope.register = function() {
-				var dataObj = {
-					email : $scope.email,
-					firstName : $scope.fName,
-					lastName : $scope.lName,
-					password : $scope.pwd,
-					phoneNum : $scope.phoneNum,
-					latitude : $scope.lat,
-					longitude : $scope.lon
-				};
 				
-				$http.post('api/admin/employee', dataObj, LocalStorage.getHeader()).success(function(data) {
+				$http.post('api/admin/employee', $scope.emp, LocalStorage.getHeader()).success(function(data) {
 					$location.path("/");
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						LocalStorage.clear();
 						$rootScope.authenticated = false;
 						$location.path("/login");
+					} else if (status === 409) {
+						$scope.formError = true;
+						$scope.errorMessage = "An Employee is already registered with that email.";
+					} else if (status === 400) {
+						$scope.formError = true;
+						$scope.errorMessage = "Invalid data inputted.";						
+					} else {
+						$scope.formError = true;
+						$scope.errorMessage = "An unexpected error occurred. Please try again.";
 					}
 			    });
 			};

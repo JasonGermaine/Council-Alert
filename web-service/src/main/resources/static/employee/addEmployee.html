@@ -6,14 +6,27 @@
 	</div>
 </div>
 
-<form class="form-horizontal" role="form">
+<div class="row">
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="formError">
+			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	</div>
+</div>
+
+<form name="addEmpForm" class="form-horizontal" role="form">
 	<div class="form-group">
 		<label
 			class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
 			for="fname">First Name:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input class="form-control" id="fname" placeholder="First Name"
-				ng-model="fName" />
+				name="firstName" ng-model="emp.firstName" ng-required="true"
+				ng-minlength="1" ng-maxlength="80" ng-pattern="nameRegex" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.firstName.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip"
+				title="Must be between 1 - 80 characters and only consist of letters"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -22,7 +35,14 @@
 			for="lname">Last Name:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input class="form-control" id="lname" placeholder="Last Name"
-				ng-model="lName" />
+				name="lastName" ng-model="emp.lastName" ng-required="true"
+				ng-minlength="1" ng-maxlength="80" ng-pattern="nameRegex" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.lastName.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip"
+				title="Must be between 1 - 80 characters and only consist of letters"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -31,7 +51,13 @@
 			for="email">Email:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input type="email" class="form-control" id="email"
-				placeholder="Email" ng-model="email" />
+				placeholder="Email" name="email" ng-model="emp.email"
+				ng-required="true" ng-minlength="1" ng-maxlength="255" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.email.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip" title="Must be between 1 - 255 characters"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -40,7 +66,14 @@
 			for="phoneNum">Phone Number:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input class="form-control" id="phoneNum" placeholder="Phone Number"
-				ng-model="phoneNum" />
+				name="phoneNum" ng-model="emp.phoneNum" ng-required="true"
+				ng-minlength="1" ng-maxlength="16" ng-pattern="numRegex" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.phoneNum.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip"
+				title="Must be a valid phone number between 1 - 16 characters"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -49,7 +82,16 @@
 			for="pwd">Password:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10 controls">
 			<input type="password" class="form-control" id="pwd"
-				placeholder="Password" ng-model="pwd" />
+				placeholder="Password" name="password" ng-model="emp.password"
+				ng-required="true" ng-minlength="1" ng-maxlength="255"
+				ng-pattern="pwdRegex" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.password.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip"
+				title="Must be between 1 - 255 characters and only consist of letters, 
+					numbers and any of the following: !?.$%"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -58,7 +100,16 @@
 			for="pwdConf">Confirm Password:</label>
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input type="password" class="form-control" id="pwdConf"
-				placeholder="Confirm password" ng-model="pwd2" />
+				placeholder="Confirm password" name="password2" ng-model="pwd2"
+				ng-required="true" ng-minlength="1" ng-maxlength="255"
+				ng-pattern="pwdRegex" />
+		</div>
+		<div class="col-lg-1 col-md-1 col-sm-1"
+			ng-show="!addEmpForm.password2.$valid">
+			<i class="fa fa-times" style="display: block; margin: auto;"
+				data-toggle="tooltip"
+				title="Must be between 1 - 255 characters and only consist of letters, 
+					numbers and any of the following: !?.$%"></i>
 		</div>
 	</div>
 	<div class="form-group">
@@ -79,9 +130,10 @@
 			<div class="row">
 				<div class="controls form-inline" style="margin-top: 10px">
 					<label for="lat" class="control-label">Latitude</label> <input
-						type="text" class="form-control" id="lat" ng-model="lat" /> <label
-						for="lon" class="control-label" style="margin-left: 10px;">Longitude</label>
-					<input type="text" class="form-control" id="lon" ng-model="lon" />
+						type="text" class="form-control" id="lat" ng-model="emp.latitude" />
+					<label for="lon" class="control-label" style="margin-left: 10px;">Longitude</label>
+					<input type="text" class="form-control" id="lon"
+						ng-model="emp.longitude" />
 				</div>
 			</div>
 			<div class="collapse" id="collapseMap">
@@ -97,12 +149,13 @@
 			<div
 				class="col-lg-offset-4 col-lg-1 col-md-offset-4 col-md-1 col-sm-offset-2 col-sm-3">
 				<button ng-click="register()" class="btn btn-custom"
-					ng-disabled="error || incomplete">
+					ng-disabled="error || incomplete || !addEmpForm.$valid">
 					<i class="fa fa-user-plus"></i> Register
 				</button>
 			</div>
 			<div class="col-lg-1 col-md-1 col-sm-2">
-				<button type="reset" class="btn btn-danger" style="opacity: 0.8; margin-left: 10px;">Clear</button>
+				<button type="reset" class="btn btn-danger"
+					style="opacity: 0.8; margin-left: 10px;">Clear</button>
 			</div>
 		</div>
 	</div>

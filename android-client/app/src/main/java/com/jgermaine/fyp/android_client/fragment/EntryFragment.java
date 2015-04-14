@@ -25,8 +25,10 @@ import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.UpdateReportEntriesTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
+import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -153,15 +155,9 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
                 .show();
     }
 
-    public void onResponseReceived(Integer response) {
-        String message;
-        if (response != HttpStatus.OK.value()) {
-            // TODO: Inform user that comments update failed
-            message = response.toString();
-        } else {
-            // TODO: Inform user that comments update success
-            message = "Update Success";
-        }
+    public void onResponseReceived(ResponseEntity<String> response) {
+        String message = response.getBody().equals("Bad Request") ?
+                "Error: attempt to add invalid comments" : response.getBody();
         DialogUtil.showToast(getActivity(), message);
     }
 

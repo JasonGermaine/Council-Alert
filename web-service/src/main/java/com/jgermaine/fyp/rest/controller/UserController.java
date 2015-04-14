@@ -51,9 +51,8 @@ public class UserController {
 	 * @param email
 	 * @return Employee
 	 */
-	
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public ResponseEntity<User> attemptLogin(@RequestBody UserRequest data) {
+	public ResponseEntity<User> getUser(@RequestBody UserRequest data) {
 		try {
 			String email = data.getEmail();
 			User user = userService.getUser(email);

@@ -24,18 +24,24 @@ import java.util.Date;
 /**
  * Created by jason on 04/12/14.
  */
-public abstract class GetReportTask extends AsyncTask<Void, Void, ResponseEntity<Report>> {
+public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report>> {
     private String mURL;
     private Activity mActivity;
     private ProgressDialog dialog;
     private Cache mCache;
+    private OnReportRetrievedListener mListener;
 
-
-    public GetReportTask(Activity activity, String postfix) {
+    public GetReportTask(Activity activity) {
         super();
         mActivity = activity;
-        mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, postfix);
         mCache = Cache.getCurrentCache(activity);
+
+        try {
+            mListener = (OnReportRetrievedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnEntryInteractionListener");
+        }
     }
 
 
@@ -60,8 +66,9 @@ public abstract class GetReportTask extends AsyncTask<Void, Void, ResponseEntity
     }
 
     @Override
-    protected ResponseEntity<Report> doInBackground(Void... params) {
+    protected ResponseEntity<Report> doInBackground(String... params) {
         try {
+            mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
             RestTemplate restTemplate = new RestTemplate(true);
             HttpHeaders headers = new HttpHeaders();
             Log.i("BEARER" , mCache.getOAuthToken());
@@ -76,11 +83,17 @@ public abstract class GetReportTask extends AsyncTask<Void, Void, ResponseEntity
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             return restTemplate.exchange(mURL, HttpMethod.GET, entity, Report.class);
         } catch (Exception e) {
-            Log.i("TAG", e.getLocalizedMessage());
             return new ResponseEntity<Report>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    protected abstract void onPostExecute(ResponseEntity<Report> response);
+    protected void onPostExecute(ResponseEntity<Report> response) {
+        getDialog().dismiss();
+        mListener.OnReportRetrieved(response);
+    }
+
+    public interface OnReportRetrievedListener {
+        public void OnReportRetrieved(ResponseEntity<Report> response);
+    }
 }

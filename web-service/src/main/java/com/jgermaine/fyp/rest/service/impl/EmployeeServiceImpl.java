@@ -8,7 +8,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Employee;
@@ -30,7 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return employee;
 	}
 	
-	public void addEmployee(Employee employee) throws EntityExistsException, PersistenceException, Exception {
+	public void addEmployee(Employee employee) throws EntityExistsException, PersistenceException, DataIntegrityViolationException, Exception {
 		EmployeeDao.create(employee);
 	}
 	

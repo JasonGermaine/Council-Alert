@@ -121,7 +121,6 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
         if (id == null) {
             id = getIdFromGCM();
         }
-        Log.i("TAG", id);
         return id;
     }
 
@@ -134,7 +133,6 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
             cache.putDeviceKey(id);
             return id;
         } catch (IOException ex) {
-            Log.e("TAG", ex.getMessage(), ex);
             return null;
         }
     }
