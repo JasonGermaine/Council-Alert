@@ -1,0 +1,28 @@
+<div class="modal-header">
+	<h3 class="modal-title">Remove Employee</h3>
+</div>
+<div class="modal-body">
+	<div class="row">
+		<span ng-if="employee.reportId && removeError === false">
+			<div class="alert alert-warning col-lg-10 col-lg-offset-1">
+				{{ employee.firstName }} {{ employee.lastName }} is currently assigned to Report {{ employee.reportId }}
+			</div>
+		</span>
+	</div>
+	<div class="row">
+		<span ng-show="removerError">
+			<div class="alert alert-danger col-lg-10 col-lg-offset-1">
+				<i class="fa fa-times"></i>	{{ errorMessage }}
+			</div>
+		</span>
+	</div>
+	<div class="row">
+		<div class="col-lg-12">
+			Are you sure you want to remove {{ employee.firstName }} {{ employee.lastName }}?
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-custom" ng-click="ok()">Remove</button>
+	 <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+</div>

@@ -1,0 +1,325 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.2.1.RELEASE)
+
+2015-04-14 21:26:23.048  INFO 24721 --- [           main] c.j.fyp.rest.config.WebApplication       : Starting WebApplication v1.0-SNAPSHOT on Jason-ThinkPad with PID 24721 (/home/jason/Council-Alert/web-service/target/CouncilAlert.jar started by jason in /home/jason/Council-Alert/web-service)
+2015-04-14 21:26:23.099  INFO 24721 --- [           main] ationConfigEmbeddedWebApplicationContext : Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@1442286d: startup date [Tue Apr 14 21:26:23 IST 2015]; root of context hierarchy
+2015-04-14 21:26:24.507  INFO 24721 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Overriding bean definition for bean 'beanNameViewResolver': replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration$WhitelabelErrorViewConfiguration; factoryMethodName=beanNameViewResolver; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/web/ErrorMvcAutoConfiguration$WhitelabelErrorViewConfiguration.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter; factoryMethodName=beanNameViewResolver; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/web/WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter.class]]
+2015-04-14 21:26:25.401  INFO 24721 --- [           main] o.s.j.d.DriverManagerDataSource          : Loaded JDBC driver: com.mysql.jdbc.Driver
+2015-04-14 21:26:25.418  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'dataSource' of type [class org.springframework.jdbc.datasource.DriverManagerDataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:25.506  INFO 24721 --- [           main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2015-04-14 21:26:25.539  INFO 24721 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2015-04-14 21:26:25.631  INFO 24721 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate Core {4.3.7.Final}
+2015-04-14 21:26:25.634  INFO 24721 --- [           main] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2015-04-14 21:26:25.636  INFO 24721 --- [           main] org.hibernate.cfg.Environment            : HHH000021: Bytecode provider name : javassist
+2015-04-14 21:26:26.029  INFO 24721 --- [           main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {4.0.5.Final}
+2015-04-14 21:26:26.625  INFO 24721 --- [           main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2015-04-14 21:26:26.764  WARN 24721 --- [           main] org.hibernate.cfg.AnnotationBinder       : HHH000457: Joined inheritance hierarchy [com.jgermaine.fyp.rest.model.User] defined explicit @DiscriminatorColumn.  Legacy Hibernate behavior was to ignore the @DiscriminatorColumn.  However, as part of issue HHH-6911 we now apply the explicit @DiscriminatorColumn.  If you would prefer the legacy behavior, enable the `hibernate.discriminator.ignore_explicit_for_joined` setting (hibernate.discriminator.ignore_explicit_for_joined=true)
+2015-04-14 21:26:26.920  INFO 24721 --- [           main] o.h.h.i.ast.ASTQueryTranslatorFactory    : HHH000397: Using ASTQueryTranslatorFactory
+2015-04-14 21:26:27.337  INFO 24721 --- [           main] org.hibernate.tool.hbm2ddl.SchemaUpdate  : HHH000228: Running hbm2ddl schema update
+2015-04-14 21:26:27.337  INFO 24721 --- [           main] org.hibernate.tool.hbm2ddl.SchemaUpdate  : HHH000102: Fetching database metadata
+2015-04-14 21:26:27.344  INFO 24721 --- [           main] org.hibernate.tool.hbm2ddl.SchemaUpdate  : HHH000396: Updating schema
+2015-04-14 21:26:27.366  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.Citizen
+2015-04-14 21:26:27.366  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [email]
+2015-04-14 21:26:27.366  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: [fk_foxm5gpsfmbxdjm7i8a081gtg]
+2015-04-14 21:26:27.366  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [primary]
+2015-04-14 21:26:27.372  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.CouncilAlertUser
+2015-04-14 21:26:27.373  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [password, salt, id, email]
+2015-04-14 21:26:27.373  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: []
+2015-04-14 21:26:27.373  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [uk_4dm8f4v5wof04vxsvle1fdcs, primary]
+2015-04-14 21:26:27.379  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.Employee
+2015-04-14 21:26:27.380  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [firstname, latitude, phonenum, deviceid, email, lastname, longitude]
+2015-04-14 21:26:27.380  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: [fk_2y5g3ij0kgtvrlp3rtmjlabj4]
+2015-04-14 21:26:27.380  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [primary]
+2015-04-14 21:26:27.387  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.Entries
+2015-04-14 21:26:27.387  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [image, author, report_id, comment, entry_id, timestamp]
+2015-04-14 21:26:27.387  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: [fk_537tep1j898epvjy52rxvbwmg]
+2015-04-14 21:26:27.388  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [fk_537tep1j898epvjy52rxvbwmg, primary]
+2015-04-14 21:26:27.393  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.Reports
+2015-04-14 21:26:27.394  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [report_id, latitude, name, emp_email, citz_email, longitude, status, timestamp]
+2015-04-14 21:26:27.394  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: [fk_ejchof2ihgjrl28ktclymsdix, fk_k30ewawehvn8obj7yav28ryox]
+2015-04-14 21:26:27.394  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [fk_ejchof2ihgjrl28ktclymsdix, fk_k30ewawehvn8obj7yav28ryox, primary]
+2015-04-14 21:26:27.399  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.Role
+2015-04-14 21:26:27.399  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [user_id, name, id]
+2015-04-14 21:26:27.399  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: [fk_1wtyy2cjpkrg90j7af2wxqw2]
+2015-04-14 21:26:27.399  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [fk_1wtyy2cjpkrg90j7af2wxqw2, primary]
+2015-04-14 21:26:27.407  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000261: Table found: jgermaine.User
+2015-04-14 21:26:27.407  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000037: Columns: [user_type, email]
+2015-04-14 21:26:27.408  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000108: Foreign keys: []
+2015-04-14 21:26:27.408  INFO 24721 --- [           main] o.hibernate.tool.hbm2ddl.TableMetadata   : HHH000126: Indexes: [primary]
+2015-04-14 21:26:27.409  INFO 24721 --- [           main] org.hibernate.tool.hbm2ddl.SchemaUpdate  : HHH000232: Schema update complete
+2015-04-14 21:26:27.462  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'entityManagerFactory' of type [class org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:27.465  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'dbConfig' of type [class com.jgermaine.fyp.rest.config.DbConfig$$EnhancerBySpringCGLIB$$d96bdc35] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:27.576  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [class org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$2323f6f4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:27.598  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'transactionAttributeSource' of type [class org.springframework.transaction.annotation.AnnotationTransactionAttributeSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:27.615  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'transactionInterceptor' of type [class org.springframework.transaction.interceptor.TransactionInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:27.631  INFO 24721 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.config.internalTransactionAdvisor' of type [class org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2015-04-14 21:26:28.100  INFO 24721 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8080 (http)
+2015-04-14 21:26:28.332  INFO 24721 --- [           main] o.apache.catalina.core.StandardService   : Starting service Tomcat
+2015-04-14 21:26:28.334  INFO 24721 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.0.15
+2015-04-14 21:26:30.592  INFO 24721 --- [ost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2015-04-14 21:26:30.593  INFO 24721 --- [ost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 7497 ms
+2015-04-14 21:26:31.723 ERROR 24721 --- [ost-startStop-1] o.s.b.c.embedded.tomcat.TomcatStarter    : Error starting Tomcat context: org.springframework.beans.factory.BeanCreationException
+2015-04-14 21:26:31.745  WARN 24721 --- [           main] ationConfigEmbeddedWebApplicationContext : Exception encountered during context initialization - cancelling refresh attempt
+
+org.springframework.context.ApplicationContextException: Unable to start embedded container; nested exception is org.springframework.boot.context.embedded.EmbeddedServletContainerException: Unable to start embedded Tomcat
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.onRefresh(EmbeddedWebApplicationContext.java:133)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:474)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.refresh(EmbeddedWebApplicationContext.java:118)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:691)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:961)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:950)
+	at com.jgermaine.fyp.rest.config.WebApplication.main(WebApplication.java:20)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:53)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.springframework.boot.context.embedded.EmbeddedServletContainerException: Unable to start embedded Tomcat
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer.initialize(TomcatEmbeddedServletContainer.java:98)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer.<init>(TomcatEmbeddedServletContainer.java:75)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory.getTomcatEmbeddedServletContainer(TomcatEmbeddedServletContainerFactory.java:378)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory.getEmbeddedServletContainer(TomcatEmbeddedServletContainerFactory.java:155)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.createEmbeddedServletContainer(EmbeddedWebApplicationContext.java:157)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.onRefresh(EmbeddedWebApplicationContext.java:130)
+	... 13 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire method: public void org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration.setFilterChainProxySecurityConfigurer(org.springframework.security.config.annotation.ObjectPostProcessor,java.util.List) throws java.lang.Exception; nested exception is org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:334)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:537)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:368)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1111)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1006)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:504)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:176)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:141)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:136)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:119)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:69)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.getServletContextInitializerBeans(EmbeddedWebApplicationContext.java:233)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.selfInitialize(EmbeddedWebApplicationContext.java:221)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.access$000(EmbeddedWebApplicationContext.java:84)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext$1.onStartup(EmbeddedWebApplicationContext.java:206)
+	at org.springframework.boot.context.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:54)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5185)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1409)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1399)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	... 1 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Could not autowire method: public void org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration.setFilterChainProxySecurityConfigurer(org.springframework.security.config.annotation.ObjectPostProcessor,java.util.List) throws java.lang.Exception; nested exception is org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredMethodElement.inject(AutowiredAnnotationBeanPostProcessor.java:649)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:88)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:331)
+	... 34 common frames omitted
+Caused by: org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.context.expression.StandardBeanExpressionResolver.evaluate(StandardBeanExpressionResolver.java:164)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.evaluateBeanDefinitionString(AbstractBeanFactory.java:1365)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:964)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:949)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredMethodElement.inject(AutowiredAnnotationBeanPostProcessor.java:606)
+	... 36 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:334)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:537)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:512)
+	at org.springframework.security.config.annotation.web.configuration.AutowiredWebSecurityConfigurersIgnoreParents.getWebSecurityConfigurers(AutowiredWebSecurityConfigurersIgnoreParents.java:52)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.expression.spel.support.ReflectiveMethodExecutor.execute(ReflectiveMethodExecutor.java:112)
+	at org.springframework.expression.spel.ast.MethodReference.getValueInternal(MethodReference.java:129)
+	at org.springframework.expression.spel.ast.MethodReference.access$000(MethodReference.java:49)
+	at org.springframework.expression.spel.ast.MethodReference$MethodValueRef.getValue(MethodReference.java:342)
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueInternal(CompoundExpression.java:88)
+	at org.springframework.expression.spel.ast.SpelNodeImpl.getValue(SpelNodeImpl.java:120)
+	at org.springframework.expression.spel.standard.SpelExpression.getValue(SpelExpression.java:242)
+	at org.springframework.context.expression.StandardBeanExpressionResolver.evaluate(StandardBeanExpressionResolver.java:161)
+	... 40 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:561)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:88)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:331)
+	... 62 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1038)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:504)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.findAutowireCandidates(DefaultListableBeanFactory.java:1127)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1003)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:949)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:533)
+	... 64 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:85)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1086)
+	... 75 common frames omitted
+Caused by: java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at java.lang.Class.getConstructor0(Class.java:3082)
+	at java.lang.Class.getDeclaredConstructor(Class.java:2178)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:80)
+	... 76 common frames omitted
+
+2015-04-14 21:26:31.758  INFO 24721 --- [           main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2015-04-14 21:26:31.760  INFO 24721 --- [           main] .b.l.ClasspathLoggingApplicationListener : Application failed to start with classpath: [jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-web-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-autoconfigure-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-logging-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jul-to-slf4j-1.7.8.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/log4j-over-slf4j-1.7.8.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/logback-classic-1.1.2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/logback-core-1.1.2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jackson-databind-2.4.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jackson-annotations-2.4.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jackson-core-2.4.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-core-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-web-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-webmvc-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-data-jpa-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-aop-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/aspectjrt-1.8.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/aspectjweaver-1.8.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-jdbc-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-jdbc-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-jdbc-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-juli-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-tx-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hibernate-entitymanager-4.3.7.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jboss-logging-annotations-1.2.0.Beta1.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hibernate-core-4.3.7.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/antlr-2.7.7.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jandex-1.1.0.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/dom4j-1.6.1.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/xml-apis-1.0.b2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hibernate-commons-annotations-4.0.5.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hibernate-jpa-2.1-api-1.0.0.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/javassist-3.18.1-GA.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/javax.transaction-api-1.2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-orm-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-data-jpa-1.7.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-data-commons-1.9.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/slf4j-api-1.7.8.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jcl-over-slf4j-1.7.8.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-aspects-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-tomcat-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-embed-core-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-embed-el-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-embed-logging-juli-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-embed-websocket-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/junit-4.12.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hamcrest-core-1.3.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-actuator-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-actuator-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-boot-starter-security-1.2.1.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-beans-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-context-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-expression-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-security-config-3.2.5.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/aopalliance-1.0.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-security-web-3.2.5.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-aop-4.1.4.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-security-oauth2-2.0.6.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-security-core-3.2.5.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jackson-mapper-asl-1.9.13.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jackson-core-asl-1.9.13.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/spring-security-jwt-1.0.2.RELEASE.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/bcpkix-jdk15on-1.47.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/bcprov-jdk15on-1.47.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/mysql-connector-java-5.1.34.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/hibernate-validator-5.1.3.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jboss-logging-3.1.3.GA.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/classmate-1.0.0.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/validation-api-1.1.0.Final.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/log4j-api-2.1.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/log4j-core-2.1.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/snakeyaml-1.14.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/gcm-server-1.0.2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/json-simple-1.1.1.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/tomcat-embed-jasper-8.0.15.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/ecj-4.4.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/jstl-1.2.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/commons-codec-1.9.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/mail-1.4.7.jar!/, jar:file:/home/jason/Council-Alert/web-service/target/CouncilAlert.jar!/lib/activation-1.1.jar!/]
+2015-04-14 21:26:31.762 ERROR 24721 --- [           main] o.s.boot.SpringApplication               : Application startup failed
+
+org.springframework.context.ApplicationContextException: Unable to start embedded container; nested exception is org.springframework.boot.context.embedded.EmbeddedServletContainerException: Unable to start embedded Tomcat
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.onRefresh(EmbeddedWebApplicationContext.java:133)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:474)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.refresh(EmbeddedWebApplicationContext.java:118)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:691)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:961)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:950)
+	at com.jgermaine.fyp.rest.config.WebApplication.main(WebApplication.java:20)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:53)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: org.springframework.boot.context.embedded.EmbeddedServletContainerException: Unable to start embedded Tomcat
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer.initialize(TomcatEmbeddedServletContainer.java:98)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer.<init>(TomcatEmbeddedServletContainer.java:75)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory.getTomcatEmbeddedServletContainer(TomcatEmbeddedServletContainerFactory.java:378)
+	at org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory.getEmbeddedServletContainer(TomcatEmbeddedServletContainerFactory.java:155)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.createEmbeddedServletContainer(EmbeddedWebApplicationContext.java:157)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.onRefresh(EmbeddedWebApplicationContext.java:130)
+	... 13 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire method: public void org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration.setFilterChainProxySecurityConfigurer(org.springframework.security.config.annotation.ObjectPostProcessor,java.util.List) throws java.lang.Exception; nested exception is org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:334)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:537)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:368)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1111)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1006)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:504)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.getOrderedBeansOfType(ServletContextInitializerBeans.java:176)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:141)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAsRegistrationBean(ServletContextInitializerBeans.java:136)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.addAdaptableBeans(ServletContextInitializerBeans.java:119)
+	at org.springframework.boot.context.embedded.ServletContextInitializerBeans.<init>(ServletContextInitializerBeans.java:69)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.getServletContextInitializerBeans(EmbeddedWebApplicationContext.java:233)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.selfInitialize(EmbeddedWebApplicationContext.java:221)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.access$000(EmbeddedWebApplicationContext.java:84)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext$1.onStartup(EmbeddedWebApplicationContext.java:206)
+	at org.springframework.boot.context.embedded.tomcat.TomcatStarter.onStartup(TomcatStarter.java:54)
+	at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5185)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1409)
+	at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1399)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	... 1 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Could not autowire method: public void org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration.setFilterChainProxySecurityConfigurer(org.springframework.security.config.annotation.ObjectPostProcessor,java.util.List) throws java.lang.Exception; nested exception is org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredMethodElement.inject(AutowiredAnnotationBeanPostProcessor.java:649)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:88)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:331)
+	... 34 common frames omitted
+Caused by: org.springframework.beans.factory.BeanExpressionException: Expression parsing failed; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.context.expression.StandardBeanExpressionResolver.evaluate(StandardBeanExpressionResolver.java:164)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.evaluateBeanDefinitionString(AbstractBeanFactory.java:1365)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:964)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:949)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredMethodElement.inject(AutowiredAnnotationBeanPostProcessor.java:606)
+	... 36 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration': Injection of autowired dependencies failed; nested exception is org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:334)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1202)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:537)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:199)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:523)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:512)
+	at org.springframework.security.config.annotation.web.configuration.AutowiredWebSecurityConfigurersIgnoreParents.getWebSecurityConfigurers(AutowiredWebSecurityConfigurersIgnoreParents.java:52)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.expression.spel.support.ReflectiveMethodExecutor.execute(ReflectiveMethodExecutor.java:112)
+	at org.springframework.expression.spel.ast.MethodReference.getValueInternal(MethodReference.java:129)
+	at org.springframework.expression.spel.ast.MethodReference.access$000(MethodReference.java:49)
+	at org.springframework.expression.spel.ast.MethodReference$MethodValueRef.getValue(MethodReference.java:342)
+	at org.springframework.expression.spel.ast.CompoundExpression.getValueInternal(CompoundExpression.java:88)
+	at org.springframework.expression.spel.ast.SpelNodeImpl.getValue(SpelNodeImpl.java:120)
+	at org.springframework.expression.spel.standard.SpelExpression.getValue(SpelExpression.java:242)
+	at org.springframework.context.expression.StandardBeanExpressionResolver.evaluate(StandardBeanExpressionResolver.java:161)
+	... 40 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Could not autowire field: private java.util.List org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration.configurers; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:561)
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:88)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:331)
+	... 62 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration': Instantiation of bean failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1093)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1038)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:504)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:476)
+	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:303)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:230)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:299)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:194)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.findAutowireCandidates(DefaultListableBeanFactory.java:1127)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1003)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:949)
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:533)
+	... 64 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b]: No default constructor found; nested exception is java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:85)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1086)
+	... 75 common frames omitted
+Caused by: java.lang.NoSuchMethodException: com.jgermaine.fyp.rest.config.DbConfig$AuthorizationServerConfiguration$$EnhancerBySpringCGLIB$$2d69023b.<init>()
+	at java.lang.Class.getConstructor0(Class.java:3082)
+	at java.lang.Class.getDeclaredConstructor(Class.java:2178)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:80)
+	... 76 common frames omitted
+
