@@ -96,23 +96,10 @@ public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<
     protected void onPostExecute(ResponseEntity<Report[]> response) {
 
         mDialog.dismiss();
-
-        List<Report> reports = null;
-        int status;
-
-        if (response != null) {
-            status = response.getStatusCode().value();
-            if(status < 300) {
-                Log.i("Reports", Arrays.toString(response.getBody()));
-                reports = new ArrayList<>(Arrays.asList(response.getBody()));
-            }
-        } else {
-            status = HttpStatus.BAD_REQUEST.value();
-        }
-        mListener.onReportsReceived(reports, status);
+        mListener.onReportsReceived(response);
     }
 
     public interface OnRetrieveCitizenReportsListener {
-        public void onReportsReceived(List<Report> reports, int status);
+        public void onReportsReceived(ResponseEntity<Report[]> response);
     }
 }

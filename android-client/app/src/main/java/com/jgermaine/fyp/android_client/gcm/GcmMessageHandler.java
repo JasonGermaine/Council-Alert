@@ -79,8 +79,9 @@ public class GcmMessageHandler extends IntentService {
         Class clazz;
         if (isLoggedIn()) {
             clazz = RetrieveReportActivity.class;
+
             // ensures that navigating backward from the Activity
-            stackBuilder.addParentStack(clazz);
+            //stackBuilder.addParentStack(clazz);
 
         } else {
             clazz = SplashActivity.class;

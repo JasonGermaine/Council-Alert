@@ -5,7 +5,9 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jgermaine.fyp.android_client.model.Entry;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
@@ -22,12 +24,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by jason on 11/04/15.
  */
-public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
+public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntity<Message>> {
     private String mURL;
     private List<Entry> mEntries;
     private Activity mActivity;
@@ -73,7 +76,7 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntit
     }
 
     @Override
-    protected ResponseEntity<String> doInBackground(Void... params) {
+    protected ResponseEntity<Message> doInBackground(Void... params) {
         try {
             RestTemplate restTemplate = new RestTemplate(true);
             HttpHeaders headers = new HttpHeaders();
@@ -87,22 +90,29 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntit
             HttpEntity<?> entity = new HttpEntity<Object>(mEntries, headers);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-            return restTemplate.exchange(mURL, HttpMethod.PUT, entity, String.class);
+            return restTemplate.exchange(mURL, HttpMethod.PUT, entity, Message.class);
 
         } catch (HttpClientErrorException e) {
-            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
-        } catch(RestClientException e) {
-            return  new ResponseEntity<String>("Bad Request", HttpStatus.BAD_REQUEST);
+            try {
+                if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    return new ResponseEntity<Message>(new Message(HttpStatus.UNAUTHORIZED.getReasonPhrase()), e.getStatusCode());
+                }
+                return new ResponseEntity<Message>(new ObjectMapper().readValue(e.getResponseBodyAsString(), Message.class), e.getStatusCode());
+            } catch (IOException e1) {
+                return  new ResponseEntity<Message>(new Message("An unexpected error has occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (RestClientException e) {
+            return  new ResponseEntity<Message>(new Message("An unexpected error has occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    protected void onPostExecute(ResponseEntity<String> response) {
+    protected void onPostExecute(ResponseEntity<Message> response) {
         getDialog().dismiss();
         mListener.onResponseReceived(response);
     }
 
     public interface OnRetrieveResponseListener {
-        public void onResponseReceived(ResponseEntity<String> status);
+        public void onResponseReceived(ResponseEntity<Message> status);
     }
 }

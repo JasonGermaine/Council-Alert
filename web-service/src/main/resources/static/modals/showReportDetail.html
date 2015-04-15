@@ -3,6 +3,12 @@
 </div>
 <div class="modal-body">
 
+<div class="row">
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="reportError">
+			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	</div>
+</div>
+
 	<div class="row">
 		<div class="col-lg-5">
 			<span ng-if="report.status == true">				

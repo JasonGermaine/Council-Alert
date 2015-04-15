@@ -40,6 +40,7 @@ import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
 import com.jgermaine.fyp.android_client.model.Employee;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.request.OAuthTask;
 import com.jgermaine.fyp.android_client.request.RegisterCitizenTask;
@@ -48,6 +49,7 @@ import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class LoginActivity extends Activity
@@ -219,30 +221,25 @@ public class LoginActivity extends Activity
 
 
     @Override
-    public void onCreationResponseReceived(Citizen citizen, ResponseEntity<String> response) {
+    public void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response) {
         int status = response.getStatusCode().value();
 
         if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             setUser(citizen);
             new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
         } else {
-            String message = "";
-            if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
-                message = "Invalid data inputted.";
-            } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
-                message = "Email already exists for a user.";
-            } else {
-                message = "An unexpected error has occurred.";
-            }
+            String message = response.getStatusCode() == HttpStatus.BAD_REQUEST ?
+                    "Invalid data entered" : response.getBody().getMessage();
             setErrorMessage(mEmailView, message);
             resetPasswordFields();
         }
     }
 
     @Override
-    public void onRetrieveResponseReceived(User user, int status) {
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
-            setUser(user);
+    public void onRetrieveResponseReceived(ResponseEntity<User> response) {
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            setUser(response.getBody());
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         } else {

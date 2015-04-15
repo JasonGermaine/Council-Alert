@@ -1,12 +1,14 @@
 package com.jgermaine.fyp.android_client.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
@@ -14,7 +16,13 @@ import com.jgermaine.fyp.android_client.adapter.ReportAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.GetCitizenReportsTask;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CitizenReportsActivity extends Activity
@@ -37,17 +45,22 @@ public class CitizenReportsActivity extends Activity
     }
 
     @Override
-    public void onReportsReceived(List<Report> reports, int status) {
-        if (status < 300) {
+    public void onReportsReceived(ResponseEntity<Report[]> response) {
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ArrayList<Report> reports = new ArrayList<>(Arrays.asList(response.getBody()));
             if (reports != null) {
                 mAdapter.addAll(reports);
                 mAdapter.notifyDataSetChanged();
             }
+        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            DialogUtil.showToast(this, HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         } else {
-            // TODO: handle error
+            DialogUtil.showToast(this, "An unexpected error has occurred.");
         }
-
-
     }
 
     @Override

@@ -71,7 +71,7 @@ public class OAuthTask extends AsyncTask<Void, Void, ResponseEntity<TokenRespons
             int code =  e.getStatusCode().value();
             return new ResponseEntity<TokenResponse>(e.getStatusCode());
         } catch(RestClientException e) {
-            return  new ResponseEntity<TokenResponse>(HttpStatus.BAD_REQUEST);
+            return  new ResponseEntity<TokenResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -97,23 +97,11 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
     protected void onPostExecute(ResponseEntity<User> response) {
 
         if (mShowProgress) mDialog.dismiss();
-
-        User user = null;
-        int status;
-
-        if (response != null) {
-            status = response.getStatusCode().value();
-            if(status < 300) {
-                user = response.getBody();
-            }
-        } else {
-            status = HttpStatus.BAD_REQUEST.value();
-        }
-        mListener.onRetrieveResponseReceived(user, status);
+        mListener.onRetrieveResponseReceived(response);
     }
 
     public interface OnRetrieveResponseListener {
-        public void onRetrieveResponseReceived(User user, int status);
+        public void onRetrieveResponseReceived(ResponseEntity<User> response);
     }
 
     protected String getDeviceId() {

@@ -22,6 +22,7 @@ import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
 import com.jgermaine.fyp.android_client.fragment.TypeFragment;
 import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.PostReportTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
@@ -218,17 +219,17 @@ public class SendReportActivity extends LocationActivity implements
     }
 
     @Override
-    public void onResponseReceived(ResponseEntity<String> response) {
+    public void onResponseReceived(ResponseEntity<Message> response) {
         int status = response.getStatusCode().value();
         if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
-            DialogUtil.showToast(this, response.getBody());
+            DialogUtil.showToast(this, response.getBody().getMessage());
             finish();
         } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         } else {
-            DialogUtil.showToast(this, response.getBody());
+            DialogUtil.showToast(this, response.getBody().getMessage());
         }
     }
 }

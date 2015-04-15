@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.activity.SendReportActivity;
 import com.jgermaine.fyp.android_client.model.Citizen;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
 
@@ -19,10 +21,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+
 /**
  * Created by jason on 08/03/15.
  */
-public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<String>> {
+public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<Message>> {
 
     private Citizen mCitizen = new Citizen();
     private static final String mURL = ConnectionUtil.API_URL+ "/citizen/";
@@ -53,25 +57,32 @@ public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<St
     }
 
     @Override
-    protected ResponseEntity<String> doInBackground(Void... params) {
+    protected ResponseEntity<Message> doInBackground(Void... params) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
         try {
-            return restTemplate.postForEntity(mURL, mCitizen, String.class);
+            return restTemplate.postForEntity(mURL, mCitizen, Message.class);
         } catch (HttpClientErrorException e) {
-            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
+            try {
+                if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    return new ResponseEntity<Message>(new Message(HttpStatus.UNAUTHORIZED.getReasonPhrase()), e.getStatusCode());
+                }
+                return new ResponseEntity<Message>(new ObjectMapper().readValue(e.getResponseBodyAsString(), Message.class), e.getStatusCode());
+            } catch (IOException e1) {
+                return  new ResponseEntity<Message>(new Message("An unexpected error has occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (RestClientException e) {
-            return  new ResponseEntity<String>("Bad Request", HttpStatus.BAD_REQUEST);
+            return  new ResponseEntity<Message>(new Message("An unexpected error has occurred"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    protected void onPostExecute(ResponseEntity<String> response) {
+    protected void onPostExecute(ResponseEntity<Message> response) {
         mDialog.dismiss();
         mListener.onCreationResponseReceived(mCitizen, response);
     }
 
     public interface OnCreationResponseListener {
-        public void onCreationResponseReceived(Citizen citizen, ResponseEntity<String> response);
+        public void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response);
     }
 }

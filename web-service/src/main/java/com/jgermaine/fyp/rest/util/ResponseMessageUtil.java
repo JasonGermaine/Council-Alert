@@ -30,6 +30,8 @@ public final class ResponseMessageUtil {
 	
 	public static final String ERROR_INVALID_STATUS = "Invalid report status entered.";
 	
+	public static final String ERROR_INVALID_DATA = "invalid fields submitted";
+	
 	public static final String ERROR_UNAUTHORIZED_USER = "User does not have authorized access.";
 		
 	public static final String ERROR_UNEXPECTED = "An unexpected error has occurred.";

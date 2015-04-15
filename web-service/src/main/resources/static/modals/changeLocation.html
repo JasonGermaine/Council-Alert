@@ -52,7 +52,7 @@
 	</div>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-custom" ng-click="change()">
+	<button class="btn btn-custom" ng-disabled="!location.latitude || !location.longitude" ng-click="change()">
 		<i class="fa fa-check"></i> Confirm
 	</button>
 	<button class="btn btn-danger" ng-click="cancel()">

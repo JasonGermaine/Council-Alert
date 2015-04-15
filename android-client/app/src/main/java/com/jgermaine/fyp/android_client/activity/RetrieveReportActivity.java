@@ -13,7 +13,10 @@ import android.widget.ViewFlipper;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jgermaine.fyp.android_client.R;
+import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
+import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Entry;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.GetReportTask;
 import com.jgermaine.fyp.android_client.request.PostReportTask;
@@ -157,9 +160,8 @@ public class RetrieveReportActivity extends LocationActivity implements
                 showErrorToast("An unexpected error has occurred.");
             }
         } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            showErrorToast("Unauthorized.");
+            finishActivity(LoginActivity.class);
         } else {
             showErrorToast("An unexpected error has occurred.");
         }
@@ -178,18 +180,23 @@ public class RetrieveReportActivity extends LocationActivity implements
 
 
     @Override
-    public void onResponseReceived(ResponseEntity<String> response) {
+    public void onResponseReceived(ResponseEntity<Message> response) {
         int status = response.getStatusCode().value();
+        DialogUtil.showToast(this, response.getBody().getMessage());
+
         if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
-            DialogUtil.showToast(this, response.getBody());
-            finish();
+            ((Employee)((CouncilAlertApplication) getApplication()).getUser()).setReport(null);
+            ((Employee)((CouncilAlertApplication) getApplication()).getUser()).setReportId(null);
+            finishActivity(HomeActivity.class);
         } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        } else {
-            DialogUtil.showToast(this, response.getBody());
+            finishActivity(LoginActivity.class);
         }
     }
 
+    private void finishActivity(Class clazz) {
+        Intent intent = new Intent(getApplicationContext(), clazz);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 }

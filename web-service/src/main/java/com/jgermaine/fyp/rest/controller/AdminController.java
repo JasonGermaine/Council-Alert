@@ -17,6 +17,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.exception.AssignmentException;
+import com.jgermaine.fyp.rest.exception.ModelValidationException;
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.EmployeeUpdateRequest;
+import com.jgermaine.fyp.rest.model.Message;
 import com.jgermaine.fyp.rest.model.PasswordChangeRequest;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.model.User;
@@ -113,20 +117,24 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/employee", method = RequestMethod.POST)
-	public ResponseEntity<String> createEmployee(@RequestBody @Valid Employee employee) {
+	public ResponseEntity<Message> createEmployee(@RequestBody @Valid Employee employee, BindingResult result) {
 		try {
-			
+			if (result.hasErrors())
+				throw new ModelValidationException(result.getErrorCount());
+
 			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION, HttpStatus.CREATED);
-			return new ResponseEntity<String>(HttpStatus.CREATED);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION),
+					HttpStatus.CREATED);
 		} catch (PersistenceException | DataIntegrityViolationException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_EMPLOYEE_EXIST, HttpStatus.CONFLICT);
-			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_EXIST),
+					HttpStatus.CONFLICT);
+		} catch (ModelValidationException e) {
+			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -143,7 +151,7 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.DELETE)
-	public ResponseEntity<String> removeEmployee(@PathVariable("email") String email) {
+	public ResponseEntity<Message> removeEmployee(@PathVariable("email") String email) {
 		try {
 			Employee emp = employeeService.getEmployee(email);
 			employeeService.removeEmployee(emp);
@@ -153,15 +161,14 @@ public class AdminController {
 				reportService.updateReport(r);
 			}
 			councilAlertUserService.removeUser(emp);
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_EMPLOYEE_REMOVAL, HttpStatus.OK);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_REMOVAL), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -179,9 +186,12 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.PUT)
-	public ResponseEntity<String> updateEmployee(@PathVariable("email") String email,
-			@RequestBody @Valid EmployeeUpdateRequest request) {
+	public ResponseEntity<Message> updateEmployee(@PathVariable("email") String email,
+			@RequestBody @Valid EmployeeUpdateRequest request, BindingResult result) {
 		try {
+			if (result.hasErrors())
+				throw new ModelValidationException(result.getErrorCount());
+
 			Employee emp = employeeService.getEmployee(email);
 			if (request.getLatitude() != 0.0 && request.getLongitude() != 0.0) {
 				emp.setLatitude(request.getLatitude());
@@ -194,15 +204,16 @@ public class AdminController {
 				emp.setDeviceId(null);
 			}
 			employeeService.updateEmployee(emp);
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_EMPLOYEE_UPDATE, HttpStatus.OK);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_UPDATE), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
+		} catch (ModelValidationException e) {
+			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -218,7 +229,7 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping("/employee/assign")
-	public ResponseEntity<String> assignReportToEmployee(@RequestParam(value = "email", required = true) String email,
+	public ResponseEntity<Message> assignReportToEmployee(@RequestParam(value = "email", required = true) String email,
 			@RequestParam(value = "id", required = true) int reportId) throws IOException {
 		try {
 			boolean reportSkip, empSkip;
@@ -256,19 +267,17 @@ public class AdminController {
 			// Send notification regardless if DB needs updating
 			// New Thread spawned for GCM so it does no block response
 			TaskManager.sendReportIdAsNotification(Integer.toString(reportId), report.getEmployee());
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_ASSIGNMENT, HttpStatus.OK);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_ASSIGNMENT), HttpStatus.OK);
 		} catch (AssignmentException e) {
-			//return new ResponseEntity<String>(e.getMessage() + ResponseMessageUtil.ERROR_ASSIGNMENT,
-			//		HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+			return new ResponseEntity<Message>(new Message(e.getMessage() + ResponseMessageUtil.ERROR_ASSIGNMENT),
+					HttpStatus.BAD_REQUEST);
 		} catch (NoResultException | NonUniqueResultException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_GENERIC_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_GENERIC_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -287,23 +296,30 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/employee/password/{email:.+}", method = RequestMethod.PUT)
-	public ResponseEntity<String> updatePassword(@PathVariable("email") String email,
-			@RequestBody @Valid PasswordChangeRequest request) {
-		CouncilAlertUser user = councilAlertUserService.getUser(email);
-		if (user != null) {
-			if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
-					user.getPassword())) {
-				user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(), user.getSalt()));
-				councilAlertUserService.updateUser(user);
-				//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE, HttpStatus.OK);
-				return new ResponseEntity<String>(HttpStatus.OK);
+	public ResponseEntity<Message> updatePassword(@PathVariable("email") String email,
+			@RequestBody @Valid PasswordChangeRequest request, BindingResult result) {
+		try {
+			if (result.hasErrors()) throw new ModelValidationException(result.getErrorCount());
+			
+			CouncilAlertUser user = councilAlertUserService.getUser(email);
+			if (user != null) {
+				if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
+						user.getPassword())) {
+					user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(),
+							user.getSalt()));
+					councilAlertUserService.updateUser(user);
+					return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE),
+							HttpStatus.OK);
+				} else {
+					return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH),
+							HttpStatus.BAD_REQUEST);
+				}
 			} else {
-				//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH, HttpStatus.BAD_REQUEST);
-				return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} else {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		} catch (ModelValidationException e) {
+			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -318,23 +334,21 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/report/unassign/{id}", method = RequestMethod.GET)
-	public ResponseEntity<String> unassignEmployee(@PathVariable("id") int reportId) {
+	public ResponseEntity<Message> unassignEmployee(@PathVariable("id") int reportId) {
 		try {
 			Report report = reportService.getReport(reportId);
 			if (report.getEmployee() != null) {
 				report.setEmployee(null);
 				reportService.updateReport(report);
 			}
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_REPORT_UPDATE, HttpStatus.OK);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_REPORT_UPDATE), HttpStatus.OK);
 		} catch (NoResultException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNAUTHORIZED_USER,
-			//		HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -345,7 +359,7 @@ public class AdminController {
 	 * @return HttpResponse
 	 */
 	@RequestMapping(value = "/report/{id}/{status}", method = RequestMethod.PUT)
-	public ResponseEntity<String> reopenReport(@PathVariable("id") int id, @PathVariable("status") int statusInt) {
+	public ResponseEntity<Message> reopenReport(@PathVariable("id") int id, @PathVariable("status") int statusInt) {
 		try {
 			if (statusInt != 0 && statusInt != 1)
 				throw new IllegalArgumentException();
@@ -361,18 +375,17 @@ public class AdminController {
 				report.setStatus(status);
 				reportService.updateReport(report);
 			}
-			//return new ResponseEntity<String>(ResponseMessageUtil.SUCCESS_REPORT_UPDATE, HttpStatus.OK);
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_REPORT_UPDATE), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
 		} catch (IllegalArgumentException e) {
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_INVALID_STATUS, HttpStatus.BAD_REQUEST);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_INVALID_STATUS),
+					HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			//return new ResponseEntity<String>(ResponseMessageUtil.ERROR_UNEXPECTED, HttpStatus.INTERNAL_SERVER_ERROR);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

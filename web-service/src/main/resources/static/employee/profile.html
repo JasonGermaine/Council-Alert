@@ -14,7 +14,13 @@
 </div>
 
 <div class="row">
-	<form class="form-horizontal col-lg-12" role="form">
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="profileError">
+			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	</div>
+</div>
+
+<div class="row">
+	<form name="profileForm" class="form-horizontal col-lg-12" role="form">
 		<div class="form-group" ng-show="!editable">
 			<label
 				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
@@ -48,7 +54,9 @@
 				for="phoneNum">Phone Number:</label>
 			<div class="col-lg-6 col-md-6 col-sm-10">
 				<input class="form-control" id="phoneNum" placeholder="Phone Number"
-					ng-model="currentUser.phoneNum" ng-disabled="!phoneEditable" />
+					name="phoneNumber"
+					ng-model="currentUser.phoneNum" ng-disabled="!phoneEditable"
+					ng-required="true" ng-minlength="1" ng-maxlength="16" ng-pattern="numRegex" />
 			</div>
 			<button ng-show="!phoneEditable" class="btn btn-custom" ng-click="phoneEdit()"
 				data-toggle="tooltip" title="Edit">
@@ -104,7 +112,7 @@
 					</ui-gmap-google-map>
 				</div>
 			</div>
-			<button class="btn btn-custom" ng-click="changeLocation() data-toggle="tooltip" title="Edit"">
+			<button class="btn btn-custom" ng-click="changeLocation()" data-toggle="tooltip" title="Edit"">
 				<i class="fa fa-edit"></i>
 			</button>
 			<button ng-show="currentUser.latitude !== user.latitude || currentUser.longitude !== user.longitude" class="btn btn-custom" 
@@ -117,7 +125,7 @@
 						currentUser.longitude !== user.longitude || currentUser.phoneNum !== user.phoneNum">
 				<div
 					class="col-lg-offset-4 col-lg-1 col-md-offset-4 col-md-1 col-sm-offset-2 col-sm-3">
-					<button ng-click="update()" class="btn btn-custom">
+					<button ng-show="profileForm.phoneNumber.$valid" ng-click="update()" class="btn btn-custom">
 						<i class="fa fa-user-plus"></i> Update
 					</button>
 				</div>
@@ -129,31 +137,3 @@
 		</div>
 	</form>
 </div>
-<script type="text/ng-template" id="changePassword.html">
-<div class="modal-header">
-	<h3 class="modal-title">Change Password</h3>
-</div>
-<div class="modal-body">
-	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-			<div class="form-group row">
-				<input ng-model="request.password" type="password"
-					class="form-control" placeholder="Old Password">
-			</div>
-			<div class="form-group row">
-				<input ng-model="request.newPassword" type="password"
-					class="form-control" placeholder="New Password">
-			</div>
-			<div class="row">
-				<div class="alert alert-danger col-lg-12" ng-show="passwordError">
-					There was a problem. Please try again.
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal-footer">
-	<button class="btn btn-custom" ng-click="change()"><i class="fa fa-check"></i> Confirm</button>
-    <button class="btn btn-danger" ng-click="cancel()"><i class="fa fa-times"></i> Cancel</button>
-</div>
-</script>

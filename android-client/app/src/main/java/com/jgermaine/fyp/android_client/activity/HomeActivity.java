@@ -50,7 +50,7 @@ public class HomeActivity extends Activity
                 if (((Employee) mUser).getReportId() != null) {
                     retrieveReport(((Employee) mUser).getReportId());
                 } else {
-                    new GetReportTask(HomeActivity.this).execute("employee?email=" + mUser.getEmail());
+                    new GetReportTask(HomeActivity.this).execute("employee/" + mUser.getEmail());
                 }
             }
         });

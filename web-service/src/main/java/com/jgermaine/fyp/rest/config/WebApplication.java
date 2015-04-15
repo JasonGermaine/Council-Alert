@@ -6,8 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import com.jgermaine.fyp.rest.model.Employee;
-import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 
 import java.util.Arrays;
 

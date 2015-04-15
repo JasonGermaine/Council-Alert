@@ -6,6 +6,14 @@
 	</div>
 </div>
 
+<div class="row" style="margin-left: 10px; margin-bottom: 35px;">
+	<a href="/employee">
+		<button class="btn btn-custom col-lg-2" style="margin-left: -10px">
+		<i class="fa fa-arrow-left"></i> Back
+		</button>
+	</a>
+</div>
+
 <div class="row">
 	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="formError">
 			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
@@ -36,7 +44,7 @@
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input class="form-control" id="lname" placeholder="Last Name"
 				name="lastName" ng-model="emp.lastName" ng-required="true"
-				ng-minlength="1" ng-maxlength="80" ng-pattern="nameRegex" />
+				ng-minlength="1" ng-maxlength="80" ng-pattern="nameRegex"/>
 		</div>
 		<div class="col-lg-1 col-md-1 col-sm-1"
 			ng-show="!addEmpForm.lastName.$valid">
@@ -83,14 +91,14 @@
 		<div class="col-lg-6 col-md-6 col-sm-10 controls">
 			<input type="password" class="form-control" id="pwd"
 				placeholder="Password" name="password" ng-model="emp.password"
-				ng-required="true" ng-minlength="1" ng-maxlength="255"
+				ng-required="true" ng-minlength="6" ng-maxlength="255"
 				ng-pattern="pwdRegex" />
 		</div>
 		<div class="col-lg-1 col-md-1 col-sm-1"
 			ng-show="!addEmpForm.password.$valid">
 			<i class="fa fa-times" style="display: block; margin: auto;"
 				data-toggle="tooltip"
-				title="Must be between 1 - 255 characters and only consist of letters, 
+				title="Must be between 6 - 255 characters and only consist of letters, 
 					numbers and any of the following: !?.$%"></i>
 		</div>
 	</div>
@@ -101,14 +109,14 @@
 		<div class="col-lg-6 col-md-6 col-sm-10">
 			<input type="password" class="form-control" id="pwdConf"
 				placeholder="Confirm password" name="password2" ng-model="pwd2"
-				ng-required="true" ng-minlength="1" ng-maxlength="255"
+				ng-required="true" ng-minlength="6" ng-maxlength="255"
 				ng-pattern="pwdRegex" />
 		</div>
 		<div class="col-lg-1 col-md-1 col-sm-1"
 			ng-show="!addEmpForm.password2.$valid">
 			<i class="fa fa-times" style="display: block; margin: auto;"
 				data-toggle="tooltip"
-				title="Must be between 1 - 255 characters and only consist of letters, 
+				title="Must be between 6 - 255 characters and only consist of letters, 
 					numbers and any of the following: !?.$%"></i>
 		</div>
 	</div>

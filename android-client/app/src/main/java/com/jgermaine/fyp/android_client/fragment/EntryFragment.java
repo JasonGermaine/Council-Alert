@@ -22,6 +22,7 @@ import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Entry;
+import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.UpdateReportEntriesTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
@@ -155,9 +156,9 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
                 .show();
     }
 
-    public void onResponseReceived(ResponseEntity<String> response) {
+    public void onResponseReceived(ResponseEntity<Message> response) {
         String message = response.getBody().equals("Bad Request") ?
-                "Error: attempt to add invalid comments" : response.getBody();
+                "Error: attempt to add invalid comments" : response.getBody().getMessage();
         DialogUtil.showToast(getActivity(), message);
     }
 

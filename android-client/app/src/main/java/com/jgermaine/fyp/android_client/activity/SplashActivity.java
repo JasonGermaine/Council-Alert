@@ -18,6 +18,9 @@ import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 public class SplashActivity extends Activity
         implements UserRetrieveTask.OnRetrieveResponseListener {
 
@@ -82,10 +85,11 @@ public class SplashActivity extends Activity
     }
 
     @Override
-    public void onRetrieveResponseReceived(User user, int status) {
-        if(status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+    public void onRetrieveResponseReceived(ResponseEntity<User> response) {
+
+        if(response.getStatusCode() == HttpStatus.OK) {
             finishAnim();
-            ((CouncilAlertApplication)getApplication()).setUser(user);
+            ((CouncilAlertApplication)getApplication()).setUser(response.getBody());
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         } else {

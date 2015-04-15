@@ -78,8 +78,12 @@ public class Report {
 	}
 	
 	public void resetEntries(List<Entry> newEntries) {
-		entries.clear();
-		setEntries(newEntries);
+		if(entries != null) {
+			entries.clear();
+		}
+		if (newEntries != null) {
+			setEntries(newEntries);
+		}
 	}
 	
 	public void addEntry(Entry entry) {
@@ -92,6 +96,7 @@ public class Report {
 	
 	public Report() { 
 		employee = null;
+		entries = new ArrayList<Entry>();
 	}
 	 
 	public Report(int id) { 
