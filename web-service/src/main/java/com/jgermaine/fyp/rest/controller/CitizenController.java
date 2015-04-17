@@ -67,7 +67,7 @@ public class CitizenController {
 	public ResponseEntity<Message> createCitizen(@RequestBody @Valid Citizen citizen, BindingResult result) {
 		try {
 			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
+				throw new ModelValidationException(result.getFieldErrorCount());
 
 			citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);

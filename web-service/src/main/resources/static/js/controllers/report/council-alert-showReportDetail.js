@@ -52,7 +52,11 @@ angular
 								{}, LocalStorage.getHeader()).success(
 								function(data) {
 									$scope.resetError();
-									$scope.cancel();
+									if (status == true) {
+										$modalInstance.close('COMPLETE');
+									} else {
+										$modalInstance.close('REOPEN');
+									}
 								}).error(function(resp, status) {
 							$scope.manageError(resp, status);
 						});
@@ -63,7 +67,7 @@ angular
 								LocalStorage.getHeader()).success(
 								function(data) {
 									$scope.resetError();
-									$scope.cancel();
+									$modalInstance.close('UNASSIGN');
 								}).error(function(resp, status) {
 							$scope.manageError(resp, status);
 						});

@@ -21,7 +21,7 @@ angular
 						$http
 								.get(url, LocalStorage.getHeader())
 								.success(function(data) {
-									$scope.cancel();
+									$modalInstance.close(email);
 									$scope.empAssignError = false;
 									$scope.errorMessage = '';
 								})

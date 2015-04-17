@@ -87,7 +87,7 @@ public class RetrieveReportActivity extends LocationActivity implements
                 new MarkerOptions()
                         .position(new LatLng(report.getLatitude(), report.getLongitude()))
                         .title(report.getName())
-                        .snippet("Tap for more detail")));
+                        .snippet(report.getCitizenId())));
         getMarker().showInfoWindow();
     }
 

@@ -166,7 +166,7 @@ public class ReportController {
 			BindingResult result) {
 		try {
 			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
+				throw new ModelValidationException(result.getFieldErrorCount());
 
 			Citizen c = citizenService.getCitizen(email);
 			c.addReport(report);
@@ -198,7 +198,7 @@ public class ReportController {
 	public ResponseEntity<Message> completeReport(@RequestBody @Valid Report report, BindingResult result) {
 		try {
 			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
+				throw new ModelValidationException(result.getFieldErrorCount());
 
 			Citizen citz = citizenService.getCitizen(report.getCitizenId());
 			report.setEmployee(null);
@@ -254,7 +254,7 @@ public class ReportController {
 			BindingResult result) {
 		try {
 			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
+				throw new ModelValidationException(result.getFieldErrorCount());
 
 			Report report = reportService.getReport(id);
 			report.resetEntries(entries);

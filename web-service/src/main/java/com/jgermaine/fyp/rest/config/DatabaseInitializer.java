@@ -23,7 +23,9 @@ import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 public class DatabaseInitializer {
 
 	private static final Logger LOGGER = LogManager.getLogger(DatabaseInitializer.class.getName());
-
+	
+	public static final String INIT_USER = "admin@council-alert.com";
+	
 	@Autowired
 	private CouncilAlertUserDetailsService councilAlertUserService;
 
@@ -50,7 +52,7 @@ public class DatabaseInitializer {
 
 	private Employee getDefaultAdminEmp() {
 		Employee employee = new Employee();
-		employee.setEmail("admin@council-alert.com");
+		employee.setEmail(INIT_USER);
 		employee.setPassword(Secret.SECRET_PASSWORD);
 		employee.setFirstName("Jason");
 		employee.setLastName("Germaine");

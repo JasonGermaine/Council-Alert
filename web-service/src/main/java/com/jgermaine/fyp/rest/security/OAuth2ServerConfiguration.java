@@ -91,7 +91,6 @@ public class OAuth2ServerConfiguration {
 						.resourceIds(RESOURCE_ID)
 						.secret("council-alert-angular-secret")
 						//.redirectUris("http://localhost:8080/")
-						.autoApprove(true)
 					.and()
 					.withClient("android-client")
 						 .resourceIds(RESOURCE_ID)

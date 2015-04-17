@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.model;
 
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;

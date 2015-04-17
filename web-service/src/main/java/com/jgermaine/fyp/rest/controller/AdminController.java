@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.rest.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,7 +57,7 @@ import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
 public class AdminController {
 
 	private static final Logger LOGGER = LogManager.getLogger(AdminController.class.getName());
-	private static final String DELTED_DEVICE_ID = "DELETED";
+	public static final String DELETED_DEVICE_ID = "DELETED";
 
 	@Autowired
 	private CouncilAlertUserDetailsService councilAlertUserService;
@@ -91,12 +92,8 @@ public class AdminController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<User> attemptLogin(@PathVariable("email") String email) {
 		try {
-			User user = userService.getUser(email);
-			if (user instanceof Employee) {
-				return new ResponseEntity<User>(user, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<User>(HttpStatus.UNAUTHORIZED);
-			}
+			Employee user = employeeService.getEmployee(email);
+			return new ResponseEntity<User>(user, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -120,8 +117,8 @@ public class AdminController {
 	public ResponseEntity<Message> createEmployee(@RequestBody @Valid Employee employee, BindingResult result) {
 		try {
 			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
-
+				throw new ModelValidationException(result.getFieldErrorCount());
+			
 			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION),
@@ -189,9 +186,10 @@ public class AdminController {
 	public ResponseEntity<Message> updateEmployee(@PathVariable("email") String email,
 			@RequestBody @Valid EmployeeUpdateRequest request, BindingResult result) {
 		try {
-			if (result.hasErrors())
-				throw new ModelValidationException(result.getErrorCount());
-
+			if (result.hasErrors()) {
+				throw new ModelValidationException(result.getFieldErrorCount());
+			}
+				
 			Employee emp = employeeService.getEmployee(email);
 			if (request.getLatitude() != 0.0 && request.getLongitude() != 0.0) {
 				emp.setLatitude(request.getLatitude());
@@ -200,7 +198,7 @@ public class AdminController {
 			if (isNotNullOrEmpty(request.getPhoneNum())) {
 				emp.setPhoneNum(request.getPhoneNum());
 			}
-			if (isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals(DELTED_DEVICE_ID)) {
+			if (isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals(DELETED_DEVICE_ID)) {
 				emp.setDeviceId(null);
 			}
 			employeeService.updateEmployee(emp);
@@ -299,8 +297,9 @@ public class AdminController {
 	public ResponseEntity<Message> updatePassword(@PathVariable("email") String email,
 			@RequestBody @Valid PasswordChangeRequest request, BindingResult result) {
 		try {
-			if (result.hasErrors()) throw new ModelValidationException(result.getErrorCount());
-			
+			if (result.hasErrors())
+				throw new ModelValidationException(result.getFieldErrorCount());
+
 			CouncilAlertUser user = councilAlertUserService.getUser(email);
 			if (user != null) {
 				if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(

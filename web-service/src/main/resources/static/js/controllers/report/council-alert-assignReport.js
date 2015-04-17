@@ -16,7 +16,7 @@ angular.module('councilalert').controller('assignReport', function($rootScope, $
 		
 		$http.get(url, LocalStorage.getHeader())
 			.success(function(data, status, headers, config) {
-				$scope.cancel();
+				$modalInstance.close(id);
 			}).error(function(resp, status) {
 				if (status === 401 || status === 403) {
 					LocalStorage.clear();

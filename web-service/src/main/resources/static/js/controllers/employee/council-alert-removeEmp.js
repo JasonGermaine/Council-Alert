@@ -11,7 +11,7 @@ angular.module('councilalert').controller('removeEmp', function($rootScope, $sco
 	
 		$http.delete("api/admin/employee/" + $scope.employee.email, LocalStorage.getHeader())
 			.success(function(response) {
-				$scope.cancel();
+				$modalInstance.close();
 			}).error(function(resp, status) {
 				if (status === 401 || status === 403) {
 					LocalStorage.clear();

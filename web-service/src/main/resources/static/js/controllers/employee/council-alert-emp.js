@@ -5,7 +5,8 @@ angular.module('councilalert').controller(
 
 			$scope.empError = false;
 			$scope.errorMessage = '';
-
+			$scope.sortType = '';
+			
 			$scope.displayError = function() {
 				$scope.empError = true;
 				$scope.errorMessage = 'An unexpected error has occurred.';
@@ -18,14 +19,17 @@ angular.module('councilalert').controller(
 
 			$scope.getAll = function() {
 				$scope.getEmployees("api/employee/");
+				$scope.sortType = 'ALL';
 			};
 
 			$scope.getUnassigned = function() {
 				$scope.getEmployees("api/employee/unassigned");
+				$scope.sortType = 'UNASSIGNED';
 			};
 
 			$scope.getAssigned = function() {
 				$scope.getEmployees("api/employee/assigned");
+				$scope.sortType = 'ASSIGNED';
 			};
 
 			$scope.getEmployees = function(url) {
@@ -43,9 +47,9 @@ angular.module('councilalert').controller(
 				});
 			};
 
-			$scope.showReport = function(reportId) {
+			$scope.showReport = function(emp) {
 
-				$http.get("api/report/" + reportId, LocalStorage.getHeader())
+				$http.get("api/report/" + emp.reportId, LocalStorage.getHeader())
 						.success(function(response) {
 							$scope.report = response;
 							$scope.resetError();
@@ -58,6 +62,14 @@ angular.module('councilalert').controller(
 										return $scope.report;
 									}
 								}
+							});
+							
+							modalInstance.result.then(function(action) {
+								if ($scope.sortType === 'ASSIGNED' 
+										&& (action === 'UNASSIGN' || action === 'COMPLETE')) {
+									$scope.emps.splice($scope.emps.indexOf(emp), 1);
+								}
+							}, function() {
 							});
 						}).error(function(resp, status) {
 							if (status === 401 || status === 403) {
@@ -82,6 +94,12 @@ angular.module('councilalert').controller(
 						}
 					}
 				});
+				
+				modalInstance.result.then(function() {
+					$scope.emps.splice($scope.emps.indexOf($scope.employee), 1);
+				}, function() {
+				});
+				
 			};
 
 			$scope.openDisplay = function(employee) {
@@ -96,21 +114,20 @@ angular.module('councilalert').controller(
 							return $scope.employee;
 						}
 					}
-				});
+				});				
 			};
 
 			$scope.email = '';
 			$scope.reports = {};
-
-			$scope.assign = function(email, lat, lon) {
-				var url = 'api/report/open?lat=' + lat + '&lon=' + lon;
-
+			
+			$scope.assign = function(emp) {
+				var url = 'api/report/open?lat=' + emp.latitude + '&lon=' + emp.longitude;
 				$http.get(url, LocalStorage.getHeader()).success(
 						function(data) {
-							$scope.email = email;
+							$scope.email = emp.email;
 							$scope.reports = data;
 							$scope.resetError();
-							$scope.openAssign();
+							$scope.openAssign(emp);
 						}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						LocalStorage.clear();
@@ -121,7 +138,7 @@ angular.module('councilalert').controller(
 				});
 			};
 
-			$scope.openAssign = function() {
+			$scope.openAssign = function(emp) {
 
 				var modalInstance = $modal.open({
 					templateUrl : 'modals/unassignedReport.html',
@@ -135,6 +152,14 @@ angular.module('councilalert').controller(
 							return $scope.email;
 						}
 					}
+				});
+				
+				modalInstance.result.then(function(reportId) {
+					emp.reportId = reportId;
+					if ($scope.sortType === 'UNASSIGNED') {
+						$scope.emps.splice($scope.emps.indexOf(emp), 1);
+					}
+				}, function() {
 				});
 			};
 
