@@ -21,7 +21,7 @@ public final class ResponseMessageUtil {
 	public static final String ERROR_GENERIC_NOT_EXIST = "Data for id entered does not exist.";
 	
 	public static final String ERROR_USER_EXIST = "A User is already registered for that email.";
-	public static final String ERROR_EMPLOYEE_EXIST = "A Employee is already registered for that email.";
+	public static final String ERROR_EMPLOYEE_EXIST = "An Employee is already registered for that email.";
 	public static final String ERROR_REPORT_EXIST = "A Report for that id has already been created.";
 	
 	public static final String ERROR_ASSIGNMENT = " currently has a different assignment.";

@@ -129,11 +129,13 @@ public class DatabaseInitializer {
 	}
 
 	private void initReports() {
-		// public Report(String name, double lat, double lon,
-		// Date timestamp, boolean status, List<Entry> entries) {
+		Location loc = LOCATIONS[random.nextInt(LOCATIONS.length)];
+		Report rpt = new Report(REPORT_TYPES[random.nextInt(REPORT_TYPES.length)], loc.getLat(),
+				loc.getLon(), getRandomDate(), true);
+		insertNewReport(rpt, false);
+		
 		for (int i = 0; i < 100; i++) {
 			Location location = LOCATIONS[random.nextInt(LOCATIONS.length)];
-
 			Report report = new Report(REPORT_TYPES[random.nextInt(REPORT_TYPES.length)], location.getLat(),
 					location.getLon(), getRandomDate(), i % 4 == 0);
 
