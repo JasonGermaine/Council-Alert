@@ -19,11 +19,9 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
-import com.jgermaine.fyp.rest.controller.ReportController;
 import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Report;
 
@@ -141,7 +139,7 @@ public class EmployeeDao {
 
 			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
 			subquery.where(correlatePredicate);
-			query.where((criteriaBuilder.exists(subquery)));
+			query.where(criteriaBuilder.exists(subquery));
 
 			TypedQuery typedQuery = entityManager.createQuery(query);
 			return typedQuery.getResultList();
@@ -172,7 +170,7 @@ public class EmployeeDao {
 				+ "* cos( radians( longitude ) - radians(:lon) ) "
 				+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )" + "AS distance " + "FROM Employee "
 				+ "WHERE email not in(Select r.emp_email " + "from Reports r WHERE r.emp_email IS NOT NULL) "
-				+ "HAVING distance < 10 " + "ORDER BY distance " + "LIMIT 0 , 6;", Employee.class);
+				+ "HAVING distance < 10 " + "ORDER BY distance " + "LIMIT 0 , 10;", Employee.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);
 		return query.getResultList();

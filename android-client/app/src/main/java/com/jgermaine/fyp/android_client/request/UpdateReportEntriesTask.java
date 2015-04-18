@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Message;
+import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
@@ -32,15 +33,15 @@ import java.util.List;
  */
 public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntity<Message>> {
     private String mURL;
-    private List<Entry> mEntries;
+    private Report mReport;
     private Activity mActivity;
     private ProgressDialog dialog;
     private Cache mCache;
     private OnRetrieveResponseListener mListener;
 
-    public UpdateReportEntriesTask(List<Entry> entries, Activity activity, Fragment frag, int reportId) {
+    public UpdateReportEntriesTask(Report report, Activity activity, Fragment frag, int reportId) {
         super();
-        mEntries = entries;
+        mReport = report;
         mActivity = activity;
         mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, reportId);
         mCache = Cache.getCurrentCache(activity);
@@ -87,7 +88,7 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntit
                 }
             });
 
-            HttpEntity<?> entity = new HttpEntity<Object>(mEntries, headers);
+            HttpEntity<?> entity = new HttpEntity<Object>(mReport, headers);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
             return restTemplate.exchange(mURL, HttpMethod.PUT, entity, Message.class);

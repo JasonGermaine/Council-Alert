@@ -66,6 +66,8 @@ public class DbConfig {
 				env.getProperty("hibernate.show_sql"));
 		additionalProperties.put("hibernate.hbm2ddl.auto",
 				env.getProperty("hibernate.hbm2ddl.auto"));
+		additionalProperties.put("hibernate.enable_lazy_load_no_trans",
+				env.getProperty("hibernate.enable_lazy_load_no_trans"));
 		entityManagerFactory.setJpaProperties(additionalProperties);
 
 		return entityManagerFactory;

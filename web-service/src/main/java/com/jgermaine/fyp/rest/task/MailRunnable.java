@@ -10,16 +10,10 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.jgermaine.fyp.rest.config.Secret;
 import com.jgermaine.fyp.rest.model.Employee;
 
 public class MailRunnable implements Runnable {
-
-	private static final Logger LOGGER = LogManager
-			.getLogger(MailRunnable.class.getName());
 
 	private String reportId;
 	private Employee emp;

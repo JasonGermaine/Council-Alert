@@ -9,7 +9,6 @@ import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,6 @@ import com.jgermaine.fyp.rest.model.Message;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
-import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
 
 /**
@@ -49,9 +47,6 @@ public class CitizenController {
 	@Autowired
 	private CitizenServiceImpl citizenService;
 
-	@Autowired
-	private UserServiceImpl userService;
-
 	/**
 	 * Creates a new Citizen. There are 4 possible outputs
 	 * <ul>
@@ -69,16 +64,19 @@ public class CitizenController {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
 
+			citizen.setEmail(citizen.getEmail().toLowerCase());
 			citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
-			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_USER_CREATION), HttpStatus.CREATED);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_USER_CREATION),
+					HttpStatus.CREATED);
 		} catch (PersistenceException | DataIntegrityViolationException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_USER_EXIST), HttpStatus.CONFLICT);
 		} catch (ModelValidationException e) {
 			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -96,8 +94,8 @@ public class CitizenController {
 	@RequestMapping(value = "/report/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getCitizenReports(@PathVariable("email") String email) {
 		try {
-			Citizen citz = citizenService.getCitizen(email);
-			return new ResponseEntity<List<Report>>(citz.getReports(), HttpStatus.OK);
+			return new ResponseEntity<List<Report>>(citizenService.getReportsForCitizen(email.toLowerCase()), 
+					HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<List<Report>>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {

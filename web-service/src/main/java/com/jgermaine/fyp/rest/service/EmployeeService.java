@@ -8,29 +8,28 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.jgermaine.fyp.rest.model.Employee;
 
 public interface EmployeeService {
 
-	public Employee getEmployee();
+	Employee getEmployee();
 
-	public void addEmployee(Employee employee) throws EntityExistsException, PersistenceException,
+	void addEmployee(Employee employee) throws EntityExistsException, PersistenceException,
 		DataIntegrityViolationException, Exception;
 
-	public void removeEmployee(Employee employee) throws Exception;
+	void removeEmployee(Employee employee) throws Exception;
 
-	public List<Employee> getEmployees() throws Exception;
+	List<Employee> getEmployees() throws Exception;
 
-	public Employee getEmployee(String email) throws NoResultException, NonUniqueResultException, Exception;
+	Employee getEmployee(String email) throws NoResultException, NonUniqueResultException, Exception;
 
-	public List<Employee> getUnassignedEmployees() throws Exception;
+	List<Employee> getUnassignedEmployees() throws Exception;
 
-	public List<Employee> getAssignedEmployees() throws Exception;
+	List<Employee> getAssignedEmployees() throws Exception;
 
-	public List<Employee> getUnassignedNearEmployees(double lat, double lon) throws Exception;
+	List<Employee> getUnassignedNearEmployees(double lat, double lon) throws Exception;
 
-	public HashMap<String, Long> getEmployeesStatistics() throws Exception;
+	HashMap<String, Long> getEmployeesStatistics() throws Exception;
 }

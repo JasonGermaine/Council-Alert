@@ -11,10 +11,12 @@
 <link rel="icon" href="css/favicon.ico" type="image/x-icon">
 
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 <link href="css/council-alert.css" rel="stylesheet">
 <link href="css/tablesort.css" rel="stylesheet">
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="js/angular-chart/angular-chart.css">
 <style type="text/css">
 [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -47,13 +49,13 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				
+
 				<a ng-show="authenticated" class="navbar-brand" href="/"> <img
 					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
 					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
 					class="pull-right">Council Alert</span>
-				</a>
-				<a ng-show="!authenticated" class="navbar-brand" href="/login"> <img
+				</a> <a ng-show="!authenticated" class="navbar-brand" href="/login">
+					<img
 					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
 					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
 					class="pull-right">Council Alert</span>
@@ -70,8 +72,8 @@
 						class="fa fa-user"></i> {{user.firstName}} {{user.lastName}} <b
 						class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
-						</li>
+						<li><a href="/profile"><i class="fa fa-fw fa-user"></i>
+								Profile</a></li>
 						<li class="divider"></li>
 						<li ng-click="logout()"><a href="/login"><i
 								class="fa fa-fw fa-power-off"></i> Log Out</a></li>
@@ -84,14 +86,12 @@
 					<li><a href="/"><i class="fa fa-fw fa-dashboard"></i>
 							Dashboard</a></li>
 					<li><a href="/employee"><i class="fa fa-fw fa-street-view"></i>
-							Employees</a>
-					</li>
+							Employees</a></li>
 					<li><a href="/report"><i class="fa fa-fw fa-wrench"></i>
-							Tickets</a>
-					</li>
-					<li>
-						<a href="/citizen"> <i class="fa fa-fw fa-users"></i> Users</a>
-					</li>
+							Tickets</a></li>
+					<li><a href="/citizen"> <i class="fa fa-fw fa-users"></i>
+							Users
+					</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -109,15 +109,17 @@
 
 	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript"
+		src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 	<script src="js/Chart.js"></script>
 	<script src="js/angular/angular.min.js"></script>
 	<script src="js/angular/angular-route.min.js"></script>
 	<script src="js/angular/angular-cookies.min.js"></script>
 	<script src="js/angular/angular.min.js"></script>
 	<script src="js/angular/angular-tablesort.js"></script>
-	<script src="js/angular/ui-bootstrap.min.js"></script>	
+	<script src="js/angular/ui-bootstrap.min.js"></script>
 	<script src="/js/locationpicker.js"></script>
 	<script src="/js/lodash.js"></script>
 	<script src="/js/angular/angular-google-map.js"></script>
@@ -126,7 +128,7 @@
 	<!-- Custom AngularJS/JavaScipt -->
 	<script src="js/council-alert.js"></script>
 	<script src="js/controllers/council-alert-nav.js"></script>
-	
+
 	<!-- Employees -->
 	<script src="js/controllers/employee/council-alert-emp.js"></script>
 	<script src="js/controllers/employee/council-alert-addEmp.js"></script>
@@ -136,15 +138,17 @@
 	<script src="js/controllers/employee/council-alert-changePassword.js"></script>
 	<script src="js/controllers/employee/council-alert-displayEmpDetails.js"></script>
 	<script src="js/controllers/employee/council-alert-removeEmp.js"></script>
-	
+	<script src="js/controllers/employee/council-alert-showAssignmentLocation.js"></script>
+
 	<!-- Reports -->
 	<script src="js/controllers/report/council-alert-report.js"></script>
 	<script src="js/controllers/report/council-alert-assignReport.js"></script>
 	<script src="js/controllers/report/council-alert-displayImage.js"></script>
 	<script src="js/controllers/report/council-alert-showReportDetail.js"></script>
-	
+
 	<!-- Citizens -->
 	<script src="js/controllers/citizen/council-alert-citizen.js"></script>
-	<script src="js/controllers/citizen/council-alert-displayUserReports.js"></script>
+	<script
+		src="js/controllers/citizen/council-alert-displayUserReports.js"></script>
 </body>
 </html>

@@ -3,40 +3,40 @@
 	<Properties>
 		<Property name="log-path">/home/jason/Council-Alert/logs</Property>
 	</Properties>
-	
+
 	<!-- Configure Appenders -->
 	<Appenders>
 		<File name="debug-log" fileName="${log-path}/debug.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
-		
+
 		<!-- Controller Logs -->
 		<File name="controller-info-log" fileName="${log-path}/info_controller.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
 		<File name="controller-error-log" fileName="${log-path}/error_controller.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
-		
+
 		<!-- Config Logs -->
 		<File name="config-info-log" fileName="${log-path}/info_config.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
 		<File name="config-error-log" fileName="${log-path}/error_config.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
@@ -44,41 +44,45 @@
 		<!-- Database Logs -->
 		<File name="dao-info-log" fileName="${log-path}/info_dao.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
 		<File name="dao-error-log" fileName="${log-path}/error_dao.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
-				
+
 		<!-- Google Cloud Messaging Logs -->
 		<File name="gcm-log" fileName="${log-path}/gcm.log">
 			<PatternLayout>
-				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level]  %c{1} - %msg%n
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %c{1} - %msg%n
 				</pattern>
 			</PatternLayout>
 		</File>
 	</Appenders>
-	
+
 	<!-- Configure Loggers -->
 	<Loggers>
-		<Logger name="com.jgermaine.fyp.rest.controller" level="debug" additivity="false">
+		<Logger name="com.jgermaine.fyp.rest.controller" level="debug"
+			additivity="false">
 			<appender-ref ref="controller-info-log" level="info" />
 			<appender-ref ref="controller-error-log" level="warn" />
 		</Logger>
-		<Logger name="com.jgermaine.fyp.rest.config" level="debug" additivity="false">
+		<Logger name="com.jgermaine.fyp.rest.config" level="debug"
+			additivity="false">
 			<appender-ref ref="config-info-log" level="info" />
 			<appender-ref ref="config-error-log" level="warn" />
 		</Logger>
-		<Logger name="com.jgermaine.fyp.rest.model.dao" level="debug" additivity="false">
+		<Logger name="com.jgermaine.fyp.rest.model.dao" level="debug"
+			additivity="false">
 			<appender-ref ref="dao-info-log" level="info" />
 			<appender-ref ref="dao-error-log" level="warn" />
 		</Logger>
-		<Logger name="com.jgermaine.fyp.rest.gcm" level="debug" additivity="false">
+		<Logger name="com.jgermaine.fyp.rest.gcm" level="debug"
+			additivity="false">
 			<appender-ref ref="gcm-log" level="debug" />
 		</Logger>
 		<Root level="debug" additivity="false">

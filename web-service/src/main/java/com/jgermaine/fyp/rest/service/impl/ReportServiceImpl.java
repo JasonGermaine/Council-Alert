@@ -8,13 +8,11 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Report;
-import com.jgermaine.fyp.rest.model.dao.EmployeeDao;
 import com.jgermaine.fyp.rest.model.dao.ReportDao;
 import com.jgermaine.fyp.rest.service.ReportService;
 
@@ -38,7 +36,6 @@ public class ReportServiceImpl implements ReportService {
 
 	public void removeReport(Report report) throws Exception {
 		reportDao.delete(report);
-		;
 	}
 
 	public List<Report> getReports() throws Exception {

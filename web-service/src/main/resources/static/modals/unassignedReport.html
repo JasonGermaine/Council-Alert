@@ -3,8 +3,9 @@
 </div>
 <div class="modal-body">
 	<div class="row">
-		<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="assignError">
-				<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+		<div class="alert alert-danger col-lg-8 col-lg-offset-2"
+			ng-show="assignError">
+			<span><i class="fa fa-times"></i> {{ errorMessage }}</span>
 		</div>
 	</div>
 	<div class="row">
@@ -23,8 +24,11 @@
 							<td>{{report.id}}</td>
 							<td>{{report.name}}</td>
 							<td>
-								<button ng-click="assignReport(report.id)" class="btn btn-custom"><i class="fa fa-street-view"></i> Assign</button>
-							</td>						
+								<button ng-click="assignReport(report.id)"
+									class="btn btn-custom">
+									<i class="fa fa-street-view"></i> Assign
+								</button>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -33,5 +37,5 @@
 	</div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+	<button class="btn btn-danger" ng-click="cancel()">Cancel</button>
 </div>

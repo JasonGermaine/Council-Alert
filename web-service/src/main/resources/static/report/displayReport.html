@@ -9,23 +9,29 @@
 
 <div class="row" style="margin-bottom: 50px;">
 	<div class="btn-group col-lg-12" role="group" aria-label="">
-		<button type="button" class="btn btn-default col-lg-3" ng-click="getComplete()">COMPLETE</button>
-		<button type="button" class="btn btn-default col-lg-3" ng-click="getAll()">ALL</button>
-		<button type="button" class="btn btn-default col-lg-3" ng-click="getToday()">TODAY</button>
-		<button type="button" class="btn btn-default col-lg-3" ng-click="getIncomplete()">INCOMPLETE</button>
+		<button type="button" class="btn btn-default col-lg-3"
+			ng-click="getComplete()">COMPLETE</button>
+		<button type="button" class="btn btn-default col-lg-3"
+			ng-click="getAll()">ALL</button>
+		<button type="button" class="btn btn-default col-lg-3"
+			ng-click="getToday()">TODAY</button>
+		<button type="button" class="btn btn-default col-lg-3"
+			ng-click="getIncomplete()">INCOMPLETE</button>
 	</div>
 </div>
 
 <div class="row">
-	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="reportError">
-			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2"
+		ng-show="reportError">
+		<span><i class="fa fa-times"></i> {{ errorMessage }}</span>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<div class="col-lg-3" style="margin-bottom: 20px; margin-left: -15px;">
+			<div class="col-lg-3"
+				style="margin-bottom: 20px; margin-left: -15px;">
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
@@ -47,34 +53,26 @@
 						<td>{{report.name}}</td>
 						<td>{{report.timestamp | date:'medium'}}</td>
 						<td>{{report.citizenId}}</td>
-						<td>
-							<span ng-if="report.status == false">
-								<span ng-if="report.employeeId">
-								<button ng-click="showEmp(report.employeeId)" class="btn btn-custom"
-									data-toggle="tooltip" title="View Employee">
-									<i class="fa fa-user" style="margin-right: 5px;"></i> {{report.employeeId}}  
-								</button>
-								</span>
-								<span ng-if="!report.employeeId">
-										<button style="margin: auto; display:block;"
-											ng-click="assign(report)"
-											class="btn btn-custom"
-											data-toggle="tooltip" title="Assign Employee">
-											<i class="fa fa-wrench"></i>
-										</button>
-								</span>
+						<td><span ng-if="report.status == false"> <span
+								ng-if="report.employeeId">
+									<button ng-click="showEmp(report.employeeId)"
+										class="btn btn-custom" data-toggle="tooltip"
+										title="View Employee">
+										<i class="fa fa-user" style="margin-right: 5px;"></i>
+										{{report.employeeId}}
+									</button>
+							</span> <span ng-if="!report.employeeId">
+									<button style="margin: auto; display: block;"
+										ng-click="assign(report)" class="btn btn-custom"
+										data-toggle="tooltip" title="Assign Employee">
+										<i class="fa fa-wrench"></i>
+									</button>
 							</span>
-						</td>
-						<td>
-							<span ng-if="report.status == false">
-							open
-							</span>
-							<span ng-if="report.status == true">
-							closed
-							</span>
-						</td>
+						</span></td>
+						<td><span ng-if="report.status == false"> open </span> <span
+							ng-if="report.status == true"> closed </span></td>
 						<td><button class="btn btn-custom" ng-click="open(report)"
-							data-toggle="tooltip" title="View Details">
+								data-toggle="tooltip" title="View Details">
 								<i class="fa fa-info-circle">
 							</button></td>
 					</tr>

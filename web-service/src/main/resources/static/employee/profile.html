@@ -14,8 +14,9 @@
 </div>
 
 <div class="row">
-	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="profileError">
-			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2"
+		ng-show="profileError">
+		<span><i class="fa fa-times"></i> {{ errorMessage }}</span>
 	</div>
 </div>
 
@@ -54,24 +55,26 @@
 				for="phoneNum">Phone Number:</label>
 			<div class="col-lg-6 col-md-6 col-sm-10">
 				<input class="form-control" id="phoneNum" placeholder="Phone Number"
-					name="phoneNumber"
-					ng-model="currentUser.phoneNum" ng-disabled="!phoneEditable"
-					ng-required="true" ng-minlength="1" ng-maxlength="16" ng-pattern="numRegex" />
+					name="phoneNumber" ng-model="currentUser.phoneNum"
+					ng-disabled="!phoneEditable" ng-required="true" ng-minlength="1"
+					ng-maxlength="16" ng-pattern="numRegex" />
 			</div>
-			<button ng-show="!phoneEditable" class="btn btn-custom" ng-click="phoneEdit()"
-				data-toggle="tooltip" title="Edit">
+			<button ng-show="!phoneEditable" class="btn btn-custom"
+				ng-click="phoneEdit()" data-toggle="tooltip" title="Edit">
 				<i class="fa fa-edit"></i>
 			</button>
-			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="phoneUnedit()"
-				data-toggle="tooltip" title="Save">
+			<button ng-show="phoneEditable" class="btn btn-custom"
+				ng-click="phoneUnedit()" data-toggle="tooltip" title="Save">
 				<i class="fa fa-check"></i>
 			</button>
-			<button ng-show="phoneEditable" class="btn btn-custom" ng-click="clearPhoneUnedit()"
-				data-toggle="tooltip" title="Reset">
+			<button ng-show="phoneEditable" class="btn btn-custom"
+				ng-click="clearPhoneUnedit()" data-toggle="tooltip" title="Reset">
 				<i class="fa fa-times"></i>
 			</button>
-			<button ng-show="currentUser.phoneNum !== user.phoneNum && !phoneEditable" class="btn btn-custom" 
-				ng-click="clearPhoneUnedit()" data-toggle="tooltip" title="Undo">
+			<button
+				ng-show="currentUser.phoneNum !== user.phoneNum && !phoneEditable"
+				class="btn btn-custom" ng-click="clearPhoneUnedit()"
+				data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>
@@ -79,20 +82,24 @@
 			<label
 				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
 				for="phoneNum">Device:</label>
-			<div ng-show="!currentUser.deviceId" class="col-lg-6 col-md-6 col-sm-10">
+			<div ng-show="!currentUser.deviceId"
+				class="col-lg-6 col-md-6 col-sm-10">
 				<input class="form-control" placeholder="No Device Assigned"
 					ng-model="currentUser.deviceId" disabled />
 			</div>
-			<div ng-show="currentUser.deviceId" class="col-lg-6 col-md-6 col-sm-10">
+			<div ng-show="currentUser.deviceId"
+				class="col-lg-6 col-md-6 col-sm-10">
 				<input class="form-control" placeholder="Device"
 					ng-model="currentUser.deviceId" ng-disabled="!editable" />
 			</div>
-			<button ng-show="currentUser.deviceId" class="btn btn-custom" ng-click="clearDevice()"
-				data-toggle="tooltip" title="Remove">
+			<button ng-show="currentUser.deviceId" class="btn btn-custom"
+				ng-click="clearDevice()" data-toggle="tooltip" title="Remove">
 				<i class="fa fa-times"></i>
 			</button>
-			<button ng-show="currentUser.deviceId !== user.deviceId && currentUser.deviceId !== 'DELETED'" class="btn btn-custom" 
-				ng-click="resetDevice()" data-toggle="tooltip" title="Undo">
+			<button
+				ng-show="currentUser.deviceId !== user.deviceId && currentUser.deviceId !== 'DELETED'"
+				class="btn btn-custom" ng-click="resetDevice()"
+				data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>
@@ -100,32 +107,37 @@
 			<label
 				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
 			<div class="col-lg-6 col-md-6 col-sm-10">
-			
+
 				<style type="text/css" scoped>
-				.angular-google-map-container {
-					height: 250px;
-				}
-				</style>
+.angular-google-map-container {
+	height: 250px;
+}
+</style>
 				<div style="margin-top: 10px">
 					<ui-gmap-google-map center="map.center" zoom="map.zoom">
 					<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
 					</ui-gmap-google-map>
 				</div>
 			</div>
-			<button class="btn btn-custom" ng-click="changeLocation()" data-toggle="tooltip" title="Edit"">
+			<button class="btn btn-custom" ng-click="changeLocation()"
+				data-toggle="tooltip" title="Edit"">
 				<i class="fa fa-edit"></i>
 			</button>
-			<button ng-show="currentUser.latitude !== user.latitude || currentUser.longitude !== user.longitude" class="btn btn-custom" 
-				ng-click="resetLocation()" data-toggle="tooltip" title="Undo">
+			<button
+				ng-show="currentUser.latitude !== user.latitude || currentUser.longitude !== user.longitude"
+				class="btn btn-custom" ng-click="resetLocation()"
+				data-toggle="tooltip" title="Undo">
 				<i class="fa fa-undo"></i>
 			</button>
 		</div>
 		<div class="form-group form-actions">
-			<div class="row" ng-show="currentUser.deviceId !== user.deviceId || currentUser.latitude !== user.latitude || 
+			<div class="row"
+				ng-show="currentUser.deviceId !== user.deviceId || currentUser.latitude !== user.latitude || 
 						currentUser.longitude !== user.longitude || currentUser.phoneNum !== user.phoneNum">
 				<div
 					class="col-lg-offset-4 col-lg-1 col-md-offset-4 col-md-1 col-sm-offset-2 col-sm-3">
-					<button ng-show="profileForm.phoneNumber.$valid" ng-click="update()" class="btn btn-custom">
+					<button ng-show="profileForm.phoneNumber.$valid"
+						ng-click="update()" class="btn btn-custom">
 						<i class="fa fa-user-plus"></i> Update
 					</button>
 				</div>

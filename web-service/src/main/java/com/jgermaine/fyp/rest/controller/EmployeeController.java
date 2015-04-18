@@ -5,8 +5,8 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Employee;
-import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
-import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
-import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 
 /**
  * Handles all RESTful operations for employees
@@ -34,16 +31,7 @@ public class EmployeeController {
 	private static final Logger LOGGER = LogManager.getLogger(EmployeeController.class.getName());
 
 	@Autowired
-	private CouncilAlertUserDetailsService councilAlertUserService;
-
-	@Autowired
 	private EmployeeServiceImpl employeeService;
-
-	@Autowired
-	private ReportServiceImpl reportService;
-
-	@Autowired
-	private UserServiceImpl userService;
 
 	/**
 	 * Returns list of all employees
@@ -110,7 +98,7 @@ public class EmployeeController {
 	@RequestMapping(value = "/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<Employee> getEmployee(@PathVariable("email") String email) {
 		try {
-			Employee emp = employeeService.getEmployee(email);
+			Employee emp = employeeService.getEmployee(email.toLowerCase());
 			return new ResponseEntity<Employee>(emp, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Employee>(HttpStatus.BAD_REQUEST);

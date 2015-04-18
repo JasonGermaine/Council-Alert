@@ -7,9 +7,8 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.validation.Valid;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.hibernate.exception.ConstraintViolationException;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.exception.ModelValidationException;
 import com.jgermaine.fyp.rest.model.Citizen;
-import com.jgermaine.fyp.rest.model.Entry;
 import com.jgermaine.fyp.rest.model.Message;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
@@ -168,7 +166,7 @@ public class ReportController {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
 
-			Citizen c = citizenService.getCitizen(email);
+			Citizen c = citizenService.getCitizen(email.toLowerCase());
 			c.addReport(report);
 			report.setCitizen(c);
 			reportService.addReport(report);
@@ -182,7 +180,7 @@ public class ReportController {
 		} catch (ModelValidationException e) {
 			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);			
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -226,7 +224,7 @@ public class ReportController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<Report> retrieveReportForEmp(@PathVariable("email") String email) {
 		try {
-			Report report = reportService.getReportForEmp(email);
+			Report report = reportService.getReportForEmp(email.toLowerCase());
 			return new ResponseEntity<Report>(report, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Report>(HttpStatus.BAD_REQUEST);
@@ -250,15 +248,15 @@ public class ReportController {
 	 * @return report
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Message> updateReport(@PathVariable("id") int id, @RequestBody @Valid List<Entry> entries,
+	public ResponseEntity<Message> updateReport(@PathVariable("id") int id, @RequestBody @Valid Report report,
 			BindingResult result) {
 		try {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
-
-			Report report = reportService.getReport(id);
-			report.resetEntries(entries);
-			reportService.updateReport(report);
+			
+			Report rpt = reportService.getReport(id);
+			rpt.resetEntries(report.getEntries());
+			reportService.updateReport(rpt);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_REPORT_UPDATE), HttpStatus.OK);
 		} catch (NoResultException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST),

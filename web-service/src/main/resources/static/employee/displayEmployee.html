@@ -17,22 +17,27 @@
 
 <div class="row" style="margin-bottom: 50px;">
 	<div class="btn-group col-lg-12" role="group" aria-label="">
-		<button type="button" class="btn btn-default col-lg-4" ng-click="getAssigned()">ACTIVE</button>
-		<button type="button" class="btn btn-default col-lg-4" ng-click="getAll()">ALL</button>
-		<button type="button" class="btn btn-default col-lg-4" ng-click="getUnassigned()">INACTIVE</button>
+		<button type="button" class="btn btn-default col-lg-4"
+			ng-click="getAssigned()">ACTIVE</button>
+		<button type="button" class="btn btn-default col-lg-4"
+			ng-click="getAll()">ALL</button>
+		<button type="button" class="btn btn-default col-lg-4"
+			ng-click="getUnassigned()">INACTIVE</button>
 	</div>
 </div>
 
 <div class="row">
-	<div class="alert alert-danger col-lg-8 col-lg-offset-2" ng-show="empError">
-			<span><i class="fa fa-times"></i>	{{ errorMessage }}</span>
+	<div class="alert alert-danger col-lg-8 col-lg-offset-2"
+		ng-show="empError">
+		<span><i class="fa fa-times"></i> {{ errorMessage }}</span>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-lg-12">
 		<div class="table-responsive">
-			<div class="col-lg-3" style="margin-bottom: 20px; margin-left: -15px;">
+			<div class="col-lg-3"
+				style="margin-bottom: 20px; margin-left: -15px;">
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
@@ -53,34 +58,27 @@
 						<td>{{emp.lastName}}</td>
 						<td>{{emp.email}}</td>
 						<td>{{emp.phoneNum}}</td>
-						<td>
-						
-						<span ng-if="emp.reportId">
-								<button
-									ng-click="showReport(emp)" class="btn btn-custom"
-										data-toggle="tooltip" title="View Report">
-									<i class="fa fa-map-marker" style="margin-right: 5px;"></i> {{emp.reportId}}
+						<td><span ng-if="emp.reportId">
+								<button ng-click="showReport(emp)" class="btn btn-custom"
+									data-toggle="tooltip" title="View Report">
+									<i class="fa fa-map-marker" style="margin-right: 5px;"></i>
+									{{emp.reportId}}
 								</button>
-						</span>
-						 
-						
-						<span ng-if="!emp.reportId">
-								<button
-									ng-click="assign(emp)"
-									class="btn btn-custom" data-toggle="tooltip" title="Assign Task">
+						</span> <span ng-if="!emp.reportId">
+								<button ng-click="assign(emp)" class="btn btn-custom"
+									data-toggle="tooltip" title="Assign Task">
 									<i class="fa fa-wrench"></i>
 								</button>
-						</span>
-						</td>
+						</span></td>
 						<td>
-							<button ng-click="openDisplay(emp)" class="btn btn-custom" 
+							<button ng-click="openDisplay(emp)" class="btn btn-custom"
 								data-toggle="tooltip" title="View Details">
 								<i class="fa fa-info-circle"></i>
 							</button>
 							<button ng-click="openRemove(emp)" class="btn btn-custom"
 								data-toggle="tooltip" title="Remove Employee">
 								<i class="fa fa-user-times"></i>
-							</button>						
+							</button>
 						</td>
 					</tr>
 				</tbody>

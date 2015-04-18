@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jgermaine.fyp.rest.config.Secret;
 
 @Entity
 @Table(name = "Employee")
@@ -50,12 +51,28 @@ public class Employee extends User {
     @Transient
     private String reportId;
 
+    public Employee() {
+    	
+    }
+    
+    public Employee(String email, String password, String fName, String lName, 
+    		String phoneNum, double lat, double lon) {
+		
+    	setEmail(email);
+		setPassword(password);
+		setFirstName(fName);
+		setLastName(lName);
+		setPhoneNum(phoneNum);
+		setLatitude(lat);
+		setLongitude(lon);
+    }
+    
     public String getReportId() {
-    	String id = null;
+    	reportId = null;
     	if(report != null) {
-    		id = Integer.toString(report.getId());
+    		reportId = Integer.toString(report.getId());
     	}
-    	return id;
+    	return reportId;
     }
            
     public String getFirstName() {

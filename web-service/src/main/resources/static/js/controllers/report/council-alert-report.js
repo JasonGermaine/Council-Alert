@@ -98,7 +98,7 @@ angular.module('councilalert').controller(
 			};
 
 			$scope.openEmp = function(report) {
-
+				$scope.report = report;
 				var modalInstance = $modal.open({
 					templateUrl : 'modals/availableEmp.html',
 					controller : 'availableEmp',
@@ -107,8 +107,8 @@ angular.module('councilalert').controller(
 						employees : function() {
 							return $scope.employees;
 						},
-						reportId : function() {
-							return $scope.reportId;
+						report : function() {
+							return $scope.report;
 						}
 					}
 				});

@@ -3,12 +3,13 @@ angular
 		.controller(
 				'availableEmp',
 				function($rootScope, $scope, $http, $location, $route,
-						LocalStorage, $modalInstance, employees, reportId) {
+						LocalStorage, $modal, $modalInstance, employees, report) {
 
 					$scope.employees = employees;
-					$scope.reportId = reportId;
+					$scope.report = report;
 					$scope.empAssignError = false;
 					$scope.errorMessage = '';
+					$scope.employee = {};
 
 					$scope.cancel = function() {
 						$modalInstance.dismiss('cancel');
@@ -16,7 +17,7 @@ angular
 
 					$scope.assignEmp = function(email) {
 						var url = 'api/admin/employee/assign?email=' + email
-								+ '&id=' + reportId;
+								+ '&id=' + $scope.report.id;
 
 						$http
 								.get(url, LocalStorage.getHeader())
@@ -41,6 +42,7 @@ angular
 											}
 										});
 					};
+					
 
 					$scope.cancel = function() {
 						$modalInstance.dismiss('cancel');

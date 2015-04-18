@@ -7,7 +7,6 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.User;

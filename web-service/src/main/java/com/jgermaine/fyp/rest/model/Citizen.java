@@ -1,5 +1,6 @@
 package com.jgermaine.fyp.rest.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -23,6 +24,16 @@ public class Citizen extends User {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy="citizen",cascade=CascadeType.ALL)
 	private List<Report> reports;
 
+	public Citizen() {
+		reports = new ArrayList<Report>();
+	}
+	
+	public Citizen(String email, String password) {
+		this();
+		setEmail(email);
+		setPassword(password);		
+	}
+	
 	@Override
 	public String getType() {
 		return "citizen";

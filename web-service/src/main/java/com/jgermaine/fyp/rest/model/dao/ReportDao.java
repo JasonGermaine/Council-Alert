@@ -1,10 +1,5 @@
 package com.jgermaine.fyp.rest.model.dao;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
@@ -14,14 +9,10 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import javax.transaction.Transactional;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
-
-import ch.qos.logback.classic.Logger;
 
 import com.jgermaine.fyp.rest.model.Report;
 
@@ -48,11 +39,11 @@ public class ReportDao {
 	 * Delete the report from the database.
 	 */
 	public void delete(Report report) throws Exception {
-		if (entityManager.contains(report))
+		if (entityManager.contains(report)) {
 			entityManager.remove(report);
-		else
+		} else {
 			entityManager.remove(entityManager.merge(report));
-		return;
+		}
 	}
 
 	/**

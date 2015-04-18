@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.model.Employee;
-import com.jgermaine.fyp.rest.model.UserRequest;
 import com.jgermaine.fyp.rest.model.User;
+import com.jgermaine.fyp.rest.model.UserRequest;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 
@@ -55,9 +55,10 @@ public class UserController {
 	public ResponseEntity<User> getUser(@RequestBody UserRequest data) {
 		try {
 			String email = data.getEmail();
-			User user = userService.getUser(email);
+			User user = userService.getUser(email.toLowerCase());
 			String deviceId = data.getDeviceId();
 			if (deviceId != null && user instanceof Employee) {
+				((Employee) user).setDeviceId(deviceId);
 				updateEmployee((Employee) user, deviceId);
 			}
 			return new ResponseEntity<User>(user, HttpStatus.OK);
@@ -76,8 +77,7 @@ public class UserController {
 	 * @throws Exception 
 	 */
 	private void updateEmployee(Employee employee, String deviceId) throws Exception {
-		if ((employee.getDeviceId() == null || !employee.getDeviceId().equals(deviceId))) {
-			LOGGER.info("Updating employee: " + employee.getEmail() + " device key to: " + deviceId);
+		if (employee.getDeviceId() == null || !employee.getDeviceId().equals(deviceId)) {
 			employee.setDeviceId(deviceId);
 			employeeService.updateEmployee(employee);
 		}

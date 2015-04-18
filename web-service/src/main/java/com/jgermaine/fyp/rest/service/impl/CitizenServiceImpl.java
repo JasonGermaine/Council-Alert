@@ -7,14 +7,13 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Citizen;
+import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.model.dao.CitizenDao;
-import com.jgermaine.fyp.rest.model.dao.ReportDao;
 import com.jgermaine.fyp.rest.service.CitizenService;
 
 @Service
@@ -22,9 +21,6 @@ public class CitizenServiceImpl implements CitizenService {
 
 	@Autowired
 	private CitizenDao CitizenDao;
-
-	@Autowired
-	private ReportDao reportDao;
 
 	public Citizen getCitizen() {
 		Citizen Citizen = new Citizen();
@@ -40,13 +36,16 @@ public class CitizenServiceImpl implements CitizenService {
 
 	public void removeCitizen(Citizen Citizen) throws Exception {
 		CitizenDao.delete(Citizen);
-		;
 	}
 
 	public List<Citizen> getCitizens() throws Exception {
 		return CitizenDao.getAll();
 	}
 
+	public List<Report> getReportsForCitizen(String email) throws NoResultException, NonUniqueResultException, Exception {
+		return getCitizen(email).getReports();
+	}
+	
 	public Citizen getCitizen(String email) throws NoResultException, NonUniqueResultException, Exception {
 		return CitizenDao.getByEmail(email);
 	}

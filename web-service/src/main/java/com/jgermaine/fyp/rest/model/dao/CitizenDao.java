@@ -10,9 +10,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
@@ -29,8 +26,6 @@ public class CitizenDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private static final Logger LOGGER = LogManager.getLogger(CitizenDao.class.getName());
-
 	/**
 	 * Create new Citizen in the database.
 	 */
@@ -42,11 +37,11 @@ public class CitizenDao {
 	 * Delete the Citizen from the database.
 	 */
 	public void delete(Citizen Citizen) throws Exception {
-		if (entityManager.contains(Citizen))
+		if (entityManager.contains(Citizen)) {
 			entityManager.remove(Citizen);
-		else
+		} else {
 			entityManager.remove(entityManager.merge(Citizen));
-		return;
+		}
 	}
 
 	/**

@@ -80,7 +80,8 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                new UpdateReportEntriesTask(getEntries(), mActivity, fragment, report.getId()).execute();
+                    report.setEntries(getEntries());
+                    new UpdateReportEntriesTask(report, mActivity, fragment, report.getId()).execute();
                 }
             });
         }

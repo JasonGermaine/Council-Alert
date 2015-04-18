@@ -8,6 +8,6 @@ import com.jgermaine.fyp.rest.model.User;
 
 public interface UserService {
 
-	public User getUser(String email) throws NoResultException, NonUniqueResultException, Exception;
+	User getUser(String email) throws NoResultException, NonUniqueResultException, Exception;
 
 }

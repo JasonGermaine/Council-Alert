@@ -8,9 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
 import com.google.android.gcm.server.Message.Builder;
+import com.google.android.gcm.server.Sender;
 
 public class GCMRunnable implements Runnable {
 
@@ -40,9 +39,7 @@ public class GCMRunnable implements Runnable {
 			// Add Android device key
 			String devices = employeeDevice;
 			
-			
-			Result response = sender.send(message, devices, 5);
-			LOGGER.info("Sent report " + id + " to device " + employeeDevice);
+			sender.send(message, devices, 5);
 		} catch (IOException e) {
 			LOGGER.error("Google Cloud Messaging Failure", e);
 		}		

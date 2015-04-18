@@ -8,15 +8,14 @@ import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Employee;
-import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.model.dao.EmployeeDao;
 import com.jgermaine.fyp.rest.service.EmployeeService;
+import com.jgermaine.fyp.rest.task.TaskManager;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -81,6 +80,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 		
 		statMap.put("emp_assigned", assigned);
 		return statMap;
+	}
+	
+	public void sendEmployeeNotification(Employee emp, int reportId) {
+		// Send notification regardless if DB needs updating
+		// New Thread spawned for GCM so it does no block response
+		TaskManager.sendReportIdAsNotification(Integer.toString(reportId), emp);
 	}
 	
 } 

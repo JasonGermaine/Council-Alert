@@ -1,7 +1,6 @@
 package com.jgermaine.fyp.rest.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,14 +11,12 @@ import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,9 +38,8 @@ import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
-import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
-import com.jgermaine.fyp.rest.task.TaskManager;
 import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
+import com.jgermaine.fyp.rest.util.StringUtil;
 
 /**
  * 
@@ -69,9 +65,6 @@ public class AdminController {
 	private ReportServiceImpl reportService;
 
 	@Autowired
-	private UserServiceImpl userService;
-
-	@Autowired
 	private CitizenServiceImpl citizenService;
 
 	/**
@@ -92,7 +85,7 @@ public class AdminController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<User> attemptLogin(@PathVariable("email") String email) {
 		try {
-			Employee user = employeeService.getEmployee(email);
+			Employee user = employeeService.getEmployee(email.toLowerCase());
 			return new ResponseEntity<User>(user, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
@@ -118,7 +111,7 @@ public class AdminController {
 		try {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
-			
+			employee.setEmail(employee.getEmail().toLowerCase());
 			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION),
@@ -150,7 +143,7 @@ public class AdminController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.DELETE)
 	public ResponseEntity<Message> removeEmployee(@PathVariable("email") String email) {
 		try {
-			Employee emp = employeeService.getEmployee(email);
+			Employee emp = employeeService.getEmployee(email.toLowerCase());
 			employeeService.removeEmployee(emp);
 			if (emp.getReport() != null) {
 				Report r = emp.getReport();
@@ -189,16 +182,16 @@ public class AdminController {
 			if (result.hasErrors()) {
 				throw new ModelValidationException(result.getFieldErrorCount());
 			}
-				
-			Employee emp = employeeService.getEmployee(email);
+
+			Employee emp = employeeService.getEmployee(email.toLowerCase());
 			if (request.getLatitude() != 0.0 && request.getLongitude() != 0.0) {
 				emp.setLatitude(request.getLatitude());
 				emp.setLongitude(request.getLongitude());
 			}
-			if (isNotNullOrEmpty(request.getPhoneNum())) {
+			if (StringUtil.isNotNullOrEmpty(request.getPhoneNum())) {
 				emp.setPhoneNum(request.getPhoneNum());
 			}
-			if (isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals(DELETED_DEVICE_ID)) {
+			if (StringUtil.isNotNullOrEmpty(request.getDeviceId()) && request.getDeviceId().equals(DELETED_DEVICE_ID)) {
 				emp.setDeviceId(null);
 			}
 			employeeService.updateEmployee(emp);
@@ -236,7 +229,7 @@ public class AdminController {
 
 			// Check if report is already assigned to employee
 			if (report.getEmployee() != null) {
-				if (!report.getEmployee().getEmail().equals(email)) {
+				if (!report.getEmployee().getEmail().equals(email.toLowerCase())) {
 					throw new AssignmentException(AssignmentException.ExceptionType.REPORT);
 				} else {
 					reportSkip = true;
@@ -244,7 +237,7 @@ public class AdminController {
 			}
 
 			// Check here for better performance if report check fails
-			Employee employee = employeeService.getEmployee(email);
+			Employee employee = employeeService.getEmployee(email.toLowerCase());
 
 			// Check if employee is already assigned to report
 			if (employee.getReport() != null) {
@@ -262,9 +255,7 @@ public class AdminController {
 				reportService.updateReport(report);
 			}
 
-			// Send notification regardless if DB needs updating
-			// New Thread spawned for GCM so it does no block response
-			TaskManager.sendReportIdAsNotification(Integer.toString(reportId), report.getEmployee());
+			employeeService.sendEmployeeNotification(report.getEmployee(), reportId);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_ASSIGNMENT), HttpStatus.OK);
 		} catch (AssignmentException e) {
 			return new ResponseEntity<Message>(new Message(e.getMessage() + ResponseMessageUtil.ERROR_ASSIGNMENT),
@@ -300,25 +291,27 @@ public class AdminController {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
 
-			CouncilAlertUser user = councilAlertUserService.getUser(email);
-			if (user != null) {
-				if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
-						user.getPassword())) {
-					user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(),
-							user.getSalt()));
-					councilAlertUserService.updateUser(user);
-					return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE),
-							HttpStatus.OK);
-				} else {
-					return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH),
-							HttpStatus.BAD_REQUEST);
-				}
+			CouncilAlertUser user = councilAlertUserService.getUser(email.toLowerCase());
+			if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
+					user.getPassword())) {
+				user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(), user.getSalt()));
+				councilAlertUserService.updateUser(user);
+				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE),
+						HttpStatus.OK);
 			} else {
-				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
-						HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH),
+						HttpStatus.BAD_REQUEST);
 			}
+
+		} catch (NoResultException | NonUniqueResultException e) {
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),
+					HttpStatus.BAD_REQUEST);
 		} catch (ModelValidationException e) {
 			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -423,15 +416,5 @@ public class AdminController {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<HashMap<String, Long>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
-
-	/**
-	 * Determines whether a string is not null and not empty
-	 * 
-	 * @param value
-	 * @return isValid
-	 */
-	private boolean isNotNullOrEmpty(String value) {
-		return value != null && !value.isEmpty();
 	}
 }
