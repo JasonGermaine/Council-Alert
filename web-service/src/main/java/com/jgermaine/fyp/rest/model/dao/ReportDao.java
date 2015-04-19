@@ -178,7 +178,7 @@ public class ReportDao {
 				+ "* cos( radians( longitude ) - radians(:lon) ) "
 				+ "+ sin( radians(:lat) ) * sin( radians( latitude ) ) ) )" + "AS distance " + "FROM Reports "
 				+ "WHERE emp_email IS NULL " + "AND status = false  " + "HAVING distance < 10 " + "ORDER BY distance "
-				+ "LIMIT 0 , 6;", Report.class);
+				+ "LIMIT 0 , 10;", Report.class);
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);
 		return query.getResultList();

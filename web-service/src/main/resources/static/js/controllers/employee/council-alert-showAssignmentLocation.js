@@ -1,40 +1,39 @@
-angular.module('councilalert').controller(
-		'showAssignmentLocation',
-		function($rootScope, $scope, $http, $location, $route, LocalStorage,
+angular.module('councilalert')
+	.controller('showAssignmentLocation', function($rootScope, $scope, $http, $location, $route, LocalStorage,
 				$modalInstance, $timeout, employee, report) {
 
-			$scope.employee = employee;
-			$scope.report = report;
-
-			$scope.cancel = function() {
-				$modalInstance.dismiss('cancel');
-			};
-
-			$scope.mapSetup = function() {
-				$scope.map = {
-					center : {
-						latitude : $scope.employee.latitude,
-						longitude : $scope.employee.longitude
-					},
-					zoom : 12
-				};
+		$scope.employee = employee;
+		$scope.report = report;
+		$scope.markers = [ {
+			id : 0,
+			coords : {
+				latitude : $scope.employee.latitude,
+				longitude : $scope.employee.longitude
 			}
+		}, {
+			id : 2,
+			coords : {
+				latitude : $scope.report.latitude,
+				longitude : $scope.report.longitude
+			}
+		} ];
+		
+		$scope.cancel = function() {
+			$modalInstance.dismiss('cancel');
+		};
 
-			$scope.markers = [ {
-				id : 0,
-				coords : {
+		$scope.mapSetup = function() {
+			$scope.map = {
+				center : {
 					latitude : $scope.employee.latitude,
 					longitude : $scope.employee.longitude
-				}
-			}, {
-				id : 2,
-				coords : {
-					latitude : $scope.report.latitude,
-					longitude : $scope.report.longitude
-				}
-			} ];
-			$timeout(function() {
-				$scope.mapSetup();
-			}, 250);
+				},
+				zoom : 12
+			};
+		}
 
-		});
+		$timeout(function() {
+			$scope.mapSetup();
+		}, 250);
+		
+	});

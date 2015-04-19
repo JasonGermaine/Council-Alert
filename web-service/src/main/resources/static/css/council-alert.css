@@ -141,6 +141,14 @@ body {
 	color: #df8a13;
 }
 
+table {
+	text-align: center;
+}
+
+table th {
+	text-align: center;
+}
+
 .checkbox {
 	margin-bottom: 20px;
 	position: relative;

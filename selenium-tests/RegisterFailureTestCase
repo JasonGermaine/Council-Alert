@@ -38,53 +38,63 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='page-wrapper']/div/div/div[4]/div/div/a/div/div/div[2]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=span.ng-scope &gt; button.btn.btn-custom</td>
+	<td>link=Employees</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//td[3]/button</td>
+	<td>css=button.btn.btn-custom</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=fname</td>
+	<td>Jason</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=lname</td>
+	<td>Germaine</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=email</td>
+	<td>SampleEmployee@council-alert.com</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=phoneNum</td>
+	<td>085123456789</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=pwd</td>
+	<td>Password123</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=pwdConf</td>
+	<td>Password123</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=toggleMap</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>xpath=(//button[@type='button'])[2]</td>
+	<td>//div[@id='page-wrapper']/div/form/div[8]/div/div/button</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='page-wrapper']/div/div[5]/div/div/table/tbody/tr[2]/td[5]/span/button</td>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='page-wrapper']/div/div[3]/div/span</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>css=button.btn-xs.btn-custom</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>xpath=(//button[@type='button'])[4]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
+	<td>assertText</td>
+	<td>//div[@id='page-wrapper']/div/div[3]/div/span</td>
+	<td>An Employee is already registered for that email.</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -96,7 +106,6 @@
 	<td>link=Log Out</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>

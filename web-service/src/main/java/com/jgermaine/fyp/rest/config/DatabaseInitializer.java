@@ -28,8 +28,8 @@ public class DatabaseInitializer {
 
 	public static final String INIT_USER = "admin@council-alert.com";
 
-	private static final String[] EMP_EMAILS = { "andrea@council-alert.com", "ben@council-alert.com",
-			"carol@council-alert.com", "darren@council-alert.com", "eric@council-alert.com",
+	private static final String[] EMP_EMAILS = { "amy@council-alert.com", "andrea@council-alert.com",
+			"ben@council-alert.com", "carol@council-alert.com", "darren@council-alert.com", "eric@council-alert.com",
 			"francesca@council-alert.com", "george@council-alert.com", "harry@council-alert.com",
 			"irene@council-alert.com", "jason@council-alert.com", "kelly@council-alert.com", "laura@council-alert.com",
 			"monica@council-alert.com", "nick@council-alert.com", "oliver@council-alert.com", "paul@council-alert.com",
@@ -37,12 +37,12 @@ public class DatabaseInitializer {
 			"tom@council-alert.com", "usher@council-alert.com", "victor@council-alert.com", "wendy@council-alert.com",
 			"xang@council-alert.com", "yannick@council-alert.com", "zelda@council-alert.com" };
 
-	private static final String[] FIRST_NAMES = { "Andrea", "Ben", "Carol", "Darren", "Eric", "Francesca", "George",
-			"Harry", "Irene", "Jason", "Kelly", "Laura", "Monica", "Nick", "Oliver", "Paul", "Quinn", "Roisin",
-			"Stephen", "Tom", "Usher", "Victor", "Wendy", "Xang", "Yannick", "Zelda" };
+	private static final String[] FIRST_NAMES = { "Amy", "Andrea", "Ben", "Carol", "Darren", "Eric", "Francesca",
+			"George", "Harry", "Irene", "Jason", "Kelly", "Laura", "Monica", "Nick", "Oliver", "Paul", "Quinn",
+			"Roisin", "Stephen", "Tom", "Usher", "Victor", "Wendy", "Xang", "Yannick", "Zelda" };
 
-	private static final String[] LAST_NAMES = { "Byrne", "O'Brien", "Ford", "Murray", "Germaine", "Dunne", "Smith",
-			"Johnson", "Woods", "McCarthy", "Murphy", "Thompson", "Bowker", "Taylor", "Reid" };
+	private static final String[] LAST_NAMES = { "Byrne", "O'Brien", "Fitzharris", "Ford", "Murray", "Germaine",
+			"Dunne", "Smith", "Johnson", "Woods", "McCarthy", "Murphy", "Thompson", "Bowker", "Taylor", "Reid" };
 
 	private static final String[] PHONE_NUMBERS = { "123456789", "+3531234567", "+441234567", "987654323",
 			"0871234567", "343456789", "+353324567", "+441245347", "32445465", "0873434567", };
@@ -54,12 +54,12 @@ public class DatabaseInitializer {
 			new Location(53.3720174, -6.2605137), new Location(53.3108961, -6.2222152),
 			new Location(53.2782173, -6.2622123), new Location(53.3036795, -6.42753), };
 
-	private static final String[] CITIZEN_EMAILS = { "andrea@user.com", "ben@user.com", "carol@user.com",
-			"darren@user.com", "eric@user.com", "francesca@user.com", "george@user.com", "harry@user.com",
-			"irene@user.com", "jason@user.com", "kelly@user.com", "laura@user.com", "monica@user.com", "nick@user.com",
-			"oliver@user.com", "paul@user.com", "quinn@user.com", "roisin@user.com", "stephen@user.com",
-			"tom@user.com", "usher@user.com", "victor@user.com", "wendy@user.com", "xang@user.com", "yannick@user.com",
-			"zelda@user.com" };
+	private static final String[] CITIZEN_EMAILS = { "amy@user.com", "andrea@user.com", "ben@user.com",
+			"carol@user.com", "darren@user.com", "eric@user.com", "francesca@user.com", "george@user.com",
+			"harry@user.com", "irene@user.com", "jason@user.com", "kelly@user.com", "laura@user.com",
+			"monica@user.com", "nick@user.com", "oliver@user.com", "paul@user.com", "quinn@user.com",
+			"roisin@user.com", "stephen@user.com", "tom@user.com", "usher@user.com", "victor@user.com",
+			"wendy@user.com", "xang@user.com", "yannick@user.com", "zelda@user.com" };
 
 	private static final String[] REPORT_TYPES = { "Lamp Post Repair", "Cats Eye Repair", "Gully Problem",
 			"Blocked Drain", "Water Pollution Incident", "Repair Road Sign", "Repair Road Markings", "Weed Control",
@@ -130,10 +130,10 @@ public class DatabaseInitializer {
 
 	private void initReports() {
 		Location loc = LOCATIONS[random.nextInt(LOCATIONS.length)];
-		Report rpt = new Report(REPORT_TYPES[random.nextInt(REPORT_TYPES.length)], loc.getLat(),
-				loc.getLon(), getRandomDate(), true);
+		Report rpt = new Report(REPORT_TYPES[random.nextInt(REPORT_TYPES.length)], loc.getLat(), loc.getLon(),
+				getRandomDate(), true);
 		insertNewReport(rpt, false);
-		
+
 		for (int i = 0; i < 100; i++) {
 			Location location = LOCATIONS[random.nextInt(LOCATIONS.length)];
 			Report report = new Report(REPORT_TYPES[random.nextInt(REPORT_TYPES.length)], location.getLat(),
@@ -168,7 +168,7 @@ public class DatabaseInitializer {
 
 	private void insertNewEmployee(Employee employee) {
 		try {
-			//employeeService.addEmployee(employee);
+			// employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -177,7 +177,7 @@ public class DatabaseInitializer {
 
 	private void insertNewCitizen(Citizen citizen) {
 		try {
-			//citizenService.addCitizen(citizen);
+			// citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

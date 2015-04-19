@@ -52,5 +52,5 @@ table .tablesort-sortable:hover:after, table .tablesort-asc:after, table .tables
 }
 
 .showIfLast td:after {
-	content: "No data";
+	content: "No Data Available";
 }

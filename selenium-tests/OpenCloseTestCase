@@ -38,22 +38,42 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='page-wrapper']/div/div/div[4]/div/div/a/div/div/div[2]</td>
+	<td>//div[@id='page-wrapper']/div/div/div[3]/div[3]/div/a/div/div/div[2]/div</td>
 	<td></td>
 </tr>
 <tr>
 	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
+	<td>css=table.table.ng-scope.2.0</td>
+	<td>1</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>css=span.ng-scope &gt; button.btn.btn-custom</td>
+	<td>css=button.btn.btn-custom</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//td[3]/button</td>
+	<td>css=button.btn-sm.btn-custom</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//button[@type='button'])[5]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTable</td>
+	<td>css=table.table.ng-scope.2.0</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='page-wrapper']/div/div[4]/div/div/table/tbody/tr[2]/td[7]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.btn-sm.btn-custom</td>
 	<td></td>
 </tr>
 <tr>
@@ -63,28 +83,8 @@
 </tr>
 <tr>
 	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='page-wrapper']/div/div[5]/div/div/table/tbody/tr[2]/td[5]/span/button</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>css=button.btn-xs.btn-custom</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>xpath=(//button[@type='button'])[4]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTable</td>
-	<td>css=table.table.ng-scope.2.2</td>
-	<td>admin@council-alert.com</td>
+	<td>css=table.table.ng-scope.2.0</td>
+	<td>1</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -96,7 +96,6 @@
 	<td>link=Log Out</td>
 	<td></td>
 </tr>
-
 </tbody></table>
 </body>
 </html>
