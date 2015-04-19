@@ -2,15 +2,12 @@ package com.jgermaine.fyp.rest.model.dao;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.Citizen;
@@ -25,13 +22,6 @@ public class CitizenDao {
 	// An EntityManager will be automatically injected from entityManagerFactory
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	/**
-	 * Create new Citizen in the database.
-	 */
-	public void create(Citizen Citizen) throws EntityExistsException, PersistenceException, DataIntegrityViolationException, Exception {
-		entityManager.persist(Citizen);
-	}
 
 	/**
 	 * Delete the Citizen from the database.

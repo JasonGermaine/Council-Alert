@@ -45,7 +45,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     style="@android:style/TextAppearance.Medium"
-                    android:text="Tap to add a comment" />
+                    android:text="@string/add_comment" />
 
             </RelativeLayout>
         </LinearLayout>

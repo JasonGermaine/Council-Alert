@@ -46,7 +46,7 @@ public class CategoryAdapter extends BaseAdapter {
             textView.setText(title);
             imageView.setImageResource(mCategories[position].getIcon());
         } else {
-            grid = (View) convertView;
+            grid = convertView;
         }
         return grid;
     }

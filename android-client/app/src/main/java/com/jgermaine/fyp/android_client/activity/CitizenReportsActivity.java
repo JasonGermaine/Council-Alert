@@ -29,14 +29,14 @@ public class CitizenReportsActivity extends Activity
         implements GetCitizenReportsTask.OnRetrieveCitizenReportsListener {
 
     private ReportAdapter mAdapter;
-    private ListView reportList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citizen_reports);
 
-        reportList = (ListView) findViewById(android.R.id.list);
+        ListView reportList = (ListView) findViewById(android.R.id.list);
         mAdapter = new ReportAdapter(this, R.layout.row_report);
         reportList.setAdapter(mAdapter);
 
@@ -47,8 +47,8 @@ public class CitizenReportsActivity extends Activity
     @Override
     public void onReportsReceived(ResponseEntity<Report[]> response) {
         if (response.getStatusCode() == HttpStatus.OK) {
-            ArrayList<Report> reports = new ArrayList<>(Arrays.asList(response.getBody()));
-            if (reports != null) {
+            if (response.getBody() != null) {
+                ArrayList<Report> reports = new ArrayList<>(Arrays.asList(response.getBody()));
                 mAdapter.addAll(reports);
                 mAdapter.notifyDataSetChanged();
             }
@@ -75,10 +75,7 @@ public class CitizenReportsActivity extends Activity
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        return id == R.id.action_settings
+                || super.onOptionsItemSelected(item);
     }
 }

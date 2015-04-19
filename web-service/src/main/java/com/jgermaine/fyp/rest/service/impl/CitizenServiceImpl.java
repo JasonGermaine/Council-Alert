@@ -2,13 +2,10 @@ package com.jgermaine.fyp.rest.service.impl;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Citizen;
@@ -27,11 +24,6 @@ public class CitizenServiceImpl implements CitizenService {
 		Citizen.setEmail("example@example.com");
 		Citizen.setPassword("password");
 		return Citizen;
-	}
-
-	public void addCitizen(Citizen Citizen) throws EntityExistsException, PersistenceException,
-		DataIntegrityViolationException, Exception {
-		CitizenDao.create(Citizen);
 	}
 
 	public void removeCitizen(Citizen Citizen) throws Exception {

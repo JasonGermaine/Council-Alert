@@ -68,7 +68,6 @@ public class OAuthTask extends AsyncTask<Void, Void, ResponseEntity<TokenRespons
         try {
             return restTemplate.exchange(mURL, HttpMethod.POST, entity, TokenResponse.class);
         } catch (HttpClientErrorException e) {
-            int code =  e.getStatusCode().value();
             return new ResponseEntity<TokenResponse>(e.getStatusCode());
         } catch(RestClientException e) {
             return  new ResponseEntity<TokenResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,6 +91,6 @@ public class OAuthTask extends AsyncTask<Void, Void, ResponseEntity<TokenRespons
     }
 
     public interface OnTokenReceivedListener {
-        public void onTokenReceived(String token, String email, int status, boolean isLogin);
+        void onTokenReceived(String token, String email, int status, boolean isLogin);
     }
 }

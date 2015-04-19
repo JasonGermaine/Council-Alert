@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Report Issue"
+            android:text="@string/report_issue"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
@@ -67,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="View Status of Reports"
+            android:text="@string/report_status"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Retrieve Task"
+            android:text="@string/retrieve_task"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
             android:textStyle="bold" />

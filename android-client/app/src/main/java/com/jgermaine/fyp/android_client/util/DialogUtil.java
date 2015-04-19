@@ -16,7 +16,7 @@ public final class DialogUtil {
     }
 
 
-    public static void createAndShowDialog(String message, String title, Activity activity) {
+    private static void createAndShowDialog(String message, String title, Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
         builder.setTitle(title);

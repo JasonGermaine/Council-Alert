@@ -3,13 +3,10 @@ package com.jgermaine.fyp.rest.service.impl;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jgermaine.fyp.rest.model.Employee;
@@ -29,10 +26,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employee.setEmail("jason@council.ie");
 		employee.setPassword("password");
 		return employee;
-	}
-	
-	public void addEmployee(Employee employee) throws EntityExistsException, PersistenceException, DataIntegrityViolationException, Exception {
-		EmployeeDao.create(employee);
 	}
 	
 	public void updateEmployee(Employee employee) throws Exception {

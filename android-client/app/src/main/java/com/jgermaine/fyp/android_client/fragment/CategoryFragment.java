@@ -68,7 +68,7 @@ public class CategoryFragment extends Fragment {
 
     public interface OnCategoryInteractionListener {
 
-        public void onCategoryInteraction(String category);
+        void onCategoryInteraction(String category);
     }
 
 }

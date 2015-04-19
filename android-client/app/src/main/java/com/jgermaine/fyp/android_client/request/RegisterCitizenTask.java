@@ -83,6 +83,6 @@ public class RegisterCitizenTask extends AsyncTask<Void, Void, ResponseEntity<Me
     }
 
     public interface OnCreationResponseListener {
-        public void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response);
+        void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response);
     }
 }

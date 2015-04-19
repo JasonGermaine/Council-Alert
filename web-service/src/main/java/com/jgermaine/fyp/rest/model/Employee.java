@@ -14,7 +14,6 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jgermaine.fyp.rest.config.Secret;
 
 @Entity
 @Table(name = "Employee")

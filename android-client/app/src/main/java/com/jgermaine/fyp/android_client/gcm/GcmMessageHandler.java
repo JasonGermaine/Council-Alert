@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 public class GcmMessageHandler extends IntentService {
 
-    String mes;
+    private String mes;
     private Handler handler;
 
     public GcmMessageHandler() {
@@ -58,7 +58,7 @@ public class GcmMessageHandler extends IntentService {
 
     }
 
-    public void showToast() {
+    private void showToast() {
         handler.post(new Runnable() {
             public void run() {
                 Toast.makeText(getApplicationContext(), mes, Toast.LENGTH_LONG).show();
@@ -66,7 +66,7 @@ public class GcmMessageHandler extends IntentService {
         });
     }
 
-    public void showNotification(String task) {
+    private void showNotification(String task) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_notification)

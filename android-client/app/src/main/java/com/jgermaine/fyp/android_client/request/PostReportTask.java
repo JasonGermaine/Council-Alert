@@ -34,7 +34,6 @@ import java.util.Date;
  * Created by jason on 04/12/14.
  */
 public class PostReportTask extends AsyncTask<String, Void, ResponseEntity<Message>> {
-    private String mURL;
     private Report mReport;
     private Activity mActivity;
     private ProgressDialog dialog;
@@ -78,7 +77,7 @@ public class PostReportTask extends AsyncTask<String, Void, ResponseEntity<Messa
 
     @Override
     protected ResponseEntity<Message> doInBackground(String... params) {
-        mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
+        String url = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
         try {
 
             RestTemplate restTemplate = new RestTemplate(true);
@@ -94,7 +93,7 @@ public class PostReportTask extends AsyncTask<String, Void, ResponseEntity<Messa
             HttpEntity<?> entity = new HttpEntity<Object>(mReport, headers);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
-            return restTemplate.exchange(mURL, HttpMethod.POST, entity, Message.class);
+            return restTemplate.exchange(url, HttpMethod.POST, entity, Message.class);
 
         } catch (HttpClientErrorException e) {
             try {
@@ -117,6 +116,6 @@ public class PostReportTask extends AsyncTask<String, Void, ResponseEntity<Messa
     }
 
     public interface OnResponseListener {
-        public void onResponseReceived(ResponseEntity<Message> response);
+        void onResponseReceived(ResponseEntity<Message> response);
     }
 }

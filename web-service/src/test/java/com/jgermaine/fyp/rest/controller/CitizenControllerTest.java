@@ -70,7 +70,6 @@ public class CitizenControllerTest {
 	@Test
 	public void testAddCitizenSuccess() throws Exception {
 
-		Mockito.doNothing().when(citizenService).addCitizen(Mockito.any(Citizen.class));
 		Mockito.doNothing().when(councilAlertUserService).createNewUser(Mockito.any(User.class));
 
 		// @formatter:off
@@ -101,8 +100,8 @@ public class CitizenControllerTest {
 	@Test
 	public void testNonUniqueCitizenFailure() throws Exception {
 
-		Mockito.doThrow(DataIntegrityViolationException.class).when(citizenService)
-				.addCitizen(Mockito.any(Citizen.class));
+		Mockito.doThrow(DataIntegrityViolationException.class).when(councilAlertUserService)
+				.createNewUser(Mockito.any(Citizen.class));
 
 		// @formatter:off
 		mvc.perform(

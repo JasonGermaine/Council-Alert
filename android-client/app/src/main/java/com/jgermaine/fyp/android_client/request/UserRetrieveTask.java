@@ -101,7 +101,7 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
     }
 
     public interface OnRetrieveResponseListener {
-        public void onRetrieveResponseReceived(ResponseEntity<User> response);
+        void onRetrieveResponseReceived(ResponseEntity<User> response);
     }
 
     protected String getDeviceId() {
@@ -119,6 +119,7 @@ public class UserRetrieveTask extends AsyncTask<Void, Void, ResponseEntity<User>
             }
             String id = sGCM.register(LoginActivity.PROJECT_NUMBER);
             cache.putDeviceKey(id);
+            Log.i("TAG", id);
             return id;
         } catch (IOException ex) {
             return null;

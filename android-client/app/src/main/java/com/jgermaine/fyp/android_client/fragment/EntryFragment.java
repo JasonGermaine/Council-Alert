@@ -96,7 +96,6 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
         entries.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final long entryId = id;
                 if (mAdapter.getItem((int) id).getAuthor().equals(
                         ((CouncilAlertApplication) getActivity().getApplication()).getUser().getEmail())) {
                     displayDeletionDialog(position);
@@ -158,7 +157,7 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
     }
 
     public void onResponseReceived(ResponseEntity<Message> response) {
-        String message = response.getBody().equals("Bad Request") ?
+        String message = response.getBody().getMessage().equals("Bad Request") ?
                 "Error: attempt to add invalid comments" : response.getBody().getMessage();
         DialogUtil.showToast(getActivity(), message);
     }

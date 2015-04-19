@@ -134,7 +134,7 @@ public abstract class LocationActivity extends FragmentActivity
     /**
      * Displays an alert to user suggesting that they enable location services
      */
-    protected void suggestRedirect() {
+    private void suggestRedirect() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Connection Error")

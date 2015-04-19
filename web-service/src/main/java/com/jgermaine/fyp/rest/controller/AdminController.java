@@ -85,8 +85,7 @@ public class AdminController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<User> attemptLogin(@PathVariable("email") String email) {
 		try {
-			Employee user = employeeService.getEmployee(email.toLowerCase());
-			return new ResponseEntity<User>(user, HttpStatus.OK);
+			return new ResponseEntity<User>(employeeService.getEmployee(email.toLowerCase()), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
@@ -112,7 +111,6 @@ public class AdminController {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
 			employee.setEmail(employee.getEmail().toLowerCase());
-			employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION),
 					HttpStatus.CREATED);
@@ -144,13 +142,12 @@ public class AdminController {
 	public ResponseEntity<Message> removeEmployee(@PathVariable("email") String email) {
 		try {
 			Employee emp = employeeService.getEmployee(email.toLowerCase());
-			employeeService.removeEmployee(emp);
+			councilAlertUserService.removeUser(emp);
 			if (emp.getReport() != null) {
 				Report r = emp.getReport();
 				r.setEmployee(null);
 				reportService.updateReport(r);
-			}
-			councilAlertUserService.removeUser(emp);
+			}			
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_REMOVAL), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),

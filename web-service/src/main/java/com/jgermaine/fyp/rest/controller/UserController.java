@@ -3,8 +3,6 @@ package com.jgermaine.fyp.rest.controller;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +26,6 @@ import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-
-	private static final Logger LOGGER = LogManager.getLogger(UserController.class.getName());
 
 	@Autowired
 	private EmployeeServiceImpl employeeService;
@@ -58,8 +54,9 @@ public class UserController {
 			User user = userService.getUser(email.toLowerCase());
 			String deviceId = data.getDeviceId();
 			if (deviceId != null && user instanceof Employee) {
-				((Employee) user).setDeviceId(deviceId);
-				updateEmployee((Employee) user, deviceId);
+				System.out.println("TAG - " + deviceId);
+				Employee employee = (Employee) user;
+				updateEmployee(employee, deviceId);
 			}
 			return new ResponseEntity<User>(user, HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {

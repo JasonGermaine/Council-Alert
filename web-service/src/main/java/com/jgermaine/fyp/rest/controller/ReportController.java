@@ -224,8 +224,7 @@ public class ReportController {
 	@RequestMapping(value = "/employee/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<Report> retrieveReportForEmp(@PathVariable("email") String email) {
 		try {
-			Report report = reportService.getReportForEmp(email.toLowerCase());
-			return new ResponseEntity<Report>(report, HttpStatus.OK);
+			return new ResponseEntity<Report>(reportService.getReportForEmp(email.toLowerCase()), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Report>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {

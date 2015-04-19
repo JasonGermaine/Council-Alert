@@ -3,21 +3,14 @@ package com.jgermaine.fyp.rest.service;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceException;
-
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.jgermaine.fyp.rest.model.Employee;
 
 public interface EmployeeService {
 
 	Employee getEmployee();
-
-	void addEmployee(Employee employee) throws EntityExistsException, PersistenceException,
-		DataIntegrityViolationException, Exception;
 
 	void removeEmployee(Employee employee) throws Exception;
 

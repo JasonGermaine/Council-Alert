@@ -33,7 +33,7 @@ public final class FileUtil {
         return createFile(path);
     }
 
-    public static String generateImageFilename() {
+    private static String generateImageFilename() {
         return generateFilename(DEFAULT_DIR, JPEG);
     }
 
@@ -43,7 +43,7 @@ public final class FileUtil {
      * @param postfix
      * @return filename
      */
-    public static String generateFilename(String dir, String postfix) {
+    private static String generateFilename(String dir, String postfix) {
         createImageDirIfNotExist(dir);
         String timestamp = new SimpleDateFormat(DATE_FORMAT).format(new Date());
         return dir + timestamp + postfix;
@@ -54,7 +54,7 @@ public final class FileUtil {
      * @param path
      * @return new file
      */
-    public static File createFile(String path) {
+    private static File createFile(String path) {
         File file = null;
         try {
             file = new File(path);
@@ -78,7 +78,7 @@ public final class FileUtil {
      * Creates directory on device if it does not exist
      * @param dir
      */
-    public static void createImageDirIfNotExist(String dir) {
+    private static void createImageDirIfNotExist(String dir) {
         File imageDir = new File(dir);
         if (!imageDir.exists() || !imageDir.isDirectory()) {
             // Create directory

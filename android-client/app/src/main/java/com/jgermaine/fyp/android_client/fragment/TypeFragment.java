@@ -27,7 +27,6 @@ public class TypeFragment extends ListFragment {
 
     private String mCategory;
     private OnTypeInteractionListener mListener;
-    private TextView mTextViewCategory;
     private ArrayAdapter<String> mAdapter;
     private EditText mSearchBox;
     private Button mSearchClearButton;
@@ -58,7 +57,7 @@ public class TypeFragment extends ListFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_type, container, false);
 
-        mTextViewCategory = (TextView) view.findViewById(R.id.type_title);
+        TextView mTextViewCategory = (TextView) view.findViewById(R.id.type_title);
         mTextViewCategory.setText(mCategory);
         String[] values = setupTypes(mCategory);
         mAdapter = new ArrayAdapter<>(getActivity(),
@@ -97,7 +96,7 @@ public class TypeFragment extends ListFragment {
 
         if (TextUtils.isEmpty(title)) {
             error = getString(R.string.error_field_required);
-        } else if (!title.matches("[A-Za-z0-9?.%,\\- ]*")) {
+        } else if (!title.matches("[A-Za-z0-9!?.%,\\- ]*")) {
             error = getString(R.string.error_field_invalid_char);
         } else if (title.length() > 30) {
             error = getString(R.string.error_field_length);
@@ -183,7 +182,7 @@ public class TypeFragment extends ListFragment {
     }
 
     public interface OnTypeInteractionListener {
-        public void onTypeInteraction(String type);
+        void onTypeInteraction(String type);
     }
 
     /**

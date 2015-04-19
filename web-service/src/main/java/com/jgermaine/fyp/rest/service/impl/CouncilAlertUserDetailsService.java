@@ -2,10 +2,13 @@ package com.jgermaine.fyp.rest.service.impl;
 
 import java.util.Collection;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.PersistenceException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,7 +43,7 @@ public class CouncilAlertUserDetailsService implements UserDetailsService {
 		return councilAlertUserDao.getByEmail(email);
 	}
 
-	public void createNewUser(User newUser) {
+	public void createNewUser(User newUser) throws DataIntegrityViolationException, EntityExistsException, PersistenceException, Exception {
 		CouncilAlertUser user = new CouncilAlertUser();
 		user.setLogin(newUser.getEmail());
 		user.setSalt(KeyGenerators.string().generateKey());
@@ -50,11 +53,11 @@ public class CouncilAlertUserDetailsService implements UserDetailsService {
 		if (newUser instanceof Employee)
 			user.addRole(new Role("ADMIN", user));
 
-		councilAlertUserDao.createUser(user);
+		councilAlertUserDao.createUser(user, newUser);
 	}
 
 	public void removeUser(User user) throws NoResultException, NonUniqueResultException, Exception {
-		councilAlertUserDao.remove(councilAlertUserDao.getByEmail(user.getEmail()));
+		councilAlertUserDao.remove(councilAlertUserDao.getByEmail(user.getEmail()), user);
 	}
 
 	public void updateUser(CouncilAlertUser user) {

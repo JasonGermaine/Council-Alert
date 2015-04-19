@@ -30,7 +30,6 @@ import java.util.Date;
  * Created by jason on 04/12/14.
  */
 public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report>> {
-    private String mURL;
     private Activity mActivity;
     private ProgressDialog dialog;
     private Cache mCache;
@@ -56,7 +55,7 @@ public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report
         dialog.show();
     }
 
-    protected ProgressDialog getDialog() {
+    private ProgressDialog getDialog() {
         return dialog;
     }
 
@@ -73,7 +72,7 @@ public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report
     @Override
     protected ResponseEntity<Report> doInBackground(String... params) {
         try {
-            mURL = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
+            String url = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
             RestTemplate restTemplate = new RestTemplate(true);
             HttpHeaders headers = new HttpHeaders();
             Log.i("BEARER", mCache.getOAuthToken());
@@ -86,7 +85,7 @@ public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report
 
             HttpEntity<?> entity = new HttpEntity<Object>(null, headers);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            return restTemplate.exchange(mURL, HttpMethod.GET, entity, Report.class);
+            return restTemplate.exchange(url, HttpMethod.GET, entity, Report.class);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<Report>(e.getStatusCode());
         } catch (RestClientException e) {
@@ -101,6 +100,6 @@ public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report
     }
 
     public interface OnReportRetrievedListener {
-        public void OnReportRetrieved(ResponseEntity<Report> response);
+        void OnReportRetrieved(ResponseEntity<Report> response);
     }
 }

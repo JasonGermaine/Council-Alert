@@ -65,7 +65,6 @@ public class CitizenController {
 				throw new ModelValidationException(result.getFieldErrorCount());
 
 			citizen.setEmail(citizen.getEmail().toLowerCase());
-			citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_USER_CREATION),
 					HttpStatus.CREATED);

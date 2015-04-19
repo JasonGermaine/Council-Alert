@@ -114,6 +114,6 @@ public class UpdateReportEntriesTask extends AsyncTask<Void, Void, ResponseEntit
     }
 
     public interface OnRetrieveResponseListener {
-        public void onResponseReceived(ResponseEntity<Message> status);
+        void onResponseReceived(ResponseEntity<Message> status);
     }
 }

@@ -9,25 +9,20 @@ import android.content.SharedPreferences;
 public class Cache {
     private static Cache cache;
 
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private Context _context;
-
-    // Shared pref mode
-    private int PRIVATE_MODE = 0;
+    private final SharedPreferences pref;
+    private final SharedPreferences.Editor editor;
 
     // Sharedpref file name
     private static final String PREF_NAME = "CouncilAlertCache";
 
     // All Shared Preferences Keys
-    public static final String KEY_EMAIL = "email";
-    public static final String KEY_DEVICE = "deviceId";
-    public static final String KEY_TOKEN = "oauth-token";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_DEVICE = "deviceId";
+    private static final String KEY_TOKEN = "oauth-token";
 
     // Constructor
     private Cache(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        pref = context.getSharedPreferences(PREF_NAME, 0);
         editor = pref.edit();
     }
 

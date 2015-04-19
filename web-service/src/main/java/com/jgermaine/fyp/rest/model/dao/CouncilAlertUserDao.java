@@ -1,14 +1,18 @@
 package com.jgermaine.fyp.rest.model.dao;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
+import javax.persistence.PersistenceException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
+import com.jgermaine.fyp.rest.model.User;
 
 @Repository
 @Transactional
@@ -23,11 +27,14 @@ public class CouncilAlertUserDao {
 
 	}
 
-	public void createUser(CouncilAlertUser user) {
+	public void createUser(CouncilAlertUser user, User newUser) throws EntityExistsException, PersistenceException,
+			DataIntegrityViolationException, Exception {
 		entityManager.persist(user);
+		entityManager.persist(newUser);
 	}
 
-	public void remove(CouncilAlertUser user) {
+	public void remove(CouncilAlertUser user, User usr) {
+		entityManager.remove(usr);
 		entityManager.remove(user);
 	}
 

@@ -46,7 +46,7 @@
         android:layout_weight="1"
         android:maxLength="255"
         android:gravity="top"
-        android:hint="Add Comment.."
+        android:hint="@string/comment_label"
         android:inputType="textMultiLine" />
     <LinearLayout
         android:id="@+id/image_selectors"
@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/capture"
                 android:layout_centerHorizontal="true"
-                android:text="Camera" />
+                android:text="@string/camera" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/gallery"
                 android:layout_centerHorizontal="true"
-                android:text="Gallery" />
+                android:text="@string/gallery" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

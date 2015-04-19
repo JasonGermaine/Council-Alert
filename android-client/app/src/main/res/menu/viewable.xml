@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.jgermaine.fyp.android_client.activity.CommentActivity" >
     <item android:id="@+id/action_finish_view"
-        android:title="DONE"
+        android:title="@string/done"
         android:orderInCategory="1"
         android:showAsAction="always" />
 </menu>

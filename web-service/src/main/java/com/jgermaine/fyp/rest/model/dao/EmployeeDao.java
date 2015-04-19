@@ -2,12 +2,10 @@ package com.jgermaine.fyp.rest.model.dao;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,7 +17,6 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.Employee;
@@ -37,14 +34,6 @@ public class EmployeeDao {
 	// An EntityManager will be automatically injected from entityManagerFactory
 	@PersistenceContext
 	private EntityManager entityManager;
-
-	/**
-	 * Create new Employee in the database.
-	 */
-	public void create(Employee employee) throws EntityExistsException, PersistenceException,
-		DataIntegrityViolationException, Exception {
-		entityManager.persist(employee);
-	}
 
 	/**
 	 * Delete the Employee from the database.

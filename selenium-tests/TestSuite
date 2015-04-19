@@ -9,6 +9,7 @@
 <table id="suiteTable" cellpadding="1" cellspacing="1" border="1" class="selenium"><tbody>
 <tr><td><b>Test Suite</b></td></tr>
 <tr><td><a href="LoginTestCase">LoginTestCase</a></td></tr>
+<tr><td><a href="LoginTestFailureTestCase">LoginTestFailureTestCase</a></td></tr>
 <tr><td><a href="RegisterTestCase">RegisterSuccessTestCase</a></td></tr>
 <tr><td><a href="RegisterFailureTestCase">RegisterFailureTestCase</a></td></tr>
 <tr><td><a href="AssignUnassignTaskTestCase">AssignUnassignTaskTestCase</a></td></tr>

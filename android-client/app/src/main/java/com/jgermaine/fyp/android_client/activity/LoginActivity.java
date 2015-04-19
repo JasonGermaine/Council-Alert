@@ -130,11 +130,23 @@ public class LoginActivity extends Activity
 
         if (isValid(email, password, passwordConfirm)) {
             if (mLoginFlag) {
-                new OAuthTask(email, password, this, true).execute();
+                startOauthTask(email, password, true);
             } else {
-                new RegisterCitizenTask(email, password, this).execute();
+                startRegisterTask(email, password);
             }
         }
+    }
+
+    public void startOauthTask(String email, String password, boolean isLogin) {
+        new OAuthTask(email, password, this, isLogin).execute();
+    }
+
+    public void startUserRetrieveTask(String email, String token, boolean showProgress) {
+        new UserRetrieveTask(email, token, this, showProgress).execute();
+    }
+
+    public void startRegisterTask(String email, String password) {
+        new RegisterCitizenTask(email, password, this).execute();
     }
 
     private boolean isValid(String email, String password, String passwordConfirm) {
@@ -206,7 +218,7 @@ public class LoginActivity extends Activity
         if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             cache.putOAuthToken(token);
             if (isLogin) {
-                new UserRetrieveTask(email, token, this, true).execute();
+                startUserRetrieveTask(email, token, true);
             } else {
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 startActivity(intent);
@@ -226,7 +238,7 @@ public class LoginActivity extends Activity
 
         if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
             setUser(citizen);
-            new OAuthTask(citizen.getEmail(), citizen.getPassword(), this, false).execute();
+            startOauthTask(citizen.getEmail(), citizen.getPassword(), false);
         } else {
             String message = response.getStatusCode() == HttpStatus.BAD_REQUEST ?
                     "Invalid data entered" : response.getBody().getMessage();

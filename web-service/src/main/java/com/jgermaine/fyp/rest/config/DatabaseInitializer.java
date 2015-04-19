@@ -168,7 +168,7 @@ public class DatabaseInitializer {
 
 	private void insertNewEmployee(Employee employee) {
 		try {
-			employeeService.addEmployee(employee);
+			//employeeService.addEmployee(employee);
 			councilAlertUserService.createNewUser(employee);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -177,7 +177,7 @@ public class DatabaseInitializer {
 
 	private void insertNewCitizen(Citizen citizen) {
 		try {
-			citizenService.addCitizen(citizen);
+			//citizenService.addCitizen(citizen);
 			councilAlertUserService.createNewUser(citizen);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);

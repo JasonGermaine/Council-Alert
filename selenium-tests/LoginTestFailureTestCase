@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://council-alert.cloudapp.net/" />
+<title>LoginTestFailureTestCase</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">LoginTestFailureTestCase</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=email</td>
+	<td>admin@council-alert.com</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=key</td>
+	<td>incorrectPassword</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=span.character-checkbox</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=btn-login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//form[@id='login-form']/div[4]/div</td>
+	<td>Incorrect credentials entered.</td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

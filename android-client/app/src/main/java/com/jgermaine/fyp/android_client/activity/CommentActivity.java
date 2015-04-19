@@ -63,6 +63,7 @@ public class CommentActivity extends Activity {
 
         if (bundleContains(bundle, EntryFragment.VIEW_TAG)) {
             if (bundle.getBoolean(EntryFragment.VIEW_TAG)) {
+                isViewable = true;
                 findViewById(R.id.image_selectors).setVisibility(View.GONE);
                 mComment.setKeyListener(null);
             } else {
@@ -90,7 +91,7 @@ public class CommentActivity extends Activity {
      * @param key
      * @return
      */
-    public boolean bundleContains(Bundle bundle, String key) {
+    private boolean bundleContains(Bundle bundle, String key) {
         try {
             return bundle.containsKey(key);
         } catch (NullPointerException e) {
@@ -135,7 +136,7 @@ public class CommentActivity extends Activity {
      *
      * @param uri
      */
-    protected void sendCameraIntent(Uri uri) {
+    private void sendCameraIntent(Uri uri) {
         Intent i = new Intent("android.media.action.IMAGE_CAPTURE");
         i.putExtra("output", uri);
         i.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION,
@@ -146,7 +147,7 @@ public class CommentActivity extends Activity {
     /**
      * Sends an intent to the device gallery
      */
-    protected void sendGalleryIntent() {
+    private void sendGalleryIntent() {
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_IMAGE_GALLERY);
     }
@@ -162,8 +163,6 @@ public class CommentActivity extends Activity {
                     galleryAddPic(mImagePath);
                 }
                 mImageBytes = createBitmap(mImagePath);
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                return;
             }
         } catch (NullPointerException | IOException | OutOfMemoryError e) {
             DialogUtil.showToast(this, "Failed to add the image. An unexpected error has occurred");
@@ -176,7 +175,7 @@ public class CommentActivity extends Activity {
      * @param data
      * @return path to image
      */
-    protected String readImageFromGallery(Intent data) throws IOException {
+    private String readImageFromGallery(Intent data) throws IOException {
         String path;
         InputStream stream = getContentResolver().openInputStream(data.getData());
         stream.close();
@@ -192,7 +191,7 @@ public class CommentActivity extends Activity {
      * @param bitmap
      * @return bytes
      */
-    public byte[] getBytesFromBitmap(Bitmap bitmap) {
+    private byte[] getBytesFromBitmap(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         return stream.toByteArray();
@@ -203,7 +202,7 @@ public class CommentActivity extends Activity {
      *
      * @param path
      */
-    public void galleryAddPic(String path) {
+    private void galleryAddPic(String path) {
         if (path != null) {
             // Create and execute the intent to write to gallery
             Intent i = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
@@ -219,7 +218,7 @@ public class CommentActivity extends Activity {
      * @param path
      * @return bytes
      */
-    protected byte[] createBitmap(String path) throws NullPointerException, IOException, OutOfMemoryError {
+    private byte[] createBitmap(String path) throws NullPointerException, IOException, OutOfMemoryError {
         byte[] bytes;
         File image = new File(path);
 
@@ -285,19 +284,16 @@ public class CommentActivity extends Activity {
             entry.setImage(mImageBytes);
         }
 
-        if (mComment.getText().toString() != null) {
-            entry.setComment(mComment.getText().toString());
-        }
+        entry.setComment(mComment.getText().toString());
 
         return entry;
     }
 
-    public Bitmap decodeBitmap(String image, int width, int height) {
+    private Bitmap decodeBitmap(String image, int width, int height) {
         byte[] decodedByte = Base64.decode(image, 0);
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = calculateSize(options, width, height);
-        Bitmap bmp = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length, options);
-        return bmp;
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length, options);
     }
 
     /**
@@ -308,7 +304,7 @@ public class CommentActivity extends Activity {
      * @param reqHeight
      * @return bitmap size
      */
-    public int calculateSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private int calculateSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int size = 1;

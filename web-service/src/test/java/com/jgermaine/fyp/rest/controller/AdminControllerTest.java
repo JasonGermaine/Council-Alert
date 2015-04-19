@@ -119,7 +119,6 @@ public class AdminControllerTest {
 	@Test
 	public void testAddEmployeeSuccess() throws Exception {
 
-		Mockito.doNothing().when(employeeService).addEmployee(Mockito.any(Employee.class));
 		Mockito.doNothing().when(councilAlertUserService).createNewUser(Mockito.any(User.class));
 
 		// @formatter:off
@@ -150,8 +149,8 @@ public class AdminControllerTest {
 	public void testNonUniqueEmployeeFailure() throws Exception {
 
 		Employee emp = TestUtil.getDefaultEmp();
-		Mockito.doThrow(DataIntegrityViolationException.class).when(employeeService)
-				.addEmployee(Mockito.any(Employee.class));
+		Mockito.doThrow(DataIntegrityViolationException.class).when(councilAlertUserService)
+				.createNewUser(Mockito.any(Employee.class));
 
 		// @formatter:off
 		mvc.perform(

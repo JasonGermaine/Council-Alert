@@ -100,6 +100,6 @@ public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<
     }
 
     public interface OnRetrieveCitizenReportsListener {
-        public void onReportsReceived(ResponseEntity<Report[]> response);
+        void onReportsReceived(ResponseEntity<Report[]> response);
     }
 }
