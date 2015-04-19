@@ -88,16 +88,21 @@ councilAlertApp.config( function($routeProvider, $locationProvider, $httpProvide
 	}).when('/report', {
 		templateUrl : '/report/displayReport.html',
 		controller : 'report'
-	}).when('/citizen', {
+	}).when('/user', {
 		templateUrl : '/citizen/displayCitizen.html',
 		controller : 'citizen'
 	}).when('/profile', {
 		templateUrl : '/employee/profile.html',
 		controller : 'profile'
-	}).otherwise('/');
-
-	$locationProvider.html5Mode(true);
-	
-});
+	}).otherwise("/");
+}).run(function($rootScope, $location) {
+    $rootScope.$on( "$routeChangeStart", function(event, next, current) {
+      if ($rootScope.authenticated == false) {
+        if ( next.templateUrl !== "login.html") {
+        	$location.path("/login");
+        }
+      }
+    });
+  });
 
 

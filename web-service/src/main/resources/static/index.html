@@ -32,8 +32,6 @@
 	font-size: 20px;
 }
 </style>
-
-<base href="/">
 </head>
 
 <body ng-app="councilalert" ng-cloak class="ng-cloak">
@@ -50,11 +48,11 @@
 						class="icon-bar"></span>
 				</button>
 
-				<a ng-show="authenticated" class="navbar-brand" href="/"> <img
+				<a ng-show="authenticated" class="navbar-brand" href="#/"> <img
 					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
 					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
 					class="pull-right">Council Alert</span>
-				</a> <a ng-show="!authenticated" class="navbar-brand" href="/login">
+				</a> <a ng-show="!authenticated" class="navbar-brand" href="#/login">
 					<img
 					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
 					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
@@ -64,18 +62,18 @@
 
 			<!-- Top Menu Items -->
 			<ul class="nav navbar-right top-nav">
-				<li ng-show="!authenticated"><a href="/login"><i
+				<li ng-show="!authenticated"><a href="#/login"><i
 						class="fa fa-fw fa-sign-in"></i>Login</a></li>
 
-				<li ng-show="authenticated" class="dropdown"><a href="#"
+				<li ng-show="authenticated" class="dropdown"><a href
 					class="dropdown-toggle" data-toggle="dropdown" id="currenUser"><i
 						class="fa fa-user"></i> <span ng-if="user.firstName" id="currentUserName">{{user.firstName}} {{user.lastName}} </span> <b
 						class="caret"></b></a>
 					<ul class="dropdown-menu">
-						<li><a href="/profile"><i class="fa fa-fw fa-user"></i>
+						<li><a href="#/profile"><i class="fa fa-fw fa-user"></i>
 								Profile</a></li>
 						<li class="divider"></li>
-						<li ng-click="logout()"><a href="/login"><i
+						<li ng-click="logout()"><a href="#/login"><i
 								class="fa fa-fw fa-power-off"></i> Log Out</a></li>
 					</ul></li>
 			</ul>
@@ -83,13 +81,13 @@
 			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul ng-show="authenticated" class="nav navbar-nav side-nav">
-					<li><a href="/"><i class="fa fa-fw fa-dashboard"></i>
+					<li><a href="#/"><i class="fa fa-fw fa-dashboard"></i>
 							Dashboard</a></li>
-					<li><a href="/employee"><i class="fa fa-fw fa-street-view"></i>
+					<li><a href="#/employee"><i class="fa fa-fw fa-street-view"></i>
 							Employees</a></li>
-					<li><a href="/report"><i class="fa fa-fw fa-wrench"></i>
+					<li><a href="#/report"><i class="fa fa-fw fa-wrench"></i>
 							Tickets</a></li>
-					<li><a href="/citizen"> <i class="fa fa-fw fa-users"></i>
+					<li><a href="#/user"> <i class="fa fa-fw fa-users"></i>
 							Users
 					</a></li>
 				</ul>

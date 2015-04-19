@@ -46,11 +46,14 @@ public class OAuth2ServerConfiguration {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
+					
 					.antMatchers("/api/report/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/user/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/employee/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/citizen/report").access("#oauth2.hasScope('write')")
-					.antMatchers("/api/admin/**").access("#oauth2.hasScope('trust') and hasRole('ADMIN')");
+					.antMatchers("/api/admin/**").access("#oauth2.hasScope('trust') and hasRole('ADMIN')")
+					.antMatchers("/displayReport.html", "/displayEmployee.html",
+							"/addEmployee.html", "/profile.html").access("#oauth2.hasScope('trust') and hasRole('ADMIN')");
 			// @formatter:on
 		}
 
