@@ -1,34 +1,17 @@
 package com.jgermaine.fyp.android_client.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Location;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,23 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.fragment.EntryFragment;
 import com.jgermaine.fyp.android_client.model.Report;
-import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.FileUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
-
-import org.apache.commons.io.FileUtils;
-import org.springframework.util.StringUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.xml.validation.Validator;
 
 public abstract class LocationActivity extends FragmentActivity
         implements
@@ -116,6 +83,7 @@ public abstract class LocationActivity extends FragmentActivity
             }
             mCachedLocation = mCurrentLocation;
         } catch (IllegalStateException ise) {
+            // No longer connected to Location Client
             Log.w("LOCATION CLIENT", "No longer connected");
         }
     }
@@ -170,6 +138,7 @@ public abstract class LocationActivity extends FragmentActivity
     }
 
     public void flip(boolean flipToComments) {
+        // Determine which view we are to flip to
         if (flipToComments) {
             mFlipper.setInAnimation(this, R.anim.in_from_right);
             mFlipper.setOutAnimation(this, R.anim.out_to_left);

@@ -14,6 +14,9 @@
     <string name="title_activity_comment">Comment</string>
 
     <string name="no_connnection">No Network Connection Available</string>
+    <string name="unexpected_error">An unexpected error has occurred.</string>
+    <string name="no_employee_report">You have no assigned task.</string>
+    <string name="invalid_credentials">Invalid credentials entered</string>
 
     <!-- REST Activity -->
     <string name="report_id">ID</string>

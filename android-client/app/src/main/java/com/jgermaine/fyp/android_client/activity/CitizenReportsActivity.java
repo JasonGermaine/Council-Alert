@@ -2,16 +2,12 @@ package com.jgermaine.fyp.android_client.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.jgermaine.fyp.android_client.R;
-import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.adapter.ReportAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Report;
@@ -21,10 +17,12 @@ import com.jgermaine.fyp.android_client.util.DialogUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+/**
+ * @author JasonGermaine
+ * Activity to display reports for the currently logged in user
+ */
 public class CitizenReportsActivity extends Activity
         implements GetCitizenReportsTask.OnRetrieveCitizenReportsListener {
 
@@ -36,6 +34,8 @@ public class CitizenReportsActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_citizen_reports);
 
+        getActionBar().setIcon(android.R.color.transparent);
+
         ListView reportList = (ListView) findViewById(android.R.id.list);
         mAdapter = new ReportAdapter(this, R.layout.row_report);
         reportList.setAdapter(mAdapter);
@@ -44,22 +44,27 @@ public class CitizenReportsActivity extends Activity
 
     }
 
+    private void logout() {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void addReportsToList(Report[] reports) {
+        mAdapter.addAll(Arrays.asList(reports));
+        mAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onReportsReceived(ResponseEntity<Report[]> response) {
-        if (response.getStatusCode() == HttpStatus.OK) {
-            if (response.getBody() != null) {
-                ArrayList<Report> reports = new ArrayList<>(Arrays.asList(response.getBody()));
-                mAdapter.addAll(reports);
-                mAdapter.notifyDataSetChanged();
-            }
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            addReportsToList(response.getBody());
         } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             DialogUtil.showToast(this, HttpStatus.UNAUTHORIZED.getReasonPhrase());
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
+            logout();
         } else {
-            DialogUtil.showToast(this, "An unexpected error has occurred.");
+            DialogUtil.showToast(this, getString(R.string.unexpected_error));
         }
     }
 

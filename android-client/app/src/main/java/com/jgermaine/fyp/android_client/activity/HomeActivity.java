@@ -3,7 +3,6 @@ package com.jgermaine.fyp.android_client.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +15,14 @@ import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.request.GetReportTask;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * @author JasonGermaine
+ * Landing page activity upon login/registered
+ */
 public class HomeActivity extends Activity
         implements GetReportTask.OnReportRetrievedListener {
 
@@ -101,20 +104,19 @@ public class HomeActivity extends Activity
 
     @Override
     public void OnReportRetrieved(ResponseEntity<Report> response) {
-        int status = response.getStatusCode().value();
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             Report report = response.getBody();
             if (report != null) {
                 retrieveReport(Integer.toString(report.getId()));
             } else {
-                showErrorToast("You have no assigned reports.");
+                showErrorToast(getString(R.string.no_employee_report));
             }
-        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             logout();
-        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_BAD_REQUEST) {
-            showErrorToast("You have no assigned reports.");
+        } else if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+            showErrorToast(getString(R.string.no_employee_report));
         } else {
-            showErrorToast("An unexpected error has occurred.");
+            showErrorToast(getString(R.string.unexpected_error));
         }
     }
 

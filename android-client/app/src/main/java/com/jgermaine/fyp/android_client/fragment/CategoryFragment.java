@@ -55,8 +55,8 @@ public class CategoryFragment extends Fragment {
         try {
             mListener = (OnCategoryInteractionListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement CategoryInteractionListener");
+            // Developer Error
+            throw new ClassCastException(activity.toString() + " must implement CategoryInteractionListener");
         }
     }
 

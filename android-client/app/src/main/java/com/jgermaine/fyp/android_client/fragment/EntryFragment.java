@@ -15,20 +15,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.jgermaine.fyp.android_client.R;
-
 import com.jgermaine.fyp.android_client.activity.CommentActivity;
 import com.jgermaine.fyp.android_client.activity.RetrieveReportActivity;
 import com.jgermaine.fyp.android_client.adapter.EntryAdapter;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
-import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Entry;
 import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.UpdateReportEntriesTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
@@ -72,6 +68,7 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
         final ListView entries = (ListView) view.findViewById(android.R.id.list);
         mAdapter = new EntryAdapter(getActivity(), R.layout.row_entry);
 
+        // If this is a retrieve activity, then we need load previous comments
         if (mActivity != null && mActivity instanceof RetrieveReportActivity) {
             final Report report = ((RetrieveReportActivity) mActivity).getReport();
             populateEntries(report);

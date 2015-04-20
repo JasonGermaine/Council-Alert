@@ -55,6 +55,7 @@ councilAlertApp.factory('DistanceFactory', function() {
 	};
 });
 
+// This serviced is used to store a shortcut key to determine which data to load
 councilAlertApp.service('dashboardService', function() {
 	  var key = "";
 

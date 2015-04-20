@@ -27,6 +27,11 @@ public class CouncilAlertApplication extends Application {
         mUser = null;
     }
 
+    /**
+     * Determines if the device has a network connection
+     * @param context
+     * @return
+     */
     public boolean isNetworkConnected(Context context) {
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -16,7 +15,6 @@ import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

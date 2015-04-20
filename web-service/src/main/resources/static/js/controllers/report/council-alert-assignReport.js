@@ -2,6 +2,7 @@ angular.module('councilalert')
 	.controller('assignReport', function($rootScope, $scope, $http, $location, $route, LocalStorage, 
 			DistanceFactory, $modalInstance, reports, employee) {
 
+		// Append the distance field onto each object
 		angular.forEach(reports, function(report) {
 	    	  report.distance = parseFloat(
 	    			  (DistanceFactory.getDistanceBetweenLocations(

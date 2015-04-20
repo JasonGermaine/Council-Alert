@@ -1,9 +1,5 @@
 package com.jgermaine.fyp.android_client.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -12,47 +8,39 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Citizen;
-import com.jgermaine.fyp.android_client.model.Employee;
 import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.User;
 import com.jgermaine.fyp.android_client.request.OAuthTask;
 import com.jgermaine.fyp.android_client.request.RegisterCitizenTask;
 import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
-import com.jgermaine.fyp.android_client.util.ConnectionUtil;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author JasonGermaine
+ * Activity to handle login/register
+ */
 public class LoginActivity extends Activity
         implements LoaderCallbacks<Cursor>,
         OAuthTask.OnTokenReceivedListener,
@@ -110,6 +98,9 @@ public class LoginActivity extends Activity
         getLoaderManager().initLoader(0, null, this);
     }
 
+    /**
+     * Toggle between Login and Register
+     */
     private void toggleUI() {
         mClickableText.setText(mLoginFlag ? getString(R.string.action_register_new) : getString(R.string.action_back_login));
         mDisplayText.setText(mLoginFlag ? getString(R.string.ask_new_user) : getString(R.string.ask_registered));
@@ -152,6 +143,14 @@ public class LoginActivity extends Activity
         new RegisterCitizenTask(email, password, this).execute();
     }
 
+    /**
+     * Validates all form fields
+     *
+     * @param email
+     * @param password
+     * @param passwordConfirm
+     * @return is valid form
+     */
     private boolean isValid(String email, String password, String passwordConfirm) {
         boolean isValid = false;
 
@@ -218,7 +217,8 @@ public class LoginActivity extends Activity
 
     @Override
     public void onTokenReceived(String token, String email, int status, boolean isLogin) {
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (status == HttpStatus.OK.value()) {
+            // store oauth token in cache
             cache.putOAuthToken(token);
             if (isLogin) {
                 startUserRetrieveTask(email, token, true);
@@ -228,7 +228,7 @@ public class LoginActivity extends Activity
                 finish();
             }
         } else {
-            String message = status <= HttpCodeUtil.CLIENT_ERROR_CODE_LIMIT ? getString(R.string.error_incorrect_login) : "An unexpected error occurred";
+            String message = status != HttpStatus.INTERNAL_SERVER_ERROR.value() ? getString(R.string.error_incorrect_login) : getString(R.string.unexpected_error);
             setErrorMessage(mPasswordView, message);
             mPasswordView.setText("");
         }
@@ -237,15 +237,11 @@ public class LoginActivity extends Activity
 
     @Override
     public void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response) {
-        int status = response.getStatusCode().value();
-
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (response.getStatusCode() == HttpStatus.CREATED) {
             setUser(citizen);
             startOauthTask(citizen.getEmail(), citizen.getPassword(), false);
         } else {
-            String message = response.getStatusCode() == HttpStatus.BAD_REQUEST ?
-                    "Invalid data entered" : response.getBody().getMessage();
-            setErrorMessage(mEmailView, message);
+            setErrorMessage(mEmailView, response.getBody().getMessage());
             resetPasswordFields();
         }
     }
@@ -259,7 +255,7 @@ public class LoginActivity extends Activity
             finish();
         } else {
             cache.clearCache();
-            Toast.makeText(this, "An error occurred with retrieving user details", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.unexpected_error), Toast.LENGTH_SHORT).show();
             resetPasswordFields();
         }
     }

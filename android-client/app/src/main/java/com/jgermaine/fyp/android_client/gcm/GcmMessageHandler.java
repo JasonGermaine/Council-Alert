@@ -52,7 +52,6 @@ public class GcmMessageHandler extends IntentService {
         mes = extras.getString("reportId");
         showToast();
         showNotification(mes);
-        Log.i("GCM", "Received : (" + messageType + ")  " + extras.getString("title"));
 
         GcmBroadcastReceiver.completeWakefulIntent(intent);
 

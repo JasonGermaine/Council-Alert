@@ -32,8 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Represents an asynchronous login/registration task used to authenticate
- * the user.
+ * Retrieves all reports for a given Citizen
  */
 public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<Report[]>> {
 
@@ -52,8 +51,8 @@ public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<
         try {
             mListener = (OnRetrieveCitizenReportsListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnTokenReceivedListener");
+            // developer error
+            throw new ClassCastException(activity.toString() + " must implement interface");
         }
     }
 
@@ -71,7 +70,6 @@ public class GetCitizenReportsTask extends AsyncTask<Void, Void, ResponseEntity<
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
-        Log.i("BEARER" , mCache.getOAuthToken());
         headers.setAuthorization(new HttpAuthentication() {
             @Override
             public String getHeaderValue() {

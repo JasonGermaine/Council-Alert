@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Created by jason on 03/02/15.
+ * @author JasonGermaine
+ *
+ * A key value cache implementation
  */
 public class Cache {
     private static Cache cache;
@@ -20,13 +22,12 @@ public class Cache {
     private static final String KEY_DEVICE = "deviceId";
     private static final String KEY_TOKEN = "oauth-token";
 
-    // Constructor
     private Cache(Context context) {
         pref = context.getSharedPreferences(PREF_NAME, 0);
         editor = pref.edit();
     }
 
-    // Method to enforce singleton pattern
+    // Enforce singleton pattern
     public static synchronized Cache getCurrentCache(Context context) {
         if (cache == null) {
             cache = new Cache(context);

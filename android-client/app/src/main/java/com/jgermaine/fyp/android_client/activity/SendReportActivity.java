@@ -1,22 +1,17 @@
 package com.jgermaine.fyp.android_client.activity;
 
 
-
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-
-import android.view.View;
-
-import android.widget.ViewFlipper;
-
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.fragment.CategoryFragment;
@@ -26,13 +21,15 @@ import com.jgermaine.fyp.android_client.model.Message;
 import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.PostReportTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
+/**
+ * @author JasonGermaine
+ * Activity to submit a new issue
+ */
 public class SendReportActivity extends LocationActivity implements
         CategoryFragment.OnCategoryInteractionListener,
         TypeFragment.OnTypeInteractionListener,
@@ -226,11 +223,10 @@ public class SendReportActivity extends LocationActivity implements
 
     @Override
     public void onResponseReceived(ResponseEntity<Message> response) {
-        int status = response.getStatusCode().value();
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             DialogUtil.showToast(this, response.getBody().getMessage());
             finish();
-        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

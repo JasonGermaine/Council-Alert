@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +20,17 @@ import com.jgermaine.fyp.android_client.model.Report;
 import com.jgermaine.fyp.android_client.request.GetReportTask;
 import com.jgermaine.fyp.android_client.request.PostReportTask;
 import com.jgermaine.fyp.android_client.util.DialogUtil;
-import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 import com.jgermaine.fyp.android_client.util.LocationUtil;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+/**
+ * @author JasonGermaine
+ * Activity to retrieve and complete a task for an employee
+ */
 public class RetrieveReportActivity extends LocationActivity implements
         PostReportTask.OnResponseListener,
         GetReportTask.OnReportRetrievedListener {
@@ -67,7 +70,6 @@ public class RetrieveReportActivity extends LocationActivity implements
             String reportId = getIntent().getExtras().getString("reportId");
             new GetReportTask(this).execute(reportId);
         } catch (NullPointerException e) {
-            Log.d("Report ID Retriever", "No intent data detected");
             finish();
         }
     }
@@ -146,6 +148,9 @@ public class RetrieveReportActivity extends LocationActivity implements
         super.onLocationChanged(location);
         if (getReport() != null) {
             float distance = location.distanceTo(mReportLocation);
+
+            // Uncomment the following to disable report completion from a certain distance
+
             //findViewById(R.id.action_complete).setVisibility(distance < 1000 ? View.VISIBLE : View.GONE);
             //findViewById(R.id.action_nav).setVisibility(distance < 1000 ? View.GONE : View.VISIBLE);
         }
@@ -154,7 +159,7 @@ public class RetrieveReportActivity extends LocationActivity implements
     @Override
     public void OnReportRetrieved(ResponseEntity<Report> response) {
         int status = response.getStatusCode().value();
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (status == HttpStatus.OK.value()) {
             Report report = response.getBody();
             if (report != null) {
                 setReportLocation(report.getLatitude(), report.getLongitude());
@@ -164,13 +169,13 @@ public class RetrieveReportActivity extends LocationActivity implements
                 setReport(report);
                 setupCommentFragment();
             } else {
-                showErrorToast("An unexpected error has occurred.");
+                showErrorToast(getString(R.string.unexpected_error));
             }
-        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
-            showErrorToast("Unauthorized.");
+        } else if (status == HttpStatus.UNAUTHORIZED.value()) {
+            showErrorToast(HttpStatus.UNAUTHORIZED.getReasonPhrase());
             finishActivity(LoginActivity.class);
         } else {
-            showErrorToast("An unexpected error has occurred.");
+            showErrorToast(getString(R.string.unexpected_error));
         }
     }
 
@@ -191,15 +196,20 @@ public class RetrieveReportActivity extends LocationActivity implements
         int status = response.getStatusCode().value();
         DialogUtil.showToast(this, response.getBody().getMessage());
 
-        if (status <= HttpCodeUtil.SUCCESS_CODE_LIMIT) {
+        if (status == HttpStatus.OK.value()) {
+            // Locally unassign the report from the employee
             ((Employee)((CouncilAlertApplication) getApplication()).getUser()).setReport(null);
             ((Employee)((CouncilAlertApplication) getApplication()).getUser()).setReportId(null);
             finishActivity(HomeActivity.class);
-        } else if (status == HttpCodeUtil.CLIENT_ERROR_CODE_UNAUTHORIZED) {
+        } else if (status == HttpStatus.UNAUTHORIZED.value()) {
             finishActivity(LoginActivity.class);
         }
     }
 
+    /**
+     * Finish current Activity and go to specified class
+     * @param clazz
+     */
     private void finishActivity(Class clazz) {
         Intent intent = new Intent(getApplicationContext(), clazz);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -75,7 +75,6 @@ public class GetReportTask extends AsyncTask<String, Void, ResponseEntity<Report
             String url = String.format("%s/report/%s", ConnectionUtil.API_URL, params[0]);
             RestTemplate restTemplate = new RestTemplate(true);
             HttpHeaders headers = new HttpHeaders();
-            Log.i("BEARER", mCache.getOAuthToken());
             headers.setAuthorization(new HttpAuthentication() {
                 @Override
                 public String getHeaderValue() {
