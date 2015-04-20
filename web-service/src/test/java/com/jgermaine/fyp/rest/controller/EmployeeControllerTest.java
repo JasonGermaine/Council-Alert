@@ -89,7 +89,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void testGetAllEmployeesSuccess() throws Exception {
 
-		when(employeeService.getEmployees()).thenReturn(Arrays.asList(employee));
+		when(employeeService.getEmployees(anyInt())).thenReturn(Arrays.asList(employee));
 
 		// @formatter:off
 		mvc.perform(get("/api/employee/")).andExpect(status().isOk())
@@ -100,7 +100,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void testGetAssignedEmployeesSuccess() throws Exception {
 
-		when(employeeService.getAssignedEmployees()).thenReturn(Arrays.asList(employee));
+		when(employeeService.getAssignedEmployees(anyInt())).thenReturn(Arrays.asList(employee));
 
 		// @formatter:off
 		mvc.perform(get("/api/employee/assigned")).andExpect(status().isOk())
@@ -111,7 +111,7 @@ public class EmployeeControllerTest {
 	@Test
 	public void testGetUnassignedEmployeesSuccess() throws Exception {
 
-		when(employeeService.getUnassignedEmployees()).thenReturn(Arrays.asList(employee));
+		when(employeeService.getUnassignedEmployees(anyInt())).thenReturn(Arrays.asList(employee));
 
 		// @formatter:off
 		mvc.perform(get("/api/employee/unassigned")).andExpect(status().isOk())

@@ -3,24 +3,11 @@ angular.module('councilalert')
 				$modal, dashboardService) {
 
 		$scope.reports = [];
-		$scope.filteredReports = [];
-		$scope.currentPage = 1;
-		$scope.numPerPage = 10;
-		$scope.maxSize = 10;
-		
-		$scope.$watch('currentPage + numPerPage', function() {
-		    $scope.filterResults();
-		});
-		
-		$scope.filterResults = function() {
-			var begin = (($scope.currentPage - 1) * $scope.numPerPage);
-		    var end = begin + $scope.numPerPage;
-			$scope.filteredReports = $scope.reports.slice(begin, end);
-		};
-		
+		$scope.sortUrl = '';
 		$scope.reportError = false;
 		$scope.errorMessage = '';
 		$scope.sortType = '';
+		$scope.noMoreData = false;
 
 		$scope.showEmp = function(email) {
 			$http.get("api/employee/" + email, LocalStorage.getHeader())
@@ -51,8 +38,12 @@ angular.module('councilalert')
 			$http.get(url, LocalStorage.getHeader())
 				.success(function(response) {
 					$scope.reports = response;
-					$scope.filterResults();
 					$scope.resetError();
+					if (response.length < 30) {
+						$scope.noMoreData = true;
+					} else {
+						$scope.noMoreData = false;
+					}
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						$scope.logout();
@@ -68,7 +59,7 @@ angular.module('councilalert')
 					$scope.reportId = report.id;
 					$scope.employees = data;
 					$scope.openEmp(report);
-					$scope.resetError();
+					$scope.resetError();					
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						$scope.logout();
@@ -128,22 +119,26 @@ angular.module('councilalert')
 		};
 
 		$scope.getAll = function() {
+			$scope.sortUrl = "api/report/all";
 			$scope.getReports("api/report/");
 			$scope.sortType = 'ALL';
 		};
 
 		$scope.getToday = function() {
-			$scope.getReports("api/report/today");
+			$scope.sortUrl = "api/report/today";
+			$scope.getReports($scope.sortUrl);
 			$scope.sortType = 'TODAY';
 		};
 
 		$scope.getComplete = function() {
-			$scope.getReports("api/report/complete");
+			$scope.sortUrl = "api/report/complete";
+			$scope.getReports($scope.sortUrl);
 			$scope.sortType = 'CLOSED';
 		};
 
 		$scope.getIncomplete = function() {
-			$scope.getReports("api/report/incomplete");
+			$scope.sortUrl = "api/report/incomplete";
+			$scope.getReports($scope.sortUrl);
 			$scope.sortType = 'OPEN';
 		};
 		
@@ -162,6 +157,27 @@ angular.module('councilalert')
 			LocalStorage.clear();
 			$location.path("/login");
 		};
+		
+		$scope.loadMore = function() {
+			$http.get($scope.sortUrl + "/" + $scope.reports.length, LocalStorage.getHeader())
+				.success(function(response) {
+					if (response.length) {
+						angular.forEach(response, function(rpt) {
+							 $scope.reports.push(rpt);   	    	
+					    });
+						if (response.length < 30) {
+							$scope.noMoreData = true;
+						}
+					} else {
+						$scope.noMoreData = true;
+					}
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						$scope.logout();
+					}
+					$scope.displayError();
+				});
+		}
 		
 		var key = dashboardService.getKey();
 		if (key === "report_today") {

@@ -21,13 +21,13 @@ public interface ReportService {
 
 	void removeReport(Report report) throws Exception;
 
-	List<Report> getReports() throws Exception;
+	List<Report> getReports(int index) throws Exception;
 
-	List<Report> getTodayReports() throws Exception;
+	List<Report> getTodayReports(int index) throws Exception;
 
-	List<Report> getCompleteReports() throws Exception;
+	List<Report> getCompleteReports(int index) throws Exception;
 
-	List<Report> getIncompleteReports() throws Exception;
+	List<Report> getIncompleteReports(int index) throws Exception;
 
 	Report getReport(String name) throws NoResultException, NonUniqueResultException, Exception;
 

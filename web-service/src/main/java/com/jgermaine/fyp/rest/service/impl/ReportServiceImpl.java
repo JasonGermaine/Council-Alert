@@ -38,12 +38,12 @@ public class ReportServiceImpl implements ReportService {
 		reportDao.delete(report);
 	}
 
-	public List<Report> getReports() throws Exception {
-		return reportDao.getAll();
+	public List<Report> getReports(int index) throws Exception {
+		return reportDao.getAll(index);
 	}
 
-	public List<Report> getTodayReports() throws Exception {
-		return reportDao.getTodaysReports();
+	public List<Report> getTodayReports(int index) throws Exception {
+		return reportDao.getTodaysReports(index);
 	}
 
 	public Report getReport(String name) throws NoResultException, NonUniqueResultException, Exception {
@@ -82,11 +82,11 @@ public class ReportServiceImpl implements ReportService {
 		return statMap;
 	}
 
-	public List<Report> getCompleteReports() throws Exception {
-		return reportDao.getComplete();
+	public List<Report> getCompleteReports(int index) throws Exception {
+		return reportDao.getComplete(index);
 	}
 
-	public List<Report> getIncompleteReports() throws Exception {
-		return reportDao.getIncomplete();
+	public List<Report> getIncompleteReports(int index) throws Exception {
+		return reportDao.getIncomplete(index);
 	}
 }

@@ -1,16 +1,21 @@
 package com.jgermaine.fyp.rest.controller;
 
-import java.io.IOException;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NoResultException;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,42 +26,20 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
-import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.annotation.*;
-import com.jgermaine.fyp.rest.config.DatabaseInitializer;
-import com.jgermaine.fyp.rest.config.Secret;
 import com.jgermaine.fyp.rest.config.WebApplication;
 import com.jgermaine.fyp.rest.model.Citizen;
-import com.jgermaine.fyp.rest.model.CouncilAlertUser;
-import com.jgermaine.fyp.rest.model.Employee;
-import com.jgermaine.fyp.rest.model.EmployeeUpdateRequest;
 import com.jgermaine.fyp.rest.model.Entry;
-import com.jgermaine.fyp.rest.model.PasswordChangeRequest;
 import com.jgermaine.fyp.rest.model.Report;
-import com.jgermaine.fyp.rest.model.Role;
-import com.jgermaine.fyp.rest.model.User;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
-import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
-import com.jgermaine.fyp.rest.service.impl.UserServiceImpl;
 import com.jgermaine.fyp.rest.util.ResponseMessageUtil;
 import com.jgermaine.fyp.rest.util.TestUtil;
 
@@ -81,7 +64,6 @@ public class ReportControllerTest {
 	private CitizenServiceImpl citizenService;
 
 	private MockMvc mvc;
-	private Employee employee;
 	private Citizen citizen;
 	private Report report;
 
@@ -89,7 +71,6 @@ public class ReportControllerTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 		mvc = MockMvcBuilders.standaloneSetup(controller).build();
-		employee = TestUtil.getDefaultEmp();
 		report = TestUtil.getDefaultReport();
 		citizen = TestUtil.getDefaultCitizen();
 	}
@@ -97,7 +78,7 @@ public class ReportControllerTest {
 	@Test
 	public void testGetAllReportsSuccess() throws Exception {
 
-		when(reportService.getReports()).thenReturn(Arrays.asList(report));
+		when(reportService.getReports(anyInt())).thenReturn(Arrays.asList(report));
 
 		// @formatter:off
 		mvc.perform(get("/api/report/")).andExpect(status().isOk()).andExpect(jsonPath("$[0].id", is(report.getId())));
@@ -106,7 +87,7 @@ public class ReportControllerTest {
 
 	@Test
 	public void testGetTodayReportsSuccess() throws Exception {
-		when(reportService.getTodayReports()).thenReturn(Arrays.asList(report));
+		when(reportService.getTodayReports(anyInt())).thenReturn(Arrays.asList(report));
 
 		// @formatter:off
 		mvc.perform(get("/api/report/today")).andExpect(status().isOk())
@@ -116,7 +97,7 @@ public class ReportControllerTest {
 
 	@Test
 	public void testGetCompleteReportsSuccess() throws Exception {
-		when(reportService.getCompleteReports()).thenReturn(Arrays.asList(report));
+		when(reportService.getCompleteReports(anyInt())).thenReturn(Arrays.asList(report));
 
 		// @formatter:off
 		mvc.perform(get("/api/report/complete")).andExpect(status().isOk())
@@ -126,7 +107,7 @@ public class ReportControllerTest {
 
 	@Test
 	public void testGetIncompleteReportsSuccess() throws Exception {
-		when(reportService.getIncompleteReports()).thenReturn(Arrays.asList(report));
+		when(reportService.getIncompleteReports(anyInt())).thenReturn(Arrays.asList(report));
 
 		// @formatter:off
 		mvc.perform(get("/api/report/incomplete")).andExpect(status().isOk())

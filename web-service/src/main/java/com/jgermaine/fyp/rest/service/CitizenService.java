@@ -14,7 +14,7 @@ public interface CitizenService {
 
 	void removeCitizen(Citizen Citizen) throws Exception;
 
-	List<Citizen> getCitizens() throws Exception;
+	List<Citizen> getCitizens(int index) throws Exception;
 
 	Citizen getCitizen(String email) throws NoResultException, NonUniqueResultException, Exception;
 

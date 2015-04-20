@@ -23,6 +23,8 @@ public class CitizenDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	private static final int SET_SIZE = 30;
+	
 	/**
 	 * Delete the Citizen from the database.
 	 */
@@ -38,8 +40,8 @@ public class CitizenDao {
 	 * Return all the Citizens stored in the database.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Citizen> getAll() throws Exception {
-		return entityManager.createQuery("from Citizen").getResultList();
+	public List<Citizen> getAll(int index) throws Exception {
+		return entityManager.createQuery("from Citizen").setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
 	/**

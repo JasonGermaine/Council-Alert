@@ -15,8 +15,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.transaction.Transactional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.jgermaine.fyp.rest.model.Employee;
@@ -29,11 +27,11 @@ import com.jgermaine.fyp.rest.model.Report;
 @Transactional
 public class EmployeeDao {
 
-	private static final Logger LOGGER = LogManager.getLogger(EmployeeDao.class.getName());
-
 	// An EntityManager will be automatically injected from entityManagerFactory
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	private static final int SET_SIZE = 30;
 
 	/**
 	 * Delete the Employee from the database.
@@ -46,8 +44,8 @@ public class EmployeeDao {
 	 * Return all the Employees stored in the database.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Employee> getAll() throws Exception {
-		return entityManager.createQuery("from Employee").getResultList();
+	public List<Employee> getAll(int index) throws Exception {
+		return entityManager.createQuery("from Employee").setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
 	/**
@@ -70,13 +68,13 @@ public class EmployeeDao {
 	public Long getUnassignedCount() {
 		try {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-			
+
 			// Select count from employee
 			CriteriaQuery query = criteriaBuilder.createQuery(Long.class);
 			Root employee = query.from(Employee.class);
 			query.select(criteriaBuilder.count(employee));
 
-			// Create subquery for class 
+			// Create subquery for class
 			Subquery subquery = query.subquery(Report.class);
 			Root subRootEntity = subquery.from(Report.class);
 			subquery.select(subRootEntity);
@@ -97,7 +95,7 @@ public class EmployeeDao {
 	 * Return the Employee having no job assigned.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<Employee> getUnassigned() throws Exception {
+	public List<Employee> getUnassigned(int index) throws Exception {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
 		// Select * from employee
@@ -116,35 +114,7 @@ public class EmployeeDao {
 		query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
 
 		TypedQuery typedQuery = entityManager.createQuery(query);
-		return typedQuery.getResultList();
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<Employee> getAssigned() throws Exception {
-		try {
-			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-			// Select * from employee
-			CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
-			Root employee = query.from(Employee.class);
-			query.select(employee);
-
-			// Create subquery for class
-			Subquery subquery = query.subquery(Report.class);
-			Root subRootEntity = subquery.from(Report.class);
-			subquery.select(subRootEntity);
-
-			// where employee does exist in reports
-			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
-			subquery.where(correlatePredicate);
-			query.where(criteriaBuilder.exists(subquery));
-
-			TypedQuery typedQuery = entityManager.createQuery(query);
-			return typedQuery.getResultList();
-		} catch (Exception e) {
-			LOGGER.error(e);
-			return null;
-		}
+		return typedQuery.setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
 	/**
@@ -156,6 +126,7 @@ public class EmployeeDao {
 
 	/**
 	 * Returns a list of unassigned reports sorted by closest proximity /**
+	 * 
 	 * @see http://en.wikipedia.org/wiki/Haversine_formula
 	 * @param lat
 	 * @param lon
@@ -172,5 +143,28 @@ public class EmployeeDao {
 		query.setParameter("lat", lat);
 		query.setParameter("lon", lon);
 		return query.getResultList();
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Employee> getAssigned(int index) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
+		// Select * from employee
+		CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
+		Root employee = query.from(Employee.class);
+		query.select(employee);
+
+		// Create subquery for class
+		Subquery subquery = query.subquery(Report.class);
+		Root subRootEntity = subquery.from(Report.class);
+		subquery.select(subRootEntity);
+
+		// where employee does exist in reports
+		Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
+		subquery.where(correlatePredicate);
+		query.where(criteriaBuilder.exists(subquery));
+
+		TypedQuery typedQuery = entityManager.createQuery(query);
+		return typedQuery.setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 }

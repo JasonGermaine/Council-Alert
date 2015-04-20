@@ -35,11 +35,6 @@
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
-			<div class="col-lg-9 col-md-9">
-				<pagination class="pull-right" ng-model="currentPage"
-					total-items="reports.length" max-size="maxSize" boundary-links="true">
-				</pagination>
-			</div>
 			<table class="table" ts-wrapper>
 				<thead>
 					<tr>
@@ -53,7 +48,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="report in filteredReports | filter:searchText" ts-repeat>
+					<tr ng-repeat="report in reports | filter:searchText" ts-repeat>
 						<td>{{report.id}}</td>
 						<td>{{report.name}}</td>
 						<td>{{report.timestamp | date:'medium'}}</td>
@@ -83,6 +78,13 @@
 					</tr>
 				</tbody>
 			</table>
+			<div class="col-lg-12 col-md-12"
+				ng-if="reports.length && noMoreData !== true">
+				<button ng-click="loadMore()"
+					class="btn btn-custom col-lg-4 col-md-4 col-lg-offset-4 col-md-offset-4">
+					<i class="fa fa-caret-down" style="margin-right: 5px;"></i> More
+				</button>
+			</div>
 		</div>
 	</div>
 </div>

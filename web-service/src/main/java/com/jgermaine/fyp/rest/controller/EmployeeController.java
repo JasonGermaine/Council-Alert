@@ -41,14 +41,23 @@ public class EmployeeController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getEmployees() {
 		try {
-			return new ResponseEntity<List<Employee>>(employeeService.getEmployees(), HttpStatus.OK);
+			return new ResponseEntity<List<Employee>>(employeeService.getEmployees(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
 	}
 
+	@RequestMapping(value = "/all/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Employee>> getEmployeesForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Employee>>(employeeService.getEmployees(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns list of all unassigned employees
 	 * 
@@ -57,13 +66,24 @@ public class EmployeeController {
 	@RequestMapping(value = "/unassigned", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getUnassignEmployees() {
 		try {
-			return new ResponseEntity<List<Employee>>(employeeService.getUnassignedEmployees(), HttpStatus.OK);
+			return new ResponseEntity<List<Employee>>(employeeService.getUnassignedEmployees(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/unassigned/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Employee>> getUnassignEmployeesForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Employee>>(employeeService.getUnassignedEmployees(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	
 	/**
 	 * Returns list of all assigned employees
 	 * 
@@ -72,13 +92,23 @@ public class EmployeeController {
 	@RequestMapping(value = "/assigned", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getAssignEmployees() {
 		try {
-			return new ResponseEntity<List<Employee>>(employeeService.getAssignedEmployees(), HttpStatus.OK);
+			return new ResponseEntity<List<Employee>>(employeeService.getAssignedEmployees(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/assigned/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Employee>> getAssignEmployeesForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Employee>>(employeeService.getAssignedEmployees(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns a list of of reports of maximum size <i>x</i>. Reports are
 	 * ordered by the distance to the latitude and longitude provided

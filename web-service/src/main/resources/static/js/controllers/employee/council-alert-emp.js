@@ -3,33 +3,24 @@ angular.module('councilalert')
 				$modal, dashboardService) {
 
 		$scope.emps = [];
-		$scope.filteredEmps = [];
-		$scope.currentPage = 1;
-		$scope.numPerPage = 10;
-		$scope.maxSize = 10;
-		
-		$scope.$watch('currentPage + numPerPage', function() {
-		    $scope.filterResults();
-		});
-		
-		$scope.filterResults = function() {
-			var begin = (($scope.currentPage - 1) * $scope.numPerPage);
-		    var end = begin + $scope.numPerPage;
-			$scope.filteredEmps = $scope.emps.slice(begin, end);
-		};
-		
+		$scope.sortUrl = '';
 		$scope.empError = false;
 		$scope.errorMessage = '';
 		$scope.sortType = '';
 		$scope.email = '';
 		$scope.reports = {};
+		$scope.noMoreData = false;
 		
 		$scope.getEmployees = function(url) {
 			$http.get(url, LocalStorage.getHeader())
 				.success(function(response) {
 					$scope.emps = response;
-					$scope.filterResults();
 					$scope.resetError();
+					if (response.length < 30) {
+						$scope.noMoreData = true;
+					} else {
+						$scope.noMoreData = false;
+					}
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
 						$scope.logout();
@@ -163,20 +154,44 @@ angular.module('councilalert')
 		};
 
 		$scope.getAll = function() {
+			$scope.sortUrl = "api/employee/all";
 			$scope.getEmployees("api/employee/");
 			$scope.sortType = 'ALL';
 		};
 
 		$scope.getUnassigned = function() {
-			$scope.getEmployees("api/employee/unassigned");
+			$scope.sortUrl = "api/employee/unassigned";
+			$scope.getEmployees($scope.sortUrl);
 			$scope.sortType = 'UNASSIGNED';
 		};
 
 		$scope.getAssigned = function() {
-			$scope.getEmployees("api/employee/assigned");
+			$scope.sortUrl = "api/employee/assigned"
+			$scope.getEmployees($scope.sortUrl);
 			$scope.sortType = 'ASSIGNED';
 		};
 
+		$scope.loadMore = function() {
+			$http.get($scope.sortUrl + "/" + $scope.emps.length, LocalStorage.getHeader())
+				.success(function(response) {
+					if (response.length) {
+						angular.forEach(response, function(employee) {
+							 $scope.emps.push(employee);   	    	
+					    });
+						if (response.length < 30) {
+							$scope.noMoreData = true;
+						}
+					} else {
+						$scope.noMoreData = true;
+					}
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						$scope.logout();
+					}
+					$scope.displayError();
+				});
+		}
+		
 		// Determine if a shortcut button has been pressed through the dashboard
 		var key = dashboardService.getKey();
 		if (key === "emp_all") {

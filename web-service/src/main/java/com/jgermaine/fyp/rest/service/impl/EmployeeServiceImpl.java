@@ -36,16 +36,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 		EmployeeDao.delete(employee);
 	}
 	
-	public List<Employee> getEmployees() throws Exception {
-		return EmployeeDao.getAll();
+	public List<Employee> getEmployees(int index) throws Exception {
+		return EmployeeDao.getAll(index);
 	}
 	
-	public List<Employee> getUnassignedEmployees() throws Exception {
-		return EmployeeDao.getUnassigned();
+	public List<Employee> getUnassignedEmployees(int index) throws Exception {
+		return EmployeeDao.getUnassigned(index);
 	}
 	
-	public List<Employee> getAssignedEmployees() throws Exception {
-		return EmployeeDao.getAssigned();
+	public List<Employee> getAssignedEmployees(int index) {
+		return EmployeeDao.getAssigned(index);
 	}
 	
 	public List<Employee> getUnassignedNearEmployees(double lat, double lon) throws Exception {
@@ -80,5 +80,4 @@ public class EmployeeServiceImpl implements EmployeeService {
 		// New Thread spawned for GCM so it does no block response
 		TaskManager.sendReportIdAsNotification(Integer.toString(reportId), emp);
 	}
-	
 } 

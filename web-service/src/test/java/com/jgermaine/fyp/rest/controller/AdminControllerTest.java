@@ -464,7 +464,7 @@ public class AdminControllerTest {
 	
 	@Test
 	public void testGetCitizensSuccess() throws Exception {		
-		when(citizenService.getCitizens()).thenReturn(Arrays.asList(citizen));
+		when(citizenService.getCitizens(anyInt())).thenReturn(Arrays.asList(citizen));
 		// @formatter:off
 		mvc.perform(
 				get("/api/admin/citizen"))

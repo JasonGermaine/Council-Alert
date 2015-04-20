@@ -54,13 +54,23 @@ public class ReportController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getAllReports() {
 		try {
-			return new ResponseEntity<List<Report>>(reportService.getReports(), HttpStatus.OK);
+			return new ResponseEntity<List<Report>>(reportService.getReports(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/all/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Report>> getReportsForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Report>>(reportService.getReports(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns a list of all submitted reports for the current day
 	 * 
@@ -69,13 +79,23 @@ public class ReportController {
 	@RequestMapping(value = "/today", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getTodayReports() {
 		try {
-			return new ResponseEntity<List<Report>>(reportService.getTodayReports(), HttpStatus.OK);
+			return new ResponseEntity<List<Report>>(reportService.getTodayReports(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/today/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Report>> getTodayReportForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Report>>(reportService.getTodayReports(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns a list of complete reports
 	 * 
@@ -84,13 +104,23 @@ public class ReportController {
 	@RequestMapping(value = "/complete", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getCompleteReports() {
 		try {
-			return new ResponseEntity<List<Report>>(reportService.getCompleteReports(), HttpStatus.OK);
+			return new ResponseEntity<List<Report>>(reportService.getCompleteReports(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/complete/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Report>> getCompletReportForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Report>>(reportService.getCompleteReports(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns a list of incomplete reports
 	 * 
@@ -99,13 +129,23 @@ public class ReportController {
 	@RequestMapping(value = "/incomplete", method = RequestMethod.GET)
 	public ResponseEntity<List<Report>> getIncompleteReports() {
 		try {
-			return new ResponseEntity<List<Report>>(reportService.getIncompleteReports(), HttpStatus.OK);
+			return new ResponseEntity<List<Report>>(reportService.getIncompleteReports(0), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	@RequestMapping(value = "/incomplete/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Report>> getIncompleteReportForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Report>>(reportService.getIncompleteReports(index), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	/**
 	 * Returns a list of of reports of maximum size <i>x</i>. Reports are
 	 * ordered by the distance to the latitude and longitude provided

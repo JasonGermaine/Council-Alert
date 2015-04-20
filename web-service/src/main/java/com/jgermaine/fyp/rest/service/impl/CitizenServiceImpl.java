@@ -30,8 +30,8 @@ public class CitizenServiceImpl implements CitizenService {
 		CitizenDao.delete(Citizen);
 	}
 
-	public List<Citizen> getCitizens() throws Exception {
-		return CitizenDao.getAll();
+	public List<Citizen> getCitizens(int index) throws Exception {
+		return CitizenDao.getAll(index);
 	}
 
 	public List<Report> getReportsForCitizen(String email) throws NoResultException, NonUniqueResultException, Exception {

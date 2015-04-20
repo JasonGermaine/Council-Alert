@@ -402,7 +402,17 @@ public class AdminController {
 	@RequestMapping(value = "/citizen", method = RequestMethod.GET)
 	public ResponseEntity<List<Citizen>> getAllCitizens() {
 		try {
-			return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(), HttpStatus.OK);
+			return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(0), HttpStatus.OK);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<List<Citizen>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@RequestMapping(value = "/citizen/{index}", method = RequestMethod.GET)
+	public ResponseEntity<List<Citizen>> getAllCitizensForIndex(@PathVariable("index") int index) {
+		try {
+			return new ResponseEntity<List<Citizen>>(citizenService.getCitizens(index), HttpStatus.OK);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<List<Citizen>>(HttpStatus.INTERNAL_SERVER_ERROR);

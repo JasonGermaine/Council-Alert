@@ -27,6 +27,8 @@ public class ReportDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	private static final int SET_SIZE = 30;
+	
 	/**
 	 * Create new report in the database.
 	 */
@@ -50,22 +52,22 @@ public class ReportDao {
 	 * Return all the reports stored in the database.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Report> getAll() throws Exception {
-		return entityManager.createQuery("from Report").getResultList();
+	public List<Report> getAll(int index) throws Exception {
+		return entityManager.createQuery("from Report").setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Report> getWhereStatus(boolean status) throws Exception {
+	public List<Report> getWhereStatus(boolean status, int index) throws Exception {
 		return entityManager.createQuery("from Report where status = :status").setParameter("status", status)
-				.getResultList();
+				.setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
-	public List<Report> getComplete() throws Exception {
-		return getWhereStatus(true);
+	public List<Report> getComplete(int index) throws Exception {
+		return getWhereStatus(true, index);
 	}
 
-	public List<Report> getIncomplete() throws Exception {
-		return getWhereStatus(false);
+	public List<Report> getIncomplete(int index) throws Exception {
+		return getWhereStatus(false, index);
 	}
 
 	/**
@@ -77,10 +79,10 @@ public class ReportDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Report> getTodaysReports() throws Exception {
+	public List<Report> getTodaysReports(int index) throws Exception {
 		try {
 			return (List<Report>) entityManager.createNativeQuery(
-					"Select * from Reports where timestamp > current_date()", Report.class).getResultList();
+					"Select * from Reports where timestamp > current_date()", Report.class).setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 		} catch (Exception e) {
 			return null;
 		}

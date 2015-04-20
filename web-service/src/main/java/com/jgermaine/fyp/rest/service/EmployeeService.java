@@ -14,13 +14,13 @@ public interface EmployeeService {
 
 	void removeEmployee(Employee employee) throws Exception;
 
-	List<Employee> getEmployees() throws Exception;
+	List<Employee> getEmployees(int index) throws Exception;
 
 	Employee getEmployee(String email) throws NoResultException, NonUniqueResultException, Exception;
 
-	List<Employee> getUnassignedEmployees() throws Exception;
+	List<Employee> getUnassignedEmployees(int index) throws Exception;
 
-	List<Employee> getAssignedEmployees() throws Exception;
+	List<Employee> getAssignedEmployees(int index) throws Exception;
 
 	List<Employee> getUnassignedNearEmployees(double lat, double lon) throws Exception;
 

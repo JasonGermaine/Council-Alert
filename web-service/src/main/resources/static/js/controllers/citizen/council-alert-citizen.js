@@ -4,29 +4,19 @@ angular.module('councilalert')
 		$rootScope.reports = {};
 		$scope.citzError = false;
 		$scope.errorMessage = '';
-		
+		$scope.noMoreData = false;
 		
 		$scope.citizens = [];
-		$scope.filteredCitz = [];
-		$scope.currentPage = 1;
-		$scope.numPerPage = 10;
-		$scope.maxSize = 10;
-		
-		$scope.$watch('currentPage + numPerPage', function() {
-		    $scope.filterResults();
-		});
-		
-		$scope.filterResults = function() {
-			var begin = (($scope.currentPage - 1) * $scope.numPerPage);
-		    var end = begin + $scope.numPerPage;
-			$scope.filteredCitz = $scope.citizens.slice(begin, end);
-		};
 		
 		$http.get("api/admin/citizen", LocalStorage.getHeader()).success(
 				function(response) {
 					$scope.resetError();
 					$scope.citizens = response;
-					$scope.filterResults();
+					if (response.length < 30) {
+						$scope.noMoreData = true;
+					} else {
+						$scope.noMoreData = false;
+					}
 				}).error(function(resp, status) {
 			if (status === 401 || status === 403) {
 				$scope.logout();
@@ -65,6 +55,27 @@ angular.module('councilalert')
 			$scope.citzError = false;
 			$scope.errorMessage = '';
 		};
+		
+		$scope.loadMore = function() {
+			$http.get("api/admin/citizen/" + $scope.citizens.length, LocalStorage.getHeader())
+				.success(function(response) {
+					if (response.length) {
+						angular.forEach(response, function(ctz) {
+							 $scope.citizens.push(ctz);   	    	
+					    });
+						if (response.length < 30) {
+							$scope.noMoreData = true;
+						}
+					} else {
+						$scope.noMoreData = true;
+					}
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						$scope.logout();
+					}
+					$scope.displayError();
+				});
+		}
 		
 		// Opens a model displaying citizen reports
 		$scope.open = function() {
