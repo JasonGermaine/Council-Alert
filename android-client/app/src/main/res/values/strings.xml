@@ -13,6 +13,8 @@
     <string name="title_activity_report">Report</string>
     <string name="title_activity_comment">Comment</string>
 
+    <string name="no_connnection">No Network Connection Available</string>
+
     <!-- REST Activity -->
     <string name="report_id">ID</string>
     <string name="name">Name</string>
@@ -146,7 +148,7 @@
     <string name="title_activity_citizen_reports">Reports</string>
 
 
-    <string name="comment_buttom">Tap to add a comment</string>
+    <string name="comment_button">Tap to add a comment</string>
     <string name="comment_label">Add a comment...</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>

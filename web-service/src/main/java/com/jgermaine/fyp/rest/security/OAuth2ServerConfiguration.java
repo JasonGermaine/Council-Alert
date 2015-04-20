@@ -20,6 +20,8 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
+import com.jgermaine.fyp.rest.config.Secret;
+
 @Configuration
 public class OAuth2ServerConfiguration {
 	
@@ -92,7 +94,7 @@ public class OAuth2ServerConfiguration {
 						.authorities("ADMIN")
 						.scopes("read", "write", "trust")
 						.resourceIds(RESOURCE_ID)
-						.secret("council-alert-angular-secret")
+						.secret(Secret.ANGULAR_SECRET)
 						//.redirectUris("http://localhost:8080/")
 					.and()
 					.withClient("android-client")
@@ -100,14 +102,14 @@ public class OAuth2ServerConfiguration {
 						 .authorizedGrantTypes("password", "refresh_token")
 						 .authorities("ADMIN")
 						 .scopes("read", "write")
-						 .secret("council-alert-android-secret")
+						 .secret(Secret.ANDROID_SECRET)
 					.and()
 					.withClient("android-client")
 						.resourceIds(RESOURCE_ID)
 	 			        .authorizedGrantTypes("password", "refresh_token")
 	 			        .authorities("USER")
 	 			        .scopes("read", "write")
-	 			        .secret("council-alert-android-secret");
+	 			        .secret(Secret.ANDROID_SECRET);
 			// @formatter:on			
 		}
 

@@ -26,7 +26,7 @@ public class SplashActivity extends Activity
 
     private Cache mCache;
     private ImageView mIcon;
-    private static final long SPLASH_TIMEOUT = 2*1000;
+    private static final long SPLASH_TIMEOUT = 2 * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class SplashActivity extends Activity
     private void init() {
         String email = mCache.getUserEmail();
         String authToken = mCache.getOAuthToken();
-        if (isStringValid(email) && isStringValid(authToken)) {
+        if (isStringValid(email) && isStringValid(authToken) && ((CouncilAlertApplication) getApplication()).isNetworkConnected(this)) {
             new UserRetrieveTask(email, authToken, this, false).execute();
         } else {
             new Handler().postDelayed(new Runnable() {
@@ -83,9 +83,9 @@ public class SplashActivity extends Activity
     @Override
     public void onRetrieveResponseReceived(ResponseEntity<User> response) {
 
-        if(response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             finishAnim();
-            ((CouncilAlertApplication)getApplication()).setUser(response.getBody());
+            ((CouncilAlertApplication) getApplication()).setUser(response.getBody());
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();
         } else {

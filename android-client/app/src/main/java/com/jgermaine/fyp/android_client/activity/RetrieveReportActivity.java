@@ -39,6 +39,9 @@ public class RetrieveReportActivity extends LocationActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_retrieve_report);
+
+        getActionBar().setIcon(android.R.color.transparent);
+
         setZoomLevel(LocationUtil.RETRIEVE_ZOOM_LEVEL);
         getGoogleMap();
         registerLocationListener();
@@ -92,8 +95,12 @@ public class RetrieveReportActivity extends LocationActivity implements
     }
 
     public void completeReport(Report report) {
-        report.setStatus(true);
-        new PostReportTask(report, this).execute("close");
+        if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(this)) {
+            DialogUtil.showToast(this, getString(R.string.no_connnection));
+        } else {
+            report.setStatus(true);
+            new PostReportTask(report, this).execute("close");
+        }
     }
 
     /**

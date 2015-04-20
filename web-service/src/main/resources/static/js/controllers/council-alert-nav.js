@@ -75,14 +75,14 @@ angular.module('councilalert').controller('navigation', function($rootScope, $sc
 	$scope.login = function() {		
 		
 		// OAuth2 Request Data
-		var authdata = btoa("angular-client:council-alert-angular-secret");
+		var authdata = btoa("angular-client:tvARY4ockNZHjpKwm7GbgI7XxM10BXV6");
 		var request = {
             "username" : $scope.credentials.username,
             "password" : $scope.credentials.password,
             "grant_type" : "password",
             "scope" : "read write trust",
             "client_id" : "angular-client",
-            "client_secret" : "council-alert-angular-secret"
+            "client_secret" : "tvARY4ockNZHjpKwm7GbgI7XxM10BXV6"
 		};
 		var config = {
 			headers : { 

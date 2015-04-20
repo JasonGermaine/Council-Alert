@@ -31,6 +31,9 @@ public class HomeActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
+        getActionBar().setIcon(android.R.color.transparent);
+
         mCache = Cache.getCurrentCache(this);
         mUser = ((CouncilAlertApplication) getApplication()).getUser();
 
@@ -47,10 +50,14 @@ public class HomeActivity extends Activity
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (((Employee) mUser).getReportId() != null) {
-                    retrieveReport(((Employee) mUser).getReportId());
+                if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(HomeActivity.this)) {
+                    DialogUtil.showToast(HomeActivity.this, getString(R.string.no_connnection));
                 } else {
-                    new GetReportTask(HomeActivity.this).execute("employee/" + mUser.getEmail());
+                    if (((Employee) mUser).getReportId() != null) {
+                        retrieveReport(((Employee) mUser).getReportId());
+                    } else {
+                        new GetReportTask(HomeActivity.this).execute("employee/" + mUser.getEmail());
+                    }
                 }
             }
         });
@@ -63,7 +70,11 @@ public class HomeActivity extends Activity
         newReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SendReportActivity.class));
+                if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(HomeActivity.this)) {
+                    DialogUtil.showToast(HomeActivity.this, getString(R.string.no_connnection));
+                } else {
+                    startActivity(new Intent(getApplicationContext(), SendReportActivity.class));
+                }
             }
         });
 
@@ -73,14 +84,18 @@ public class HomeActivity extends Activity
         viewReports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), CitizenReportsActivity.class));
+                if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(HomeActivity.this)) {
+                    DialogUtil.showToast(HomeActivity.this, getString(R.string.no_connnection));
+                } else {
+                    startActivity(new Intent(getApplicationContext(), CitizenReportsActivity.class));
+                }
             }
         });
     }
 
     private void retrieveReport(String id) {
         Intent resultIntent = new Intent(getApplicationContext(), RetrieveReportActivity.class);
-        resultIntent.putExtra("reportId",id);
+        resultIntent.putExtra("reportId", id);
         startActivity(resultIntent);
     }
 

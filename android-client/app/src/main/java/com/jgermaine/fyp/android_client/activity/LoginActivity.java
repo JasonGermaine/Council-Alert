@@ -47,6 +47,7 @@ import com.jgermaine.fyp.android_client.request.RegisterCitizenTask;
 import com.jgermaine.fyp.android_client.request.UserRetrieveTask;
 import com.jgermaine.fyp.android_client.session.Cache;
 import com.jgermaine.fyp.android_client.util.ConnectionUtil;
+import com.jgermaine.fyp.android_client.util.DialogUtil;
 import com.jgermaine.fyp.android_client.util.HttpCodeUtil;
 
 import org.springframework.http.HttpStatus;
@@ -128,7 +129,9 @@ public class LoginActivity extends Activity
         String password = mPasswordView.getText().toString();
         String passwordConfirm = mConfirmPasswordView.getText().toString();
 
-        if (isValid(email, password, passwordConfirm)) {
+        if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(this)) {
+            DialogUtil.showToast(this, getString(R.string.no_connnection));
+        } else if (isValid(email, password, passwordConfirm)) {
             if (mLoginFlag) {
                 startOauthTask(email, password, true);
             } else {

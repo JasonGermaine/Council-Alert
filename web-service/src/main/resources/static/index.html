@@ -34,76 +34,91 @@
 </style>
 </head>
 
-<body ng-app="councilalert" ng-cloak class="ng-cloak">
-	<div ng-controller="navigation" id="wrapper" ng-init="init()">
+<body>
+	<div ng-app="councilalert" ng-cloak class="ng-cloak">
+		<div ng-controller="navigation" id="wrapper" ng-init="init()">
 
-		<!-- Navigation -->
-		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-			<!-- Brand and toggle get grouped for better mobile display -->
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target=".navbar-ex1-collapse">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
+			<!-- Navigation -->
+			<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target=".navbar-ex1-collapse">
+						<span class="sr-only">Toggle navigation</span> <span
+							class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
 
-				<a ng-show="authenticated" class="navbar-brand" href="#/"> <img
-					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
-					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
-					class="pull-right">Council Alert</span>
-				</a> <a ng-show="!authenticated" class="navbar-brand" href="#/login">
-					<img
-					style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
-					class="img-responsive pull-left" src="css/ic_launcher.png"> <span
-					class="pull-right">Council Alert</span>
-				</a>
-			</div>
+					<a ng-show="authenticated" class="navbar-brand" href="#/"> <img
+						style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
+						class="img-responsive pull-left" src="css/ic_launcher.png">
+						<span class="pull-right">Council Alert</span>
+					</a> <a ng-show="!authenticated" class="navbar-brand" href="#/login">
+						<img
+						style="height: 35px; width: 35px; margin-top: -7.5px; margin-left: -10px; margin-right: 10px;"
+						class="img-responsive pull-left" src="css/ic_launcher.png">
+						<span class="pull-right">Council Alert</span>
+					</a>
+				</div>
 
-			<!-- Top Menu Items -->
-			<ul class="nav navbar-right top-nav">
-				<li ng-show="!authenticated"><a href="#/login"><i
-						class="fa fa-fw fa-sign-in"></i>Login</a></li>
+				<!-- Top Menu Items -->
+				<ul class="nav navbar-right top-nav">
+					<li ng-show="!authenticated"><a href="#/login"><i
+							class="fa fa-fw fa-sign-in"></i>Login</a></li>
 
-				<li ng-show="authenticated" class="dropdown"><a href
-					class="dropdown-toggle" data-toggle="dropdown" id="currenUser"><i
-						class="fa fa-user"></i> <span ng-if="user.firstName" id="currentUserName">{{user.firstName}} {{user.lastName}} </span> <b
-						class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#/profile"><i class="fa fa-fw fa-user"></i>
-								Profile</a></li>
-						<li class="divider"></li>
-						<li ng-click="logout()"><a href="#/login"><i
-								class="fa fa-fw fa-power-off"></i> Log Out</a></li>
-					</ul></li>
-			</ul>
-
-			<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul ng-show="authenticated" class="nav navbar-nav side-nav">
-					<li><a href="#/"><i class="fa fa-fw fa-dashboard"></i>
-							Dashboard</a></li>
-					<li><a href="#/employee"><i class="fa fa-fw fa-street-view"></i>
-							Employees</a></li>
-					<li><a href="#/report"><i class="fa fa-fw fa-wrench"></i>
-							Tickets</a></li>
-					<li><a href="#/user"> <i class="fa fa-fw fa-users"></i>
-							Users
-					</a></li>
+					<li ng-show="authenticated" class="dropdown"><a href
+						class="dropdown-toggle" data-toggle="dropdown" id="currenUser"><i
+							class="fa fa-user"></i> <span ng-if="user.firstName"
+							id="currentUserName">{{user.firstName}} {{user.lastName}}
+						</span> <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li><a href="#/profile"><i class="fa fa-fw fa-user"></i>
+									Profile</a></li>
+							<li class="divider"></li>
+							<li ng-click="logout()"><a href="#/login"><i
+									class="fa fa-fw fa-power-off"></i> Log Out</a></li>
+						</ul></li>
 				</ul>
+
+				<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+				<div class="collapse navbar-collapse navbar-ex1-collapse">
+					<ul ng-show="authenticated" class="nav navbar-nav side-nav">
+						<li><a href="#/"><i class="fa fa-fw fa-dashboard"></i>
+								Dashboard</a></li>
+						<li><a href="#/employee"><i
+								class="fa fa-fw fa-street-view"></i> Employees</a></li>
+						<li><a href="#/report"><i class="fa fa-fw fa-wrench"></i>
+								Tickets</a></li>
+						<li><a href="#/user"> <i class="fa fa-fw fa-users"></i>
+								Users
+						</a></li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</nav>
+
+			<div id="page-wrapper">
+
+				<div class="container-fluid" ng-view></div>
+
 			</div>
-			<!-- /.navbar-collapse -->
-		</nav>
-
-		<div id="page-wrapper">
-
-			<div class="container-fluid" ng-view></div>
+			<!-- /#page-wrapper -->
 
 		</div>
-		<!-- /#page-wrapper -->
+		<!-- /#wrapper -->
 
 	</div>
-	<!-- /#wrapper -->
+
+	<noscript>
+		<img src="css/ic_launcher.png" class="img-responsive"
+			style="height: 60px; width: 60px; margin: 0 auto;" alt="Logo" /> <img
+			src="css/ic_logo_text.png"
+			style="height: 50px; width: 350px; margin: 0 auto;"
+			class="img-responsive" alt="Logo" /> 
+			
+			<h3 style="width=100%; text-align: center;"><b>The Council Alert web portal requires JavaScript.</b></h3>
+			<h4 style="width=100%; text-align: center;">Please enable this in your web browser settings</h4>
+	</noscript>
 
 	<script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
@@ -134,9 +149,11 @@
 	<script src="js/controllers/employee/council-alert-availableEmp.js"></script>
 	<script src="js/controllers/employee/council-alert-changeLocation.js"></script>
 	<script src="js/controllers/employee/council-alert-changePassword.js"></script>
-	<script src="js/controllers/employee/council-alert-displayEmpDetails.js"></script>
+	<script
+		src="js/controllers/employee/council-alert-displayEmpDetails.js"></script>
 	<script src="js/controllers/employee/council-alert-removeEmp.js"></script>
-	<script src="js/controllers/employee/council-alert-showAssignmentLocation.js"></script>
+	<script
+		src="js/controllers/employee/council-alert-showAssignmentLocation.js"></script>
 
 	<!-- Reports -->
 	<script src="js/controllers/report/council-alert-report.js"></script>

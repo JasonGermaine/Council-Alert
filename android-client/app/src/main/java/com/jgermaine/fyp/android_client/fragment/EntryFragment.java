@@ -80,8 +80,12 @@ public class EntryFragment extends Fragment implements UpdateReportEntriesTask.O
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    report.setEntries(getEntries());
-                    new UpdateReportEntriesTask(report, mActivity, fragment, report.getId()).execute();
+                    if (!((CouncilAlertApplication) getActivity().getApplication()).isNetworkConnected(getActivity())) {
+                        DialogUtil.showToast(getActivity(), getString(R.string.no_connnection));
+                    } else {
+                        report.setEntries(getEntries());
+                        new UpdateReportEntriesTask(report, mActivity, fragment, report.getId()).execute();
+                    }
                 }
             });
         }

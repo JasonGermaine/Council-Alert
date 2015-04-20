@@ -72,10 +72,6 @@ public class CitizenReportsActivity extends Activity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        return id == R.id.action_settings
-                || super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -2,6 +2,8 @@ package com.jgermaine.fyp.android_client.model;
 
 import android.util.Base64;
 
+import com.jgermaine.fyp.android_client.util.ConnectionUtil;
+
 import org.springframework.http.HttpAuthentication;
 import org.springframework.http.HttpBasicAuthentication;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +29,7 @@ public class TokenRequest {
         this.grant_type = "password";
         this.scope = "read write";
         this.client_id = "android-client";
-        this.client_secret = "council-alert-android-secret";
+        this.client_secret = ConnectionUtil.OAUTH_SECRET;
     }
 
     public String getUsername() {

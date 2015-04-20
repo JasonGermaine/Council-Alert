@@ -45,6 +45,8 @@ public class SendReportActivity extends LocationActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_report);
 
+        getActionBar().setIcon(android.R.color.transparent);
+
         setZoomLevel(LocationUtil.START_ZOOM_LEVEL);
         getGoogleMap();
         registerLocationListener();
@@ -205,8 +207,12 @@ public class SendReportActivity extends LocationActivity implements
      * @param view
      */
     public void submitData(View view) {
-        Citizen citizen = (Citizen)((CouncilAlertApplication)getApplication()).getUser();
-        new PostReportTask(getReport(), this).execute("citizen/" + citizen.getEmail());
+        if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(this)) {
+            DialogUtil.showToast(this, getString(R.string.no_connnection));
+        } else {
+            Citizen citizen = (Citizen) ((CouncilAlertApplication) getApplication()).getUser();
+            new PostReportTask(getReport(), this).execute("citizen/" + citizen.getEmail());
+        }
     }
 
     public Report createNewReport(String type) {
