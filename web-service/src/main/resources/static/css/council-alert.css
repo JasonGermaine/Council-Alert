@@ -213,3 +213,12 @@ table th {
 .pac-container {
 	z-index: 2000 !important;
 }
+
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus {
+  background-color: #222;
+  border-color: #222;
+}
+
+.pagination>li>a, .pagination>li>span {
+  color: #222;
+}

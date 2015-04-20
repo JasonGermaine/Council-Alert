@@ -41,6 +41,10 @@
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
+			<div class="col-lg-9">
+				<pagination class="pull-right" ng-model="currentPage" total-items="emps.length"
+					max-size="maxSize" boundary-links="true"> </pagination>
+			</div>
 			<table class="table" ts-wrapper>
 				<thead>
 					<tr>
@@ -53,7 +57,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="emp in emps | filter:searchText" ts-repeat>
+					<tr ng-repeat="emp in filteredEmps | filter:searchText" ts-repeat>
 						<td>{{emp.firstName}}</td>
 						<td>{{emp.lastName}}</td>
 						<td>{{emp.email}}</td>

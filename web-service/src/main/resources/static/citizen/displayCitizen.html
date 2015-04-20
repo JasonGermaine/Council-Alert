@@ -14,6 +14,11 @@
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
+			<div class="col-lg-9">
+				<pagination class="pull-right" ng-model="currentPage"
+					total-items="citizens.length" max-size="maxSize" boundary-links="true">
+				</pagination>
+			</div>
 			<table class="table" ts-wrapper>
 				<thead>
 					<tr>
@@ -22,7 +27,8 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="citizen in citizens | filter:searchText" ts-repeat>
+					<tr ng-repeat="citizen in filteredCitz | filter:searchText"
+						ts-repeat>
 						<td>{{citizen.email}}</td>
 						<td>
 							<button ng-click="getReports(citizen.email)"

@@ -4,12 +4,29 @@ angular.module('councilalert')
 		$rootScope.reports = {};
 		$scope.citzError = false;
 		$scope.errorMessage = '';
-			
+		
+		
+		$scope.citizens = [];
+		$scope.filteredCitz = [];
+		$scope.currentPage = 1;
+		$scope.numPerPage = 10;
+		$scope.maxSize = 10;
+		
+		$scope.$watch('currentPage + numPerPage', function() {
+		    $scope.filterResults();
+		});
+		
+		$scope.filterResults = function() {
+			var begin = (($scope.currentPage - 1) * $scope.numPerPage);
+		    var end = begin + $scope.numPerPage;
+			$scope.filteredCitz = $scope.citizens.slice(begin, end);
+		};
 		
 		$http.get("api/admin/citizen", LocalStorage.getHeader()).success(
 				function(response) {
 					$scope.resetError();
 					$scope.citizens = response;
+					$scope.filterResults();
 				}).error(function(resp, status) {
 			if (status === 401 || status === 403) {
 				$scope.logout();

@@ -2,6 +2,22 @@ angular.module('councilalert')
 	.controller('emp', function($rootScope, $scope, $http, $location, $route, LocalStorage,
 				$modal, dashboardService) {
 
+		$scope.emps = [];
+		$scope.filteredEmps = [];
+		$scope.currentPage = 1;
+		$scope.numPerPage = 10;
+		$scope.maxSize = 10;
+		
+		$scope.$watch('currentPage + numPerPage', function() {
+		    $scope.filterResults();
+		});
+		
+		$scope.filterResults = function() {
+			var begin = (($scope.currentPage - 1) * $scope.numPerPage);
+		    var end = begin + $scope.numPerPage;
+			$scope.filteredEmps = $scope.emps.slice(begin, end);
+		};
+		
 		$scope.empError = false;
 		$scope.errorMessage = '';
 		$scope.sortType = '';
@@ -12,6 +28,7 @@ angular.module('councilalert')
 			$http.get(url, LocalStorage.getHeader())
 				.success(function(response) {
 					$scope.emps = response;
+					$scope.filterResults();
 					$scope.resetError();
 				}).error(function(resp, status) {
 					if (status === 401 || status === 403) {
