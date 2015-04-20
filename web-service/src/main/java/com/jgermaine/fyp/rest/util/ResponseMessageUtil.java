@@ -26,6 +26,8 @@ public final class ResponseMessageUtil {
 	
 	public static final String ERROR_ASSIGNMENT = " currently has a different assignment.";
 	
+	public static final String ERROR_CLOSED_ASSIGNMENT = "Report is closed and cannot be assigned.";
+	
 	public static final String ERROR_PASSWORD_MISMATCH = "Password does not match.";
 	
 	public static final String ERROR_INVALID_STATUS = "Invalid report status entered.";

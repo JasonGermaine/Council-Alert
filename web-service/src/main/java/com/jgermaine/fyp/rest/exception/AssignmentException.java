@@ -1,5 +1,14 @@
 package com.jgermaine.fyp.rest.exception;
 
+/**
+ * 
+ * @author JasonGermaine
+ * 
+ *         The class AssignmentException denotes an error when an attempt to
+ *         assign a report to an employee occurs whereas one or the other are
+ *         already assigned
+ *
+ */
 public class AssignmentException extends Exception {
 
 	/**
@@ -14,7 +23,7 @@ public class AssignmentException extends Exception {
 	public AssignmentException(ExceptionType type) {
 		super(type.getType());
 	}
-	
+
 	public AssignmentException(String message) {
 		super(message);
 	}
@@ -26,10 +35,10 @@ public class AssignmentException extends Exception {
 	public AssignmentException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 	public enum ExceptionType {
 		REPORT, EMPLOYEE;
-		
+
 		public String getType() {
 			if (this == REPORT) {
 				return "Report";

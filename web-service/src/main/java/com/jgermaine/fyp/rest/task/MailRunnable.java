@@ -28,6 +28,7 @@ public class MailRunnable implements Runnable {
 
 		String to = emp.getEmail();
 
+		// Sender details
 		String from = "tasks.council.alert@gmail.com";
 		final String username = "tasks.council.alert";
 		final String password = Secret.EMAIL_PASSWORD;
@@ -60,6 +61,10 @@ public class MailRunnable implements Runnable {
 		}
 	}
 
+	/**
+	 * Retrieve properties required for email setup
+	 * @return
+	 */
 	private Properties getEmailProperties() {
 
 		Properties props = new Properties();
@@ -70,7 +75,11 @@ public class MailRunnable implements Runnable {
 		
 		return props;
 	}
-	
+
+	/**
+	 * Retrieve the message to be sent in the email
+	 * @return
+	 */
 	private String getMessage() {
 		StringBuilder sb = new StringBuilder();
 		

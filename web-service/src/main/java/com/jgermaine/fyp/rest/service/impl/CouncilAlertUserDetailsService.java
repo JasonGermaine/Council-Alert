@@ -44,12 +44,19 @@ public class CouncilAlertUserDetailsService implements UserDetailsService {
 	}
 
 	public void createNewUser(User newUser) throws DataIntegrityViolationException, EntityExistsException, PersistenceException, Exception {
+		
+		// Create new user for login/security purposes - seperate from logical user model
 		CouncilAlertUser user = new CouncilAlertUser();
 		user.setLogin(newUser.getEmail());
+		
+		// Generate random crypto String to use as a salt
 		user.setSalt(KeyGenerators.string().generateKey());
+		
+		// Hash and salt password
 		user.setPassword(new ShaPasswordEncoder(256).encodePassword(newUser.getPassword(), user.getSalt()));
 		user.addRole(new Role("USER", user));
 
+		// Assign ADMIN role to employees
 		if (newUser instanceof Employee)
 			user.addRole(new Role("ADMIN", user));
 

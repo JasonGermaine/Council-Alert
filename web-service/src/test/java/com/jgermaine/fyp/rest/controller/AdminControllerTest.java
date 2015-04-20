@@ -248,6 +248,19 @@ public class AdminControllerTest {
 		// @formatter:on
 	}
 
+	@Test
+	public void testAssignmentClosedReportFailure() throws Exception {
+		// @formatter:off
+		Report rpt = TestUtil.getDefaultReport();
+		rpt.setStatus(true);
+		when(reportService.getReport(anyInt())).thenReturn(rpt);		
+		mvc.perform(
+				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_CLOSED_ASSIGNMENT)));
+		// @formatter:on
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAssignmentReportNotExist() throws Exception {
@@ -335,7 +348,6 @@ public class AdminControllerTest {
 	@Test
 	public void testChangePasswordMismatchFailure() throws Exception {		
 		when(councilAlertUserService.getUser(anyString())).thenReturn(user);
-		Mockito.doNothing().when(councilAlertUserService).updateUser(Mockito.any(CouncilAlertUser.class));
 		PasswordChangeRequest invalidRequest = TestUtil.getPasswordRequest();
 		invalidRequest.setPassword("notthesamepassword");
 		// @formatter:off

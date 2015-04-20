@@ -37,6 +37,7 @@ councilAlertApp.factory('DistanceFactory', function() {
 	return {		
 		getDistanceBetweenLocations : function (lat1,lon1,lat2,lon2) {
 			
+			// http://en.wikipedia.org/wiki/Haversine_formula
 			// Haversine Formula in KM
 			var R = 6371;
 			var dLat = (lat2-lat1) * (Math.PI/180);

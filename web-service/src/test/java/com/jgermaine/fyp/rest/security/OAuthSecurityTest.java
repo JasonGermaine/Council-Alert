@@ -93,7 +93,7 @@ public class OAuthSecurityTest {
 
 	private String getAccessToken(String username, String password) throws Exception {
 		String authorization = "Basic " + new String(
-				Base64Utils.encode("angular-client:council-alert-angular-secret".getBytes()));
+				Base64Utils.encode(("angular-client:" + Secret.ANGULAR_SECRET).getBytes()));
 		
 		// @formatter:off
 		String content = mvc
@@ -106,7 +106,7 @@ public class OAuthSecurityTest {
 								.param("grant_type", "password")
 								.param("scope", "read write trust")
 								.param("client_id", "angular-client")
-								.param("client_secret", "council-alert-angular-secret"))																
+								.param("client_secret", Secret.ANGULAR_SECRET))																
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.access_token", is(notNullValue())))				
 				.andReturn().getResponse().getContentAsString();

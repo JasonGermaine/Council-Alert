@@ -33,7 +33,7 @@ public class DbConfig {
 	private LocalContainerEntityManagerFactoryBean entityManagerFactory;
 
 	/** 
-	 * DataSource definition for database connection.
+	 * Returns database connection bean
 	 */
 	@Bean
 	public DataSource dataSource() {
@@ -90,11 +90,7 @@ public class DbConfig {
 	}
 
 	/**
-	 * PersistenceExceptionTranslationPostProcessor is a bean post processor
-	 * which adds an advisor to any bean that's annotated with \@Repository so
-	 * that any platform-specific exceptions are caught and then rethrown as one
-	 * Spring's unchecked data access exceptions (i.e. a subclass of
-	 * DataAccessException).
+	 * Catches platform specific exceptions and throws as Spring data access exceptions
 	 */
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
@@ -102,6 +98,10 @@ public class DbConfig {
 	}
 	
 
+	/**
+	 * Registers a handler for 404 requests
+	 * @return
+	 */
 	@Bean
 	public EmbeddedServletContainerCustomizer containerCustomizer() {
 		return new EmbeddedServletContainerCustomizer() {

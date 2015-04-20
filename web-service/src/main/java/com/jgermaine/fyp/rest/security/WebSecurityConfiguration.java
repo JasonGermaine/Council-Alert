@@ -21,8 +21,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	private CouncilAlertUserDetailsService userDetailsService;
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-			throws Exception {
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+		// Apply password hash and salt to authentication process using custom
+		// user table in database
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(userDetailsService);
 		provider.setPasswordEncoder(passwordEncoder());
@@ -42,8 +44,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return encoder;
 	}
 
+	/**
+	 * Return the source of the salt to apply to password
+	 * 
+	 * @return
+	 */
 	public ReflectionSaltSource saltSource() {
 		ReflectionSaltSource source = new ReflectionSaltSource();
+
+		// Maps to the getter method for the 'salt' field
 		source.setUserPropertyToUse("getSalt");
 		return source;
 	}

@@ -48,7 +48,7 @@ public class OAuth2ServerConfiguration {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and()
 				.authorizeRequests()
-					
+					 // Matchers to apply different levels of security to
 					.antMatchers("/api/report/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/user/**").access("#oauth2.hasScope('write')")
 					.antMatchers("/api/employee/**").access("#oauth2.hasScope('write')")
@@ -88,23 +88,25 @@ public class OAuth2ServerConfiguration {
 			// @formatter:off
 			clients
 				.inMemory()
-					
+				
+				// Angular Client 
 				.withClient("angular-client")
 						.authorizedGrantTypes("password", "refresh_token")
 						.authorities("ADMIN")
 						.scopes("read", "write", "trust")
 						.resourceIds(RESOURCE_ID)
 						.secret(Secret.ANGULAR_SECRET)
-						//.redirectUris("http://localhost:8080/")
-					.and()
-					.withClient("android-client")
+				.and()
+					
+				// Android
+				.withClient("android-client")
 						 .resourceIds(RESOURCE_ID)
 						 .authorizedGrantTypes("password", "refresh_token")
 						 .authorities("ADMIN")
 						 .scopes("read", "write")
 						 .secret(Secret.ANDROID_SECRET)
-					.and()
-					.withClient("android-client")
+				.and()
+				.withClient("android-client")
 						.resourceIds(RESOURCE_ID)
 	 			        .authorizedGrantTypes("password", "refresh_token")
 	 			        .authorities("USER")

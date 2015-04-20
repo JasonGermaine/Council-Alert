@@ -2,46 +2,35 @@
 	<h3 class="modal-title">{{ emp.firstName }} {{ emp.lastName }}</h3>
 </div>
 <div class="modal-body">
-	<form class="form-horizontal col-lg-12" role="form">
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-				for="email">Email:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<input ng-disabled="true" type="email" class="form-control"
-					id="email" placeholder="Email" ng-model="emp.email" />
-			</div>
+	<div class="row">
+		
+		<div class="col-lg-5">
+			<h5><b>Email:</b></h5> {{ emp.email }}
+
+			<h5 style="margin-top: 30px;"><b>Phone Number:</b></h5> {{emp.phoneNum}} 
+			
+			<span ng-if="emp.reportId">
+				<h5 style="margin-top: 30px;"><b>Assigned To:</b></h5> {{emp.reportId}}
+			</span>
 		</div>
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2"
-				for="phoneNum">Phone Number:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<input ng-disabled="true" class="form-control" id="phoneNum"
-					placeholder="Phone Number" ng-model="emp.phoneNum" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label
-				class="control-label col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2">Location:</label>
-			<div class="col-lg-6 col-md-6 col-sm-10">
-				<div>
-					<style type="text/css" scoped>
-.angular-google-map-container {
-	height: 250px;
-}
-</style>
-					<div style="margin-top: 10px">
-						<div id="map_canvas">
-							<ui-gmap-google-map center="map.center" zoom="map.zoom">
-							<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
-							</ui-gmap-google-map>
-						</div>
+
+		<div class="col-lg-5 col-lg-offset-1">
+			<div>
+				<style type="text/css" scoped>
+				.angular-google-map-container {
+					height: 200px;
+				}
+				</style>
+				<div style="margin-top: 10px">
+					<div id="map_canvas">
+						<ui-gmap-google-map center="map.center" zoom="map.zoom">
+						<ui-gmap-marker coords="map.marker.coords" idkey="map.marker.id"></ui-gmap-marker>
+						</ui-gmap-google-map>
 					</div>
 				</div>
 			</div>
 		</div>
-	</form>
+	</div>
 </div>
 <div class="modal-footer">
 	<button class="btn btn-custom" ng-click="cancel()">Close</button>

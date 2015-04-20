@@ -14,6 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.User;
 
+/**
+ * 
+ * @author JasonGermaine
+ *
+ * The CouncilAlertUserDao applies the Transactional attribute to it's methods.
+ * This implies that transaction management is implemented when carry out single or
+ * multiple transactions with effective rollback implementation on errors.
+ */
 @Repository
 @Transactional
 public class CouncilAlertUserDao {

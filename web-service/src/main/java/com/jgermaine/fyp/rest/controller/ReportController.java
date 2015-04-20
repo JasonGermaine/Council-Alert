@@ -155,6 +155,8 @@ public class ReportController {
 	 * <li>1. Citizen for email exists - returns 201</li>
 	 * <li>2. Citizen for email does not exist - returns 400</li>
 	 * <li>3. Invalid Report passed - returns 400</li>
+	 * <li>4. Report for id already exists - returns 409</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return HttpResponse
@@ -187,7 +189,15 @@ public class ReportController {
 	}
 
 	/**
-	 * Closes a given report providing it is valid
+	 * Closes a given report. 
+	 * There are 3 possible outputs
+	 * <ul>
+	 * <li>1. Report updated successfully - returns 201</li>
+	 * <li>2. Citizen for email does not exist - returns 400</li>
+	 * <li>3. Invalid Report passed - returns 400</li>
+	 * <li>4. Report for id already exists - returns 409</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
 	 * 
 	 * @param report
 	 * @return HttpResponse
@@ -216,8 +226,12 @@ public class ReportController {
 	}
 
 	/**
-	 * Returns a report for a given Employee
-	 * 
+	 * Retrieves an Report for a given Employee email
+	 * <ul>
+	 * <li>1. Report exists - returns Report + 200</li>
+	 * <li>2. No Report exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
 	 * @param email
 	 * @return Report
 	 */
@@ -240,7 +254,7 @@ public class ReportController {
 	 * <li>1. Report for id exists - update Report and return 200</li>
 	 * <li>2. Report for id does not exist - returns 400</li>
 	 * <li>3. Invalid comment entries - returns 400</li>
-	 * <li>4. Unexpected entry - returns 500</li>
+	 * <li>4. Unexpected error - returns 500</li>
 	 * </ul>
 	 * 
 	 * @param id

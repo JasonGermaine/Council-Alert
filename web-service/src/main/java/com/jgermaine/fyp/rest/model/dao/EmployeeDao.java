@@ -70,15 +70,18 @@ public class EmployeeDao {
 	public Long getUnassignedCount() {
 		try {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
+			
+			// Select count from employee
 			CriteriaQuery query = criteriaBuilder.createQuery(Long.class);
 			Root employee = query.from(Employee.class);
 			query.select(criteriaBuilder.count(employee));
 
+			// Create subquery for class 
 			Subquery subquery = query.subquery(Report.class);
 			Root subRootEntity = subquery.from(Report.class);
 			subquery.select(subRootEntity);
 
+			// where employee does not exist in reports
 			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
 			subquery.where(correlatePredicate);
 			query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
@@ -93,18 +96,21 @@ public class EmployeeDao {
 	/**
 	 * Return the Employee having no job assigned.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Employee> getUnassigned() throws Exception {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
+		// Select * from employee
 		CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
 		Root employee = query.from(Employee.class);
 		query.select(employee);
 
+		// Create subquery for class
 		Subquery subquery = query.subquery(Report.class);
 		Root subRootEntity = subquery.from(Report.class);
 		subquery.select(subRootEntity);
 
+		// where employee does exist in reports
 		Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
 		subquery.where(correlatePredicate);
 		query.where(criteriaBuilder.not(criteriaBuilder.exists(subquery)));
@@ -113,19 +119,22 @@ public class EmployeeDao {
 		return typedQuery.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Employee> getAssigned() throws Exception {
 		try {
 			CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
+			// Select * from employee
 			CriteriaQuery query = criteriaBuilder.createQuery(Employee.class);
 			Root employee = query.from(Employee.class);
 			query.select(employee);
 
+			// Create subquery for class
 			Subquery subquery = query.subquery(Report.class);
 			Root subRootEntity = subquery.from(Report.class);
 			subquery.select(subRootEntity);
 
+			// where employee does exist in reports
 			Predicate correlatePredicate = criteriaBuilder.equal(subRootEntity.get("employee"), employee);
 			subquery.where(correlatePredicate);
 			query.where(criteriaBuilder.exists(subquery));
@@ -146,8 +155,8 @@ public class EmployeeDao {
 	}
 
 	/**
-	 * Returns a list of unassigned reports sorted by closest proximity
-	 * 
+	 * Returns a list of unassigned reports sorted by closest proximity /**
+	 * @see http://en.wikipedia.org/wiki/Haversine_formula
 	 * @param lat
 	 * @param lon
 	 * @return list of report

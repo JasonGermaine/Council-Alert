@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.exception.AssignmentException;
 import com.jgermaine.fyp.rest.exception.ModelValidationException;
+import com.jgermaine.fyp.rest.exception.PasswordMismatchException;
 import com.jgermaine.fyp.rest.model.Citizen;
 import com.jgermaine.fyp.rest.model.CouncilAlertUser;
 import com.jgermaine.fyp.rest.model.Employee;
@@ -110,8 +111,10 @@ public class AdminController {
 		try {
 			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
+
 			employee.setEmail(employee.getEmail().toLowerCase());
 			councilAlertUserService.createNewUser(employee);
+
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_CREATION),
 					HttpStatus.CREATED);
 		} catch (PersistenceException | DataIntegrityViolationException e) {
@@ -143,11 +146,14 @@ public class AdminController {
 		try {
 			Employee emp = employeeService.getEmployee(email.toLowerCase());
 			councilAlertUserService.removeUser(emp);
+
+			// Update the report table if needed
 			if (emp.getReport() != null) {
 				Report r = emp.getReport();
 				r.setEmployee(null);
 				reportService.updateReport(r);
-			}			
+			}
+
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_EMPLOYEE_REMOVAL), HttpStatus.OK);
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),
@@ -176,11 +182,12 @@ public class AdminController {
 	public ResponseEntity<Message> updateEmployee(@PathVariable("email") String email,
 			@RequestBody @Valid EmployeeUpdateRequest request, BindingResult result) {
 		try {
-			if (result.hasErrors()) {
+			if (result.hasErrors())
 				throw new ModelValidationException(result.getFieldErrorCount());
-			}
 
 			Employee emp = employeeService.getEmployee(email.toLowerCase());
+
+			// Determine which fields we need to update
 			if (request.getLatitude() != 0.0 && request.getLongitude() != 0.0) {
 				emp.setLatitude(request.getLatitude());
 				emp.setLongitude(request.getLongitude());
@@ -211,7 +218,8 @@ public class AdminController {
 	 * <ul>
 	 * <li>1. Employee and Report exist - returns 200</li>
 	 * <li>2. Employee or Report ids do not exist - returns 400</li>
-	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * <li>3. Report is closed and therefore can't be assigned - returns 400</li>
+	 * <li>4. Unexpected error occurs - returns 500</li>
 	 * </ul>
 	 * 
 	 * @return HttpResponse
@@ -223,6 +231,10 @@ public class AdminController {
 			boolean reportSkip, empSkip;
 			reportSkip = empSkip = false;
 			Report report = reportService.getReport(reportId);
+
+			// Check if the report is already closed
+			if (report.getStatus())
+				throw new IllegalArgumentException(ResponseMessageUtil.ERROR_CLOSED_ASSIGNMENT);
 
 			// Check if report is already assigned to employee
 			if (report.getEmployee() != null) {
@@ -260,6 +272,8 @@ public class AdminController {
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_GENERIC_NOT_EXIST),
 					HttpStatus.BAD_REQUEST);
+		} catch (IllegalArgumentException e) {
+			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_UNEXPECTED),
@@ -289,21 +303,22 @@ public class AdminController {
 				throw new ModelValidationException(result.getFieldErrorCount());
 
 			CouncilAlertUser user = councilAlertUserService.getUser(email.toLowerCase());
-			if (new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
-					user.getPassword())) {
-				user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(), user.getSalt()));
-				councilAlertUserService.updateUser(user);
-				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE),
-						HttpStatus.OK);
-			} else {
-				return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH),
-						HttpStatus.BAD_REQUEST);
-			}
+
+			// Hash the passwords, apply the salt and compare to the stored password
+			if (!new ShaPasswordEncoder(256).encodePassword(request.getPassword(), user.getSalt()).equals(
+					user.getPassword()))
+				throw new PasswordMismatchException();
+		
+			user.setPassword(new ShaPasswordEncoder(256).encodePassword(request.getNewPassword(), user.getSalt()));
+			councilAlertUserService.updateUser(user);
+			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE), HttpStatus.OK);
 
 		} catch (NoResultException | NonUniqueResultException e) {
 			return new ResponseEntity<Message>(new Message(ResponseMessageUtil.ERROR_EMPLOYEE_NOT_EXIST),
 					HttpStatus.BAD_REQUEST);
 		} catch (ModelValidationException e) {
+			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
+		} catch (PasswordMismatchException e) {
 			return new ResponseEntity<Message>(new Message(e.getMessage()), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -350,6 +365,7 @@ public class AdminController {
 	@RequestMapping(value = "/report/{id}/{status}", method = RequestMethod.PUT)
 	public ResponseEntity<Message> reopenReport(@PathVariable("id") int id, @PathVariable("status") int statusInt) {
 		try {
+			// Validate status - 1 = true, 0 = false
 			if (statusInt != 0 && statusInt != 1)
 				throw new IllegalArgumentException();
 

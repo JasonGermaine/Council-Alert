@@ -147,6 +147,7 @@ public class ReportDao {
 	/**
 	 * Returns a list of reports sorted by closest proximity
 	 * 
+	 * @see http://en.wikipedia.org/wiki/Haversine_formula
 	 * @param lat
 	 * @param lon
 	 * @return list of report
@@ -167,6 +168,7 @@ public class ReportDao {
 	/**
 	 * Returns a list of unassigned reports sorted by closest proximity
 	 * 
+	 * @see http://en.wikipedia.org/wiki/Haversine_formula 
 	 * @param lat
 	 * @param lon
 	 * @return list of report

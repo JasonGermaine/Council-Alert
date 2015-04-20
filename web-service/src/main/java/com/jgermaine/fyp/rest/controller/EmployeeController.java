@@ -64,6 +64,11 @@ public class EmployeeController {
 		}
 	}
 
+	/**
+	 * Returns list of all assigned employees
+	 * 
+	 * @return employee list
+	 */
 	@RequestMapping(value = "/assigned", method = RequestMethod.GET)
 	public ResponseEntity<List<Employee>> getAssignEmployees() {
 		try {
@@ -94,7 +99,17 @@ public class EmployeeController {
 			return new ResponseEntity<List<Employee>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+	/**
+	 * Retrieves an Employee for a given email
+	 * <ul>
+	 * <li>1. Employee exists - Employee updated + returns 200</li>
+	 * <li>2. No Employee exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value = "/{email:.+}", method = RequestMethod.GET)
 	public ResponseEntity<Employee> getEmployee(@PathVariable("email") String email) {
 		try {

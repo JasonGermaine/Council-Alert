@@ -21,6 +21,13 @@ import com.jgermaine.fyp.rest.service.impl.CouncilAlertUserDetailsService;
 import com.jgermaine.fyp.rest.service.impl.EmployeeServiceImpl;
 import com.jgermaine.fyp.rest.service.impl.ReportServiceImpl;
 
+/**
+ * 
+ * @author JasonGermaine
+ *
+ * This class will load default data into the database after the web service
+ * has been constructed
+ */
 @Component
 public class DatabaseInitializer {
 
