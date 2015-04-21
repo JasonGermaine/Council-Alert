@@ -35,6 +35,16 @@
 				<input class="form-control" placeholder="Search..."
 					ng-model="searchText" />
 			</div>
+			<div class="col-lg-1"
+				ng-if="searchText.length && !filteredReports.length">
+				<button ng-click="search(searchText)" class="btn btn-custom"
+					data-toggle="tooltip" title="Search by id">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+			<div class="col-lg-3" ng-if="searchError">
+				<h4 style="color: #00FFFF'">Search produced no results</h4>
+			</div>
 			<table class="table" ts-wrapper>
 				<thead>
 					<tr>
@@ -48,7 +58,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="report in reports | filter:searchText" ts-repeat>
+					<tr ng-repeat="report in filteredReports = (reports | filter:searchText)" ts-repeat>
 						<td>{{report.id}}</td>
 						<td>{{report.name}}</td>
 						<td>{{report.timestamp | date:'medium'}}</td>

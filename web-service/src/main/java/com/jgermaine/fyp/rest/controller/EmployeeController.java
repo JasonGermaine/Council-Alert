@@ -133,7 +133,7 @@ public class EmployeeController {
 	/**
 	 * Retrieves an Employee for a given email
 	 * <ul>
-	 * <li>1. Employee exists - Employee updated + returns 200</li>
+	 * <li>1. Employee exists - Employee + returns 200</li>
 	 * <li>2. No Employee exists for email - return 400</li>
 	 * <li>3. Unexpected error occurs - returns 500</li>
 	 * </ul>
@@ -150,7 +150,6 @@ public class EmployeeController {
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			return new ResponseEntity<Employee>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
+		}	
 	}
 }

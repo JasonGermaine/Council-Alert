@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.exception.ModelValidationException;
 import com.jgermaine.fyp.rest.model.Citizen;
+import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Message;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
@@ -100,5 +101,27 @@ public class CitizenController {
 		} catch (Exception e) {
 			return new ResponseEntity<List<Report>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	/**
+	 * Retrieves an Citizen for a given email
+	 * <ul>
+	 * <li>1. Citizen exists - Citizen + returns 200</li>
+	 * <li>2. No Citizen exists for email - return 400</li>
+	 * <li>3. Unexpected error occurs - returns 500</li>
+	 * </ul>
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping(value = "/{email:.+}", method = RequestMethod.GET)
+	public ResponseEntity<Citizen> getCitizen(@PathVariable("email") String email) {
+		try {
+			return new ResponseEntity<Citizen>(citizenService.getCitizen(email.toLowerCase()), HttpStatus.OK);
+		} catch (NoResultException | NonUniqueResultException e) {
+			return new ResponseEntity<Citizen>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new ResponseEntity<Citizen>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}	
 	}
 }

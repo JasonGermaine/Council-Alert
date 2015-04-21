@@ -3,8 +3,10 @@ angular.module('councilalert')
 				$modal, dashboardService) {
 
 		$scope.emps = [];
-		$scope.sortUrl = '';
+		$scope.searchEmps = [];
+		$scope.sortUrl = "api/employee/all";
 		$scope.empError = false;
+		$scope.searchError = false;
 		$scope.errorMessage = '';
 		$scope.sortType = '';
 		$scope.email = '';
@@ -14,6 +16,7 @@ angular.module('councilalert')
 		$scope.getEmployees = function(url) {
 			$http.get(url, LocalStorage.getHeader())
 				.success(function(response) {
+					$scope.searchEmps = [];
 					$scope.emps = response;
 					$scope.resetError();
 					if (response.length < 30) {
@@ -151,6 +154,7 @@ angular.module('councilalert')
 		$scope.resetError = function() {
 			$scope.empError = false;
 			$scope.errorMessage = '';
+			$scope.searchError = false;
 		};
 
 		$scope.getAll = function() {
@@ -174,9 +178,21 @@ angular.module('councilalert')
 		$scope.loadMore = function() {
 			$http.get($scope.sortUrl + "/" + $scope.emps.length, LocalStorage.getHeader())
 				.success(function(response) {
+					$scope.resetError();
 					if (response.length) {
-						angular.forEach(response, function(employee) {
-							 $scope.emps.push(employee);   	    	
+						var skip = false;
+						
+						// Ensure that we do not add an employee that we have already
+						// manually retrieved
+						angular.forEach(response, function(employee) {					
+							angular.forEach($scope.searchEmps, function(searchedEmp) {
+								if (searchedEmp.email === employee.email) {
+									skip = true;
+								}   	    	
+						    });
+							if (!skip) {
+								$scope.emps.push(employee);
+							}
 					    });
 						if (response.length < 30) {
 							$scope.noMoreData = true;
@@ -190,6 +206,33 @@ angular.module('councilalert')
 					}
 					$scope.displayError();
 				});
+		}
+
+		$scope.search = function(query) {
+			$http.get("api/employee/" + query, LocalStorage.getHeader())
+				.success(function(response) {
+					$scope.resetError();
+					$scope.addEmpIfNotExists(response);
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						$scope.logout();
+					}
+					$scope.searchError = true;
+				});
+		}
+		
+		$scope.addEmpIfNotExists = function(emp) {
+			var skip = false;
+			
+			angular.forEach($scope.emps, function(employee) {
+				if (employee.email === emp.email) {
+					skip = true;
+				}				
+		    });
+			if (!skip) {
+				$scope.emps.push(emp);
+				$scope.searchEmps.push(emp);
+			}
 		}
 		
 		// Determine if a shortcut button has been pressed through the dashboard

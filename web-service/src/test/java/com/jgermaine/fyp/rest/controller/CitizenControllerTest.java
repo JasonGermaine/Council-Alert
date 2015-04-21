@@ -1,6 +1,7 @@
 package com.jgermaine.fyp.rest.controller;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -133,6 +134,28 @@ public class CitizenControllerTest {
 		mvc.perform(
 				get("/api/citizen/report/sample@email.com"))
 				.andExpect(status().isBadRequest());
+		// @formatter:on
+	}
+	
+	@Test
+	public void testGetCitizenByEmailSuccess() throws Exception {
+
+		when(citizenService.getCitizen(anyString())).thenReturn(citizen);
+
+		// @formatter:off
+		mvc.perform(get("/api/citizen/sample@email.com")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.email", is(citizen.getEmail())));
+		// @formatter:on
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetEmployeesByEmailFailure() throws Exception {
+
+		when(citizenService.getCitizen(anyString())).thenThrow(NoResultException.class);
+
+		// @formatter:off
+		mvc.perform(get("/api/citizen/sample@email.com")).andExpect(status().isBadRequest());
 		// @formatter:on
 	}
 

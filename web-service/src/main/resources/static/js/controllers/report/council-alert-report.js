@@ -3,7 +3,9 @@ angular.module('councilalert')
 				$modal, dashboardService) {
 
 		$scope.reports = [];
-		$scope.sortUrl = '';
+		$scope.searchReports = [];
+		$scope.sortUrl = "api/report/all";
+		$scope.searchError = false;
 		$scope.reportError = false;
 		$scope.errorMessage = '';
 		$scope.sortType = '';
@@ -37,6 +39,7 @@ angular.module('councilalert')
 		$scope.getReports = function(url) {
 			$http.get(url, LocalStorage.getHeader())
 				.success(function(response) {
+					$scope.searchReports = [];
 					$scope.reports = response;
 					$scope.resetError();
 					if (response.length < 30) {
@@ -149,6 +152,7 @@ angular.module('councilalert')
 
 		$scope.resetError = function() {
 			$scope.reportError = false;
+			$scope.searchError = false;
 			$scope.errorMessage = '';
 		};
 		
@@ -162,8 +166,19 @@ angular.module('councilalert')
 			$http.get($scope.sortUrl + "/" + $scope.reports.length, LocalStorage.getHeader())
 				.success(function(response) {
 					if (response.length) {
-						angular.forEach(response, function(rpt) {
-							 $scope.reports.push(rpt);   	    	
+						var skip = false;
+						
+						// Ensure that we do not add a report that we have already
+						// manually retrieved
+						angular.forEach(response, function(rpt) {					
+							angular.forEach($scope.searchReports, function(searchedRpt) {
+								if (searchedRpt.id === rpt.id) {
+									skip = true;
+								}   	    	
+						    });
+							if (!skip) {
+								$scope.reports.push(rpt);
+							}
 					    });
 						if (response.length < 30) {
 							$scope.noMoreData = true;
@@ -177,6 +192,33 @@ angular.module('councilalert')
 					}
 					$scope.displayError();
 				});
+		}
+		
+		$scope.search = function(query) {
+			$http.get("api/report/" + query, LocalStorage.getHeader())
+				.success(function(response) {
+					$scope.resetError();
+					$scope.addReportIfNotExists(response);
+				}).error(function(resp, status) {
+					if (status === 401 || status === 403) {
+						$scope.logout();
+					}
+					$scope.searchError = true;
+				});
+		}
+		
+		$scope.addReportIfNotExists = function(rpt) {
+			var skip = false;
+			
+			angular.forEach($scope.reports, function(report) {
+				if (report.id === rpt.id) {
+					skip = true;
+				}				
+		    });
+			if (!skip) {
+				$scope.searchReports.push(rpt);
+				$scope.reports.push(rpt);
+			}
 		}
 		
 		var key = dashboardService.getKey();
