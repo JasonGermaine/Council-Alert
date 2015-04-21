@@ -237,7 +237,7 @@ public class LoginActivity extends Activity
 
     @Override
     public void onCreationResponseReceived(Citizen citizen, ResponseEntity<Message> response) {
-        if (response.getStatusCode() == HttpStatus.CREATED) {
+        if (response.getStatusCode().value() == HttpStatus.CREATED.value()) {
             setUser(citizen);
             startOauthTask(citizen.getEmail(), citizen.getPassword(), false);
         } else {
@@ -249,7 +249,7 @@ public class LoginActivity extends Activity
     @Override
     public void onRetrieveResponseReceived(ResponseEntity<User> response) {
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode().value() == HttpStatus.OK.value()) {
             setUser(response.getBody());
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
             finish();

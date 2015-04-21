@@ -223,10 +223,10 @@ public class SendReportActivity extends LocationActivity implements
 
     @Override
     public void onResponseReceived(ResponseEntity<Message> response) {
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode().value() == HttpStatus.CREATED.value()) {
             DialogUtil.showToast(this, response.getBody().getMessage());
             finish();
-        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (response.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value()) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

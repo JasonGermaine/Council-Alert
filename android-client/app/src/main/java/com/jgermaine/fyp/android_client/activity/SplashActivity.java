@@ -81,7 +81,7 @@ public class SplashActivity extends Activity
     @Override
     public void onRetrieveResponseReceived(ResponseEntity<User> response) {
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode().value() == HttpStatus.OK.value()) {
             finishAnim();
             ((CouncilAlertApplication) getApplication()).setUser(response.getBody());
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));

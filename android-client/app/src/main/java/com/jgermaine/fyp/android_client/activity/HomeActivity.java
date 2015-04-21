@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.jgermaine.fyp.android_client.R;
 import com.jgermaine.fyp.android_client.application.CouncilAlertApplication;
 import com.jgermaine.fyp.android_client.model.Employee;
@@ -55,6 +57,8 @@ public class HomeActivity extends Activity
             public void onClick(View view) {
                 if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(HomeActivity.this)) {
                     DialogUtil.showToast(HomeActivity.this, getString(R.string.no_connnection));
+                } else if (checkIfGoogleServicesConnected()) {
+                    showErrorToast("Google Play Services must be installed");
                 } else {
                     if (((Employee) mUser).getReportId() != null) {
                         retrieveReport(((Employee) mUser).getReportId());
@@ -75,6 +79,8 @@ public class HomeActivity extends Activity
             public void onClick(View view) {
                 if (!((CouncilAlertApplication) getApplication()).isNetworkConnected(HomeActivity.this)) {
                     DialogUtil.showToast(HomeActivity.this, getString(R.string.no_connnection));
+                } else if (checkIfGoogleServicesConnected()) {
+                    showErrorToast("Google Play Services must be installed");
                 } else {
                     startActivity(new Intent(getApplicationContext(), SendReportActivity.class));
                 }
@@ -104,16 +110,16 @@ public class HomeActivity extends Activity
 
     @Override
     public void OnReportRetrieved(ResponseEntity<Report> response) {
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode().value() == HttpStatus.OK.value()) {
             Report report = response.getBody();
             if (report != null) {
                 retrieveReport(Integer.toString(report.getId()));
             } else {
                 showErrorToast(getString(R.string.no_employee_report));
             }
-        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (response.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value()) {
             logout();
-        } else if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+        } else if (response.getStatusCode().value() == HttpStatus.BAD_REQUEST.value()) {
             showErrorToast(getString(R.string.no_employee_report));
         } else {
             showErrorToast(getString(R.string.unexpected_error));
@@ -147,5 +153,9 @@ public class HomeActivity extends Activity
         mCache.clearCache();
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
         finish();
+    }
+
+    private boolean checkIfGoogleServicesConnected() {
+        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext()) != ConnectionResult.SUCCESS;
     }
 }

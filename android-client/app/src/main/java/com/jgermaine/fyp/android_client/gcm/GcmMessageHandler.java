@@ -50,19 +50,10 @@ public class GcmMessageHandler extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         mes = extras.getString("reportId");
-        showToast();
         showNotification(mes);
 
         GcmBroadcastReceiver.completeWakefulIntent(intent);
 
-    }
-
-    private void showToast() {
-        handler.post(new Runnable() {
-            public void run() {
-                Toast.makeText(getApplicationContext(), mes, Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private void showNotification(String task) {

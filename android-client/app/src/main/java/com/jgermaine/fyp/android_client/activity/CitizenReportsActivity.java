@@ -58,9 +58,9 @@ public class CitizenReportsActivity extends Activity
 
     @Override
     public void onReportsReceived(ResponseEntity<Report[]> response) {
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+        if (response.getStatusCode().value() == HttpStatus.OK.value() && response.getBody() != null) {
             addReportsToList(response.getBody());
-        } else if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (response.getStatusCode().value() == HttpStatus.UNAUTHORIZED.value()) {
             DialogUtil.showToast(this, HttpStatus.UNAUTHORIZED.getReasonPhrase());
             logout();
         } else {

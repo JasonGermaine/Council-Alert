@@ -156,7 +156,7 @@
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
     <string name="report_issue">Report an Issue</string>
-    <string name="report_status">View Stauts of Reported Issues</string>
+    <string name="report_status">View Status of Reported Issues</string>
     <string name="retrieve_task">Retrieve Current Task</string>
     <string name="complete">Complete</string>
     <string name="incomplete">Incomplete</string>
