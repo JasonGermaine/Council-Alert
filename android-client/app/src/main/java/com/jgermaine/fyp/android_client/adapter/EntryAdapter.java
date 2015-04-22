@@ -50,6 +50,9 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         final TextView mEntryComment = (TextView) row.findViewById(R.id.entry_comment);
         final ImageView mEntryImage = (ImageView) row.findViewById(R.id.entry_image);
 
+        final TextView mEntryAuthor = (TextView) row.findViewById(R.id.entry_author);
+        mEntryAuthor.setText(entry.getAuthor());
+        mEntryAuthor.setEnabled(true);
 
         if (mEntryComment != null) {
             mEntryComment.setText(entry.getComment());

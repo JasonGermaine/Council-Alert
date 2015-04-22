@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jgermaine.fyp.rest.exception.ModelValidationException;
 import com.jgermaine.fyp.rest.model.Citizen;
-import com.jgermaine.fyp.rest.model.Employee;
 import com.jgermaine.fyp.rest.model.Message;
 import com.jgermaine.fyp.rest.model.Report;
 import com.jgermaine.fyp.rest.service.impl.CitizenServiceImpl;
