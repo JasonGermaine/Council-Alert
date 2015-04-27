@@ -83,7 +83,7 @@ public class AdminControllerTest {
 	private Citizen citizen;
 	private PasswordChangeRequest passwordRequest;
 	private CouncilAlertUser user;
-	
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
@@ -189,11 +189,11 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void testUpdateEmployeeSuccess() throws Exception {		
+	public void testUpdateEmployeeSuccess() throws Exception {
 		when(employeeService.getEmployee(anyString())).thenReturn(employee);
 		Mockito.doNothing().when(employeeService).updateEmployee(Mockito.any(Employee.class));
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
-		
+
 		// @formatter:off
 		mvc.perform(
 				put("/api/admin/employee/sample@email.com").contentType(
@@ -240,10 +240,8 @@ public class AdminControllerTest {
 		when(reportService.getReport(anyInt())).thenReturn(report);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
 		Mockito.doNothing().when(employeeService).sendEmployeeNotification(Mockito.any(Employee.class), anyInt());
-		
-		mvc.perform(
-				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
-				.andExpect(status().isOk())
+
+		mvc.perform(get("/api/admin/employee//assign?email=sample@email.com&id=1")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.SUCCESS_ASSIGNMENT)));
 		// @formatter:on
 	}
@@ -253,27 +251,23 @@ public class AdminControllerTest {
 		// @formatter:off
 		Report rpt = TestUtil.getDefaultReport();
 		rpt.setStatus(true);
-		when(reportService.getReport(anyInt())).thenReturn(rpt);		
-		mvc.perform(
-				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
-				.andExpect(status().isBadRequest())
+		when(reportService.getReport(anyInt())).thenReturn(rpt);
+		mvc.perform(get("/api/admin/employee//assign?email=sample@email.com&id=1")).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_CLOSED_ASSIGNMENT)));
 		// @formatter:on
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testAssignmentReportNotExist() throws Exception {
 		// @formatter:off
 		when(reportService.getReport(anyInt())).thenThrow(NoResultException.class);
-		
-		mvc.perform(
-				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
-				.andExpect(status().isBadRequest())
+
+		mvc.perform(get("/api/admin/employee//assign?email=sample@email.com&id=1")).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_GENERIC_NOT_EXIST)));
 		// @formatter:on
 	}
-	
+
 	@Test
 	public void testAssignmentAssignedEmployee() throws Exception {
 		// @formatter:off
@@ -285,10 +279,8 @@ public class AdminControllerTest {
 		when(employeeService.getEmployee(anyString())).thenReturn(emp);
 		when(reportService.getReport(anyInt())).thenReturn(report);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
-		
-		mvc.perform(
-				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
-				.andExpect(status().isBadRequest())
+
+		mvc.perform(get("/api/admin/employee//assign?email=sample@email.com&id=1")).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is("Employee" + ResponseMessageUtil.ERROR_ASSIGNMENT)));
 		// @formatter:on
 	}
@@ -304,13 +296,11 @@ public class AdminControllerTest {
 		when(employeeService.getEmployee(anyString())).thenReturn(employee);
 		when(reportService.getReport(anyInt())).thenReturn(rpt);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
-		mvc.perform(
-				get("/api/admin/employee//assign?email=sample@email.com&id=1"))
-				.andExpect(status().isBadRequest())
+		mvc.perform(get("/api/admin/employee//assign?email=sample@email.com&id=1")).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is("Report" + ResponseMessageUtil.ERROR_ASSIGNMENT)));
 		// @formatter:on
 	}
-	
+
 	@Test
 	public void testAssignmentAlreadyAssigned() throws Exception {
 		// @formatter:off
@@ -321,20 +311,18 @@ public class AdminControllerTest {
 		when(reportService.getReport(anyInt())).thenReturn(report);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
 		Mockito.doNothing().when(employeeService).sendEmployeeNotification(Mockito.any(Employee.class), anyInt());
-		
-		mvc.perform(
-				get("/api/admin/employee/assign?email="
-						+ employee.getEmail() + "&id=" + report.getId()))
+
+		mvc.perform(get("/api/admin/employee/assign?email=" + employee.getEmail() + "&id=" + report.getId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.SUCCESS_ASSIGNMENT)));
 		// @formatter:on
 	}
 
 	@Test
-	public void testChangePasswordSuccess() throws Exception {		
+	public void testChangePasswordSuccess() throws Exception {
 		when(councilAlertUserService.getUser(anyString())).thenReturn(user);
 		Mockito.doNothing().when(councilAlertUserService).updateUser(Mockito.any(CouncilAlertUser.class));
-		
+
 		// @formatter:off
 		mvc.perform(
 				put("/api/admin/employee/password/sample@email.com").contentType(
@@ -344,9 +332,9 @@ public class AdminControllerTest {
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.SUCCESS_PASSWORD_UPDATE)));
 		// @formatter:on
 	}
-	
+
 	@Test
-	public void testChangePasswordMismatchFailure() throws Exception {		
+	public void testChangePasswordMismatchFailure() throws Exception {
 		when(councilAlertUserService.getUser(anyString())).thenReturn(user);
 		PasswordChangeRequest invalidRequest = TestUtil.getPasswordRequest();
 		invalidRequest.setPassword("notthesamepassword");
@@ -359,9 +347,9 @@ public class AdminControllerTest {
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_PASSWORD_MISMATCH)));
 		// @formatter:on
 	}
-	
+
 	@Test
-	public void testChangePasswordInvalidPasswordFailure() throws Exception {		
+	public void testChangePasswordInvalidPasswordFailure() throws Exception {
 		when(councilAlertUserService.getUser(anyString())).thenReturn(user);
 		Mockito.doNothing().when(councilAlertUserService).updateUser(Mockito.any(CouncilAlertUser.class));
 		PasswordChangeRequest invalidRequest = TestUtil.getPasswordRequest();
@@ -378,7 +366,7 @@ public class AdminControllerTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testChangePasswordUserExistFailure() throws Exception {		
+	public void testChangePasswordUserExistFailure() throws Exception {
 		when(councilAlertUserService.getUser(anyString())).thenThrow(NoResultException.class);
 		// @formatter:off
 		mvc.perform(
@@ -396,10 +384,8 @@ public class AdminControllerTest {
 		report.setEmployee(employee);
 		when(reportService.getReport(anyInt())).thenReturn(report);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
-		
-		mvc.perform(
-				get("/api/admin/report/unassign/1"))
-				.andExpect(status().isOk())
+
+		mvc.perform(get("/api/admin/report/unassign/1")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.SUCCESS_REPORT_UPDATE)));
 		// @formatter:on
 	}
@@ -408,12 +394,10 @@ public class AdminControllerTest {
 	@Test
 	public void testUnassignmentReportExistFailure() throws Exception {
 		// @formatter:off
-		
+
 		when(reportService.getReport(anyInt())).thenThrow(NoResultException.class);
-		
-		mvc.perform(
-				get("/api/admin/report/unassign/1"))
-				.andExpect(status().isBadRequest())
+
+		mvc.perform(get("/api/admin/report/unassign/1")).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST)));
 		// @formatter:on
 	}
@@ -423,13 +407,12 @@ public class AdminControllerTest {
 		report.setEmployee(employee);
 		when(reportService.getReport(anyInt())).thenReturn(report);
 		Mockito.doNothing().when(reportService).updateReport(Mockito.any(Report.class));
-		
+
 		// @formatter:off
 		mvc.perform(
 				put("/api/admin/report/1/1").contentType(
 						new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(),
-								Charset.forName("utf8"))))
-				.andExpect(status().isOk())
+								Charset.forName("utf8")))).andExpect(status().isOk())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.SUCCESS_REPORT_UPDATE)));
 		// @formatter:on
 	}
@@ -438,55 +421,48 @@ public class AdminControllerTest {
 	@Test
 	public void testChangeReportStatusReportExistFailure() throws Exception {
 		when(reportService.getReport(anyInt())).thenThrow(NoResultException.class);
-		
+
 		// @formatter:off
 		mvc.perform(
 				put("/api/admin/report/1/1").contentType(
 						new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(),
-								Charset.forName("utf8"))))
-				.andExpect(status().isBadRequest())
+								Charset.forName("utf8")))).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_REPORT_NOT_EXIST)));
 		// @formatter:on
 	}
-	
+
 	@Test
-	public void testChangeReportStatusInvalidStatusFailure() throws Exception {		
+	public void testChangeReportStatusInvalidStatusFailure() throws Exception {
 		// @formatter:off
 		mvc.perform(
 				put("/api/admin/report/1/666").contentType(
 						new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(),
-								Charset.forName("utf8"))))
-				.andExpect(status().isBadRequest())
+								Charset.forName("utf8")))).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is(ResponseMessageUtil.ERROR_INVALID_STATUS)));
 		// @formatter:on
 	}
 
-	
 	@Test
-	public void testGetCitizensSuccess() throws Exception {		
+	public void testGetCitizensSuccess() throws Exception {
 		when(citizenService.getCitizens(anyInt())).thenReturn(Arrays.asList(citizen));
 		// @formatter:off
-		mvc.perform(
-				get("/api/admin/citizen"))
-				.andExpect(status().isOk())
+		mvc.perform(get("/api/admin/citizen")).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].email", is(citizen.getEmail())));
 		// @formatter:on
 	}
-	
+
 	@Test
-	public void testGetStatisticsSuccess() throws Exception {		
+	public void testGetStatisticsSuccess() throws Exception {
 		HashMap<String, Long> empMap = new HashMap<String, Long>();
 		HashMap<String, Long> reportMap = new HashMap<String, Long>();
 		empMap.put("emp", (long) 1);
 		reportMap.put("report", (long) 2);
-		
+
 		when(employeeService.getEmployeesStatistics()).thenReturn(empMap);
 		when(reportService.getReportStatistics()).thenReturn(reportMap);
-		
+
 		// @formatter:off
-		mvc.perform(
-				get("/api/admin/stats"))
-				.andExpect(status().isOk())
+		mvc.perform(get("/api/admin/stats")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.emp", is((int) (long) empMap.get("emp"))))
 				.andExpect(jsonPath("$.report", is((int) (long) reportMap.get("report"))));
 		// @formatter:on

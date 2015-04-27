@@ -53,12 +53,12 @@ public class ReportDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Report> getAll(int index) throws Exception {
-		return entityManager.createQuery("from Report").setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
+		return entityManager.createQuery("from Report ORDER BY id DESC").setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Report> getWhereStatus(boolean status, int index) throws Exception {
-		return entityManager.createQuery("from Report where status = :status").setParameter("status", status)
+		return entityManager.createQuery("from Report where status = :status ORDER BY id DESC").setParameter("status", status)
 				.setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 	}
 
@@ -82,7 +82,7 @@ public class ReportDao {
 	public List<Report> getTodaysReports(int index) throws Exception {
 		try {
 			return (List<Report>) entityManager.createNativeQuery(
-					"Select * from Reports where timestamp > current_date()", Report.class).setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
+					"Select * from Reports where timestamp > current_date() ORDER BY id DESC", Report.class).setFirstResult(index).setMaxResults(SET_SIZE).getResultList();
 		} catch (Exception e) {
 			return null;
 		}

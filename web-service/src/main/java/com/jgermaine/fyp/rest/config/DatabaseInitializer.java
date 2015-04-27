@@ -105,10 +105,12 @@ public class DatabaseInitializer {
 
 	@PostConstruct
 	public void postConstruct() {
+		/*
 		initEmployees();
 		initCitizens();
 		initReports();
 		initAssignments();
+		*/
 	}
 
 	private void initEmployees() {

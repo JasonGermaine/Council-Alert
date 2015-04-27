@@ -1,21 +1,9 @@
 # List of files/directories to exclude
-
+/.metadata
 /*.log
 /web-service/target/*
 /RemoteSystemsTempFiles
 /Servers*
 /keystore
-/android-client/app/*.apk
 /logs
-/.metadata
-/web-service/.*
-/setup.properties
-/.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-ConnectionUtil.java
-Secret.java
 
